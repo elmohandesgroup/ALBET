@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ALBET - لوحة التحكم</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Cairo',sans-serif; background:#f0f2f5; color:#2d3436; }
+
+/* Login Screen */
+.login-screen {
+  position:fixed; inset:0; background:linear-gradient(135deg,#2d3436,#636e72);
+  display:flex; align-items:center; justify-content:center; z-index:9999;
+}
+.login-box {
+  background:white; border-radius:24px; padding:48px 40px;
+  width:min(380px,90vw); text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,0.3);
+}
+.login-logo { font-size:48px; margin-bottom:8px; }
+.login-brand { font-size:32px; font-weight:900; color:#e17055; letter-spacing:2px; margin-bottom:4px; }
+.login-subtitle { font-size:13px; color:#b2bec3; margin-bottom:32px; }
+.login-box input {
+  width:100%; border:2px solid #e0e0e0; border-radius:12px;
+  padding:14px 18px; font-family:'Cairo',sans-serif; font-size:16px;
+  outline:none; text-align:center; letter-spacing:4px; margin-bottom:16px;
+  transition:border-color 0.2s;
+}
+.login-box input:focus { border-color:#e17055; }
+.login-btn {
+  width:100%; background:linear-gradient(135deg,#e17055,#d63031);
+  color:white; border:none; padding:14px; border-radius:12px;
+  font-family:'Cairo',sans-serif; font-size:17px; font-weight:700; cursor:pointer;
+}
+.login-btn:hover { opacity:0.9; }
+.login-error { color:#d63031; font-size:13px; margin-top:10px; display:none; }
+
+/* Sidebar */
+.sidebar { position:fixed; right:0; top:0; width:240px; height:100vh; background:linear-gradient(180deg,#2d3436,#636e72); color:white; padding:0; z-index:100; }
+.sidebar-logo { padding:20px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; align-items:center; gap:12px; }
+.sidebar-logo .brand { font-size:22px; font-weight:900; color:#e17055; letter-spacing:2px; }
+.sidebar-logo .sub { font-size:11px; opacity:0.5; margin-top:2px; }
+.nav-item { display:flex; align-items:center; gap:12px; padding:14px 20px; cursor:pointer; transition:all 0.2s; font-size:15px; font-weight:600; border-right:3px solid transparent; }
+.nav-item:hover, .nav-item.active { background:rgba(255,255,255,0.1); border-right-color:#e17055; color:#e17055; }
+.nav-icon { font-size:18px; width:24px; text-align:center; }
+.logout-btn { position:absolute; bottom:20px; width:100%; padding:14px 20px; display:flex; align-items:center; gap:12px; cursor:pointer; color:rgba(255,255,255,0.5); font-size:14px; font-weight:600; }
+.logout-btn:hover { color:white; }
+
+/* Main */
+.main { margin-right:240px; padding:30px; min-height:100vh; }
+.page { display:none; }
+.page.active { display:block; }
+.page-title { font-size:26px; font-weight:900; margin-bottom:24px; color:#2d3436; }
+
+/* Stats */
+.stats-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:20px; margin-bottom:30px; }
+.stat-card { background:white; border-radius:16px; padding:24px; box-shadow:0 2px 10px rgba(0,0,0,0.06); }
+.stat-icon { font-size:36px; margin-bottom:10px; }
+.stat-value { font-size:32px; font-weight:900; color:#e17055; }
+.stat-label { font-size:13px; color:#636e72; margin-top:4px; font-weight:600; }
+
+/* Table */
+.card { background:white; border-radius:16px; box-shadow:0 2px 10px rgba(0,0,0,0.06); overflow:hidden; margin-bottom:24px; }
+.card-header { padding:20px 24px; border-bottom:1px solid #f0f0f0; display:flex; justify-content:space-between; align-items:center; }
+.card-header h3 { font-size:18px; font-weight:900; }
+table { width:100%; border-collapse:collapse; }
+th { background:#f8f9fa; padding:14px 16px; text-align:right; font-size:13px; font-weight:700; color:#636e72; border-bottom:1px solid #f0f0f0; }
+td { padding:14px 16px; font-size:14px; border-bottom:1px solid #f8f9fa; vertical-align:middle; }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:#fafafa; }
+.product-thumb { width:50px; height:50px; border-radius:10px; object-fit:cover; background:#f0f0f0; }
+
+/* Badges */
+.badge { padding:4px 12px; border-radius:20px; font-size:12px; font-weight:700; display:inline-block; }
+.badge-new { background:#dfe6e9; color:#2d3436; }
+.badge-processing { background:#ffeaa7; color:#d35400; }
+.badge-shipped { background:#d1f2eb; color:#1e8449; }
+.badge-done { background:#d5f5e3; color:#196f3d; }
+.badge-cancelled { background:#fadbd8; color:#c0392b; }
+
+/* Buttons */
+.btn { padding:10px 20px; border:none; border-radius:10px; cursor:pointer; font-family:'Cairo',sans-serif; font-weight:700; font-size:14px; transition:all 0.2s; }
+.btn-primary { background:linear-gradient(135deg,#e17055,#d63031); color:white; }
+.btn-primary:hover { opacity:0.9; }
+.btn-sm { padding:6px 14px; font-size:13px; border-radius:8px; }
+.btn-edit { background:#74b9ff; color:white; }
+.btn-delete { background:#fab1a0; color:#c0392b; }
+
+/* Modal */
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:500; align-items:center; justify-content:center; padding:20px; }
+.modal-overlay.open { display:flex; }
+.modal { background:white; border-radius:20px; padding:32px; width:min(560px,100%); max-height:90vh; overflow-y:auto; }
+.modal h3 { font-size:20px; font-weight:900; margin-bottom:20px; }
+.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.form-group.full { grid-column:1/-1; }
+.form-group label { display:block; font-weight:700; margin-bottom:6px; font-size:13px; color:#636e72; }
+.form-group input, .form-group select, .form-group textarea {
+  width:100%; border:2px solid #e0e0e0; border-radius:10px;
+  padding:10px 14px; font-family:'Cairo',sans-serif; font-size:14px;
+  outline:none; transition:border-color 0.2s;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:#e17055; }
+.modal-actions { display:flex; gap:10px; margin-top:20px; }
+.btn-cancel { background:#f0f0f0; color:#636e72; border:none; padding:10px 20px; border-radius:10px; cursor:pointer; font-family:'Cairo',sans-serif; font-weight:700; font-size:14px; }
+.status-select { border:2px solid #e0e0e0; border-radius:8px; padding:6px 10px; font-family:'Cairo',sans-serif; font-size:13px; cursor:pointer; outline:none; }
+.toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:#2d3436; color:white; padding:14px 28px; border-radius:30px; font-weight:700; font-size:15px; z-index:9999; opacity:0; transition:opacity 0.3s; pointer-events:none; }
+.toast.show { opacity:1; }
+.img-preview { width:80px; height:80px; border-radius:10px; object-fit:cover; background:#f0f0f0; margin-top:8px; display:block; }
+
+@media(max-width:768px){
+  .sidebar { width:60px; }
+  .sidebar-logo .brand, .sidebar-logo .sub, .nav-item span, .logout-btn span { display:none; }
+  .main { margin-right:60px; padding:16px; }
+  .form-grid { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Login Screen -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">🏠</div>
+    <div class="login-brand">ALBET</div>
+    <div class="login-subtitle">لوحة تحكم المتجر</div>
+    <input type="password" id="passwordInput" placeholder="••••••" maxlength="20" onkeyup="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">🔐 دخول</button>
+    <div class="login-error" id="loginError">❌ كلمة المرور غلط، حاول تاني</div>
+  </div>
+</div>
+
+<!-- Dashboard (hidden until login) -->
+<div id="dashboardApp" style="display:none">
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <span style="font-size:28px">🏠</span>
+    <div><div class="brand">ALBET</div><div class="sub">لوحة التحكم</div></div>
+  </div>
+  <div class="nav-item active" onclick="showPage('dashboard',this)"><span class="nav-icon">📊</span><span>الرئيسية</span></div>
+  <div class="nav-item" onclick="showPage('products',this)"><span class="nav-icon">📦</span><span>المنتجات</span></div>
+  <div class="nav-item" onclick="showPage('orders',this)"><span class="nav-icon">🛒</span><span>الطلبات</span></div>
+  <div class="nav-item" onclick="window.open('https://base44.app/api/apps/69ffc25fdfb6ae9768b81b42/files/mp/public/69ffc25fdfb6ae9768b81b42/b6fbd5269_store.html','_blank')"><span class="nav-icon">🔗</span><span>المتجر</span></div>
+  <div class="logout-btn" onclick="doLogout()"><span style="font-size:18px">🚪</span><span>خروج</span></div>
+</div>
+
+<!-- Main -->
+<div class="main">
+
+  <!-- Dashboard Page -->
+  <div class="page active" id="page-dashboard">
+    <div class="page-title">📊 الرئيسية</div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-icon">📦</div><div class="stat-value" id="stat-products">-</div><div class="stat-label">إجمالي المنتجات</div></div>
+      <div class="stat-card"><div class="stat-icon">🛒</div><div class="stat-value" id="stat-orders">-</div><div class="stat-label">إجمالي الطلبات</div></div>
+      <div class="stat-card"><div class="stat-icon">🆕</div><div class="stat-value" id="stat-new">-</div><div class="stat-label">طلبات جديدة</div></div>
+      <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-value" id="stat-revenue">-</div><div class="stat-label">إجمالي المبيعات (جنيه)</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>🕐 آخر الطلبات</h3></div>
+      <table>
+        <thead><tr><th>العميل</th><th>المنتجات</th><th>الإجمالي</th><th>الحالة</th><th>التاريخ</th></tr></thead>
+        <tbody id="recent-orders-body"><tr><td colspan="5" style="text-align:center;color:#b2bec3;padding:30px">جاري التحميل...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Products Page -->
+  <div class="page" id="page-products">
+    <div class="page-title" style="display:flex;justify-content:space-between;align-items:center">
+      <span>📦 إدارة المنتجات</span>
+      <button class="btn btn-primary" onclick="openProductModal()">➕ إضافة منتج</button>
+    </div>
+    <div class="card">
+      <table>
+        <thead><tr><th>الصورة</th><th>اسم المنتج</th><th>الفئة</th><th>السعر</th><th>المخزون</th><th>مميز</th><th>الإجراءات</th></tr></thead>
+        <tbody id="products-body"><tr><td colspan="7" style="text-align:center;color:#b2bec3;padding:30px">جاري التحميل...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Orders Page -->
+  <div class="page" id="page-orders">
+    <div class="page-title">🛒 إدارة الطلبات</div>
+    <div class="card">
+      <table>
+        <thead><tr><th>العميل</th><th>الهاتف</th><th>المنتجات</th><th>الإجمالي</th><th>الدفع</th><th>الحالة</th><th>التاريخ</th></tr></thead>
+        <tbody id="orders-body"><tr><td colspan="7" style="text-align:center;color:#b2bec3;padding:30px">جاري التحميل...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- Product Modal -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal">
+    <h3 id="modalTitle">➕ إضافة منتج جديد</h3>
+    <input type="hidden" id="editProductId">
+    <div class="form-grid">
+      <div class="form-group full"><label>اسم المنتج *</label><input type="text" id="pName" placeholder="اسم المنتج"></div>
+      <div class="form-group full"><label>الوصف</label><textarea id="pDesc" rows="3" placeholder="وصف المنتج..."></textarea></div>
+      <div class="form-group"><label>السعر (جنيه) *</label><input type="number" id="pPrice" placeholder="0"></div>
+      <div class="form-group"><label>السعر الأصلي (قبل الخصم)</label><input type="number" id="pOriginal" placeholder="0"></div>
+      <div class="form-group"><label>الفئة *</label>
+        <select id="pCategory">
+          <option value="">اختر الفئة</option>
+          <option value="مطبخ">🍳 مطبخ</option>
+          <option value="حمام">🚿 حمام</option>
+          <option value="غرفة نوم">🛏️ غرفة نوم</option>
+          <option value="صالة">🛋️ صالة</option>
+          <option value="تنظيف">🧹 تنظيف</option>
+          <option value="ديكور">🎨 ديكور</option>
+        </select>
+      </div>
+      <div class="form-group"><label>الكمية المتاحة</label><input type="number" id="pStock" placeholder="0"></div>
+      <div class="form-group"><label>التقييم (1-5)</label><input type="number" id="pRating" placeholder="4.5" min="1" max="5" step="0.1"></div>
+      <div class="form-group"><label>عدد التقييمات</label><input type="number" id="pReviews" placeholder="0"></div>
+      <div class="form-group full"><label>رابط الصورة</label><input type="text" id="pImage" placeholder="https://..." oninput="previewImg(this)"><img id="imgPreview" class="img-preview" style="display:none"></div>
+      <div class="form-group full"><label><input type="checkbox" id="pFeatured" style="width:auto;margin-left:8px"> منتج مميز</label></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="saveProduct()">💾 حفظ</button>
+      <button class="btn-cancel" onclick="closeProductModal()">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const PASS = '136201';
+const SESSION_KEY = 'albet_auth';
+
+// ── Auth ──
+function doLogin() {
+  const val = document.getElementById('passwordInput').value;
+  if (val === PASS) {
+    sessionStorage.setItem(SESSION_KEY, '1');
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('dashboardApp').style.display = 'block';
+    loadDashboard();
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+    document.getElementById('passwordInput').value = '';
+    document.getElementById('passwordInput').focus();
+    setTimeout(() => document.getElementById('loginError').style.display = 'none', 3000);
+  }
+}
+
+function doLogout() {
+  sessionStorage.removeItem(SESSION_KEY);
+  document.getElementById('dashboardApp').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('passwordInput').value = '';
+}
+
+// Check if already logged in this session
+if (sessionStorage.getItem(SESSION_KEY) === '1') {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('dashboardApp').style.display = 'block';
+}
+
+// ── Navigation ──
+function showPage(name, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  if (el) el.classList.add('active');
+  if (name === 'products') loadProducts();
+  if (name === 'orders') loadOrders();
+  if (name === 'dashboard') loadDashboard();
+}
+
+// ── Toast ──
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── API ──
+const API = '/api/entities';
+async function apiGet(e) {
+  const r = await fetch(API+'/'+e+'/filter',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
+  if(!r.ok) throw new Error('فشل');
+  return r.json();
+}
+async function apiPost(e,d) {
+  const r = await fetch(API+'/'+e,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});
+  if(!r.ok) throw new Error('فشل');
+  return r.json();
+}
+async function apiPut(e,id,d) {
+  const r = await fetch(API+'/'+e+'/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});
+  if(!r.ok) throw new Error('فشل');
+  return r.json();
+}
+async function apiDelete(e,id) {
+  const r = await fetch(API+'/'+e+'/'+id,{method:'DELETE'});
+  if(!r.ok) throw new Error('فشل');
+}
+
+let productsData=[], ordersData=[];
+
+// ── Dashboard ──
+async function loadDashboard() {
+  try {
+    const [p,o] = await Promise.all([apiGet('Product'),apiGet('Order')]);
+    productsData=p; ordersData=o;
+    document.getElementById('stat-products').textContent = p.length;
+    document.getElementById('stat-orders').textContent = o.length;
+    document.getElementById('stat-new').textContent = o.filter(x=>x.status==='جديد').length;
+    document.getElementById('stat-revenue').textContent = o.reduce((s,x)=>s+(x.total||0),0).toLocaleString();
+    const tbody = document.getElementById('recent-orders-body');
+    const recent = [...o].sort((a,b)=>new Date(b.created_date)-new Date(a.created_date)).slice(0,5);
+    if(!recent.length){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:30px;color:#b2bec3">لا توجد طلبات بعد</td></tr>';return;}
+    tbody.innerHTML = recent.map(x=>'<tr><td><strong>'+x.customer_name+'</strong></td><td style="font-size:12px;color:#636e72">'+x.items+'</td><td><strong style="color:#e17055">'+(x.total||0).toLocaleString()+' جنيه</strong></td><td>'+statusBadge(x.status)+'</td><td style="font-size:12px;color:#b2bec3">'+formatDate(x.created_date)+'</td></tr>').join('');
+  } catch(e){toast('⚠️ خطأ في التحميل');}
+}
+
+// ── Products ──
+async function loadProducts() {
+  try { productsData=await apiGet('Product'); renderProducts(); }
+  catch(e){toast('⚠️ خطأ');}
+}
+function renderProducts() {
+  const tb=document.getElementById('products-body');
+  if(!productsData.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:40px;color:#b2bec3">لا توجد منتجات</td></tr>';return;}
+  tb.innerHTML=productsData.map(p=>'<tr>'+
+    '<td><img class="product-thumb" src="'+(p.image_url||'')+'" onerror="this.style.background=\'#eee\'"></td>'+
+    '<td><strong>'+p.name+'</strong><br><small style="color:#636e72">'+(p.description||'').substring(0,50)+'...</small></td>'+
+    '<td><span class="badge badge-new">'+(p.category||'-')+'</span></td>'+
+    '<td><strong style="color:#e17055">'+p.price+' جنيه</strong>'+(p.original_price?'<br><small style="color:#b2bec3;text-decoration:line-through">'+p.original_price+'</small>':'')+'</td>'+
+    '<td>'+(p.stock||0)+'</td>'+
+    '<td>'+(p.is_featured?'✅':'❌')+'</td>'+
+    '<td><button class="btn btn-sm btn-edit" onclick="editProduct(\''+p.id+'\')">✏️ تعديل</button> <button class="btn btn-sm btn-delete" onclick="deleteProduct(\''+p.id+'\',\''+p.name.replace(/'/g,"\\'")+'\')" >🗑️</button></td>'+
+    '</tr>').join('');
+}
+
+function openProductModal(){
+  document.getElementById('editProductId').value='';
+  document.getElementById('modalTitle').textContent='➕ إضافة منتج جديد';
+  ['pName','pDesc','pPrice','pOriginal','pStock','pRating','pReviews','pImage'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('pCategory').value='';
+  document.getElementById('pFeatured').checked=false;
+  document.getElementById('imgPreview').style.display='none';
+  document.getElementById('productModal').classList.add('open');
+}
+function editProduct(id){
+  const p=productsData.find(x=>x.id===id); if(!p)return;
+  document.getElementById('editProductId').value=id;
+  document.getElementById('modalTitle').textContent='✏️ تعديل المنتج';
+  document.getElementById('pName').value=p.name||'';
+  document.getElementById('pDesc').value=p.description||'';
+  document.getElementById('pPrice').value=p.price||'';
+  document.getElementById('pOriginal').value=p.original_price||'';
+  document.getElementById('pCategory').value=p.category||'';
+  document.getElementById('pStock').value=p.stock||'';
+  document.getElementById('pRating').value=p.rating||'';
+  document.getElementById('pReviews').value=p.reviews_count||'';
+  document.getElementById('pImage').value=p.image_url||'';
+  document.getElementById('pFeatured').checked=!!p.is_featured;
+  if(p.image_url){const img=document.getElementById('imgPreview');img.src=p.image_url;img.style.display='block';}
+  document.getElementById('productModal').classList.add('open');
+}
+function closeProductModal(){document.getElementById('productModal').classList.remove('open');}
+function previewImg(i){const img=document.getElementById('imgPreview');if(i.value){img.src=i.value;img.style.display='block';}else img.style.display='none';}
+
+async function saveProduct(){
+  const name=document.getElementById('pName').value.trim();
+  const price=parseFloat(document.getElementById('pPrice').value);
+  const cat=document.getElementById('pCategory').value;
+  if(!name||!price||!cat){toast('⚠️ يرجى ملء الحقول المطلوبة');return;}
+  const data={name,price,category:cat,description:document.getElementById('pDesc').value.trim(),original_price:parseFloat(document.getElementById('pOriginal').value)||null,stock:parseInt(document.getElementById('pStock').value)||0,rating:parseFloat(document.getElementById('pRating').value)||null,reviews_count:parseInt(document.getElementById('pReviews').value)||0,image_url:document.getElementById('pImage').value.trim(),is_featured:document.getElementById('pFeatured').checked};
+  const editId=document.getElementById('editProductId').value;
+  try{
+    if(editId)await apiPut('Product',editId,data); else await apiPost('Product',data);
+    toast(editId?'✅ تم التعديل':'✅ تمت الإضافة');
+    closeProductModal(); loadProducts();
+  }catch(e){toast('⚠️ خطأ: '+e.message);}
+}
+async function deleteProduct(id,name){
+  if(!confirm('هل تريد حذف: '+name+'؟'))return;
+  try{await apiDelete('Product',id);toast('🗑️ تم الحذف');loadProducts();}catch(e){toast('⚠️ خطأ');}
+}
+
+// ── Orders ──
+async function loadOrders(){
+  try{ordersData=await apiGet('Order');renderOrders();}catch(e){toast('⚠️ خطأ');}
+}
+function renderOrders(){
+  const tb=document.getElementById('orders-body');
+  if(!ordersData.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:40px;color:#b2bec3">لا توجد طلبات بعد</td></tr>';return;}
+  const sorted=[...ordersData].sort((a,b)=>new Date(b.created_date)-new Date(a.created_date));
+  tb.innerHTML=sorted.map(o=>'<tr>'+
+    '<td><strong>'+(o.customer_name||'-')+'</strong><br><small style="color:#636e72">'+(o.customer_address||'')+'</small></td>'+
+    '<td>'+(o.customer_phone||'-')+'</td>'+
+    '<td style="font-size:12px;color:#636e72;max-width:160px">'+(o.items||'-')+'</td>'+
+    '<td><strong style="color:#e17055">'+(o.total||0).toLocaleString()+' جنيه</strong></td>'+
+    '<td><small>'+(o.payment_method||'-')+'</small></td>'+
+    '<td><select class="status-select" onchange="updateOrderStatus(\''+o.id+'\',this.value)">'+
+    ['جديد','تحت المعالجة','تم الشحن','تم التسليم','ملغي'].map(s=>'<option '+(o.status===s?'selected':'')+' value="'+s+'">'+s+'</option>').join('')+
+    '</select></td>'+
+    '<td style="font-size:12px;color:#b2bec3">'+formatDate(o.created_date)+'</td></tr>').join('');
+}
+async function updateOrderStatus(id,status){
+  try{await apiPut('Order',id,{status});toast('✅ تم تحديث الحالة');}catch(e){toast('⚠️ فشل');}
+}
+
+function statusBadge(s){const m={'جديد':'badge-new','تحت المعالجة':'badge-processing','تم الشحن':'badge-shipped','تم التسليم':'badge-done','ملغي':'badge-cancelled'};return '<span class="badge '+(m[s]||'badge-new')+'">'+s+'</span>';}
+function formatDate(d){if(!d)return '-';return new Date(d).toLocaleDateString('ar-EG',{year:'numeric',month:'short',day:'numeric'});}
+
+// Auto-load if already logged in
+if(sessionStorage.getItem(SESSION_KEY)==='1') loadDashboard();
+</script>
+</body>
+</html>
