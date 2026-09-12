@@ -1,1 +1,230 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متجر ALBET | الرئيسية</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+    <style>
+        :root { --main-orange: #e17055; --dark-bg: #2d3436; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+        body { background-color: #f4f7f6; color: #333; }
+
+        header { background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; padding: 15px 20px; }
+        .logo { font-size: 24px; font-weight: 800; color: var(--main-orange); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+        .nav-btns { display: flex; gap: 10px; }
+        .btn-custom { background: #fff0ed; color: var(--main-orange); border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 14px; transition: 0.3s; }
+        .btn-custom:hover { background: var(--main-orange); color: white; }
+
+        .categories-nav { background: white; border-top: 1px solid #eee; padding: 10px 0; overflow-x: auto; }
+        .categories-container { display: flex; justify-content: center; gap: 10px; max-width: 1200px; margin: 0 auto; padding: 0 20px; white-space: nowrap; }
+        .cat-btn { border: none; background: #f1f2f6; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 14px; font-weight: 600; color: #555; transition: 0.3s; }
+        .cat-btn.active, .cat-btn:hover { background: var(--main-orange); color: white; }
+
+        .main-container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; }
+        .product-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); display: flex; flex-direction: column; }
+        .product-img { width: 100%; height: 200px; object-fit: cover; background: #f9f9f9; }
+        .product-info { padding: 15px; display: flex; flex-direction: column; flex-grow: 1; }
+        .product-cat { font-size: 12px; color: #888; margin-bottom: 5px; }
+        .product-title { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+        .product-price { font-size: 18px; font-weight: 800; color: var(--main-orange); margin-top: auto; margin-bottom: 15px; }
+        .add-to-cart-btn { background: var(--dark-bg); color: white; border: none; width: 100%; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: white; width: 90%; max-width: 500px; padding: 25px; border-radius: 12px; max-height: 90vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .form-input { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 6px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="navbar">
+            <a href="#" class="logo"><i class="fas fa-store"></i> ALBET Store</a>
+            <div class="nav-btns">
+                <button class="btn-custom" onclick="openModal('adminModal'); fetchOrders();"><i class="fas fa-user-shield"></i> اللوحة</button>
+                <button class="btn-custom" onclick="openModal('cartModal')"><i class="fas fa-shopping-basket"></i> السلة <span id="cart-count">(0)</span></button>
+            </div>
+        </div>
+        <div class="categories-nav">
+            <div class="categories-container">
+                <button class="cat-btn active" onclick="filterCat('all')">الكل</button>
+                <button class="cat-btn" onclick="filterCat('kitchen')">المطبخ</button>
+                <button class="cat-btn" onclick="filterCat('textiles')">المفروشات</button>
+                <button class="cat-btn" onclick="filterCat('appliances')">الأجهزة</button>
+                <button class="cat-btn" onclick="filterCat('decor')">الديكور</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <h2 style="margin-bottom: 20px;">المنتجات المتاحة</h2>
+        <div class="products-grid" id="products-container">
+            <p>جاري تحميل المنتجات من قاعدة البيانات...</p>
+        </div>
+    </div>
+
+    <!-- نافذة السلة -->
+    <div class="modal" id="cartModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>سلة المشتريات</h3>
+                <span style="cursor:pointer;" onclick="closeModal('cartModal')">&times;</span>
+            </div>
+            <div id="cart-items">فارغة حالياً</div>
+            <hr style="margin: 15px 0;">
+            <h4>إتمام الطلب</h4>
+            <form onsubmit="submitOrder(event)">
+                <input type="text" id="c_name" class="form-input" placeholder="الاسم" required>
+                <input type="tel" id="c_phone" class="form-input" placeholder="رقم الهاتف" required>
+                <textarea id="c_address" class="form-input" placeholder="العنوان" required></textarea>
+                <button type="submit" class="btn-custom" style="width:100%; background:#27ae60; color:white;">إرسال الطلب</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- نافذة لوحة التحكم البسيطة -->
+    <div class="modal" id="adminModal">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h3>لوحة تحكم المتجر</h3>
+                <span style="cursor:pointer;" onclick="closeModal('adminModal')">&times;</span>
+            </div>
+            
+            <h4>إضافة منتج جديد</h4>
+            <form onsubmit="addProduct(event)" style="margin-bottom: 20px;">
+                <input type="text" id="p_name" class="form-input" placeholder="اسم المنتج" required>
+                <input type="number" id="p_price" class="form-input" placeholder="السعر" required>
+                <select id="p_cat" class="form-input">
+                    <option value="kitchen">المطبخ</option>
+                    <option value="textiles">المفروشات</option>
+                    <option value="appliances">الأجهزة</option>
+                    <option value="decor">الديكور</option>
+                </select>
+                <input type="url" id="p_img" class="form-input" placeholder="رابط صورة المنتج" required>
+                <button type="submit" class="btn-custom" style="width:100%; background:#2980b9; color:white;">حفظ المنتج</button>
+            </form>
+
+            <hr style="margin: 20px 0;">
+            <h4>الطلبات الواردة</h4>
+            <div id="orders-list">جاري جلب الطلبات...</div>
+        </div>
+    </div>
+
+    <script>
+        // إعداد الاتصال بـ Supabase
+        const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5q'; // المفتاح الخص بك
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let allProducts = [];
+        let cart = [];
+
+        // تحميل المنتجات من Supabase
+        async function loadProducts() {
+            const { data, error } = await _supabase.from('products').select('*');
+            if (error) { console.error(error); return; }
+            allProducts = data;
+            renderProducts(allProducts);
+        }
+
+        function renderProducts(items) {
+            const container = document.getElementById('products-container');
+            if(items.length === 0) {
+                container.innerHTML = '<p>لا يوجد منتجات حالياً. أضف منتجات من لوحة التحكم!</p>';
+                return;
+            }
+            container.innerHTML = items.map(p => `
+                <div class="product-card">
+                    <img src="${p.image}" class="product-img">
+                    <div class="product-info">
+                        <span class="product-cat">${p.category}</span>
+                        <h3 class="product-title">${p.name}</h3>
+                        <div class="product-price">${p.price} ج.م</div>
+                        <button class="add-to-cart-btn" onclick="addToCart(${p.id})">إضافة للسلة</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterCat(cat) {
+            if(cat === 'all') renderProducts(allProducts);
+            else renderProducts(allProducts.filter(p => p.category === cat));
+        }
+
+        function addToCart(id) {
+            const p = allProducts.find(x => x.id === id);
+            cart.push(p);
+            document.getElementById('cart-count').innerText = `(${cart.length})`;
+            alert('تمت الإضافة للسلة');
+        }
+
+        // إرسال الطلب لقاعدة البيانات
+        async function submitOrder(e) {
+            e.preventDefault();
+            if(cart.length === 0) return alert('السلة فارغة');
+
+            const order = {
+                customer_name: document.getElementById('c_name').value,
+                phone: document.getElementById('c_phone').value,
+                address: document.getElementById('c_address').value,
+                items: cart,
+                total: cart.reduce((sum, item) => sum + Number(item.price), 0) + ' ج.م'
+            };
+
+            const { error } = await _supabase.from('orders').insert([order]);
+            if(error) alert('حدث خطأ أثناء الإرسال');
+            else {
+                alert('تم إرسال طلبك بنجاح!');
+                cart = [];
+                document.getElementById('cart-count').innerText = '(0)';
+                closeModal('cartModal');
+            }
+        }
+
+        // إضافة منتج جديد من اللوحة
+        async function addProduct(e) {
+            e.preventDefault();
+            const prod = {
+                name: document.getElementById('p_name').value,
+                price: document.getElementById('p_price').value,
+                category: document.getElementById('p_cat').value,
+                image: document.getElementById('p_img').value
+            };
+
+            const { error } = await _supabase.from('products').insert([prod]);
+            if(error) alert('خطأ في إضافة المنتج');
+            else {
+                alert('تمت إضافة المنتج بنجاح!');
+                loadProducts();
+            }
+        }
+
+        // جلب الطلبات
+        async function fetchOrders() {
+            const { data, error } = await _supabase.from('orders').select('*').order('created_at', { ascending: false });
+            const list = document.getElementById('orders-list');
+            if(error || !data.length) { list.innerHTML = '<p>لا توجد طلبات حتى الآن.</p>'; return; }
+
+            list.innerHTML = data.map(o => `
+                <div style="background:#f8f9fa; padding:10px; margin-bottom:10px; border-radius:6px; border-right:4px solid var(--main-orange);">
+                    <strong>${o.customer_name}</strong> (${o.phone}) - ${o.address}<br>
+                    <small>الإجمالي: ${o.total}</small>
+                </div>
+            `).join('');
+        }
+
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        // بدء التشغيل
+        loadProducts();
+    </script>
+</body>
+</html>
