@@ -1,20 +1,20 @@
 {
-  "name": "متجر البيت - ALBET Store",
-  "short_name": "ALBET Store",
-  "start_url": "/",
+  "name": "متجر البيت - الأفضل دائماً",
+  "short_name": "متجر البيت",
+  "start_url": "/index.html",
   "display": "standalone",
-  "background_color": "#ffffff",
+  "background_color": "#f8f9fa",
   "theme_color": "#e17055",
   "icons": [
     {
-      "src": "/192.png",
+      "src": "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=192&auto=format&fit=crop&q=60",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/jpeg"
     },
     {
-      "src": "/512.png",
+      "src": "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=512&auto=format&fit=crop&q=60",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/jpeg"
     }
   ]
 }
