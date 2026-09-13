@@ -32,11 +32,11 @@
 </head>
 <body class="bg-gray-50 text-gray-800 pb-20">
 
-    <!-- الهيدر الرئيسي المحدث (تم تصحيح وضوح اللوجو وترتيب العناصر) -->
-    <header class="bg-white shadow-sm sticky top-0 z-50 px-4 py-3">
+    <!-- الهيدر الرئيسي (تم تعديل المقاسات لراحة اللوجو والعناصر) -->
+    <header class="bg-white shadow-sm sticky top-0 z-50 px-4 py-3.5">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             
-            <!-- القسم الأيمن: زر القائمة + اللوجو الواضح -->
+            <!-- القسم الأيمن: زر القائمة + اللوجو -->
             <div class="flex items-center gap-3">
                 <button id="open-menu-btn" class="p-1.5 text-gray-700 hover:text-orange-600 transition-colors focus:outline-none" aria-label="فتح القائمة">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -44,21 +44,21 @@
                     </svg>
                 </button>
                 <a href="index.html" class="flex items-center">
-                    <img src="logo192.png" alt="متجر البيت" class="w-11 h-11 object-cover rounded-xl shadow-md border border-gray-100 bg-white p-0.5">
+                    <img src="logo192.png" alt="متجر البيت" class="w-12 h-12 object-contain rounded-xl shadow-sm border border-gray-100 bg-white p-1">
                 </a>
             </div>
 
             <!-- القسم الأوسط: اسم المتجر والسلوجان -->
             <div class="text-center flex-1 mx-2">
                 <a href="index.html" class="block">
-                    <h1 class="text-base md:text-xl font-black text-orange-600 leading-tight">متجر البيت</h1>
-                    <p class="text-[10px] md:text-xs text-gray-500 font-medium">الأفضل دائماً</p>
+                    <h1 class="text-lg md:text-2xl font-black text-orange-600 leading-tight">متجر البيت</h1>
+                    <p class="text-[11px] md:text-xs text-gray-500 font-medium">الأفضل دائماً</p>
                 </a>
             </div>
 
             <!-- القسم الأيسر: زر أضف إعلانك -->
             <div class="flex items-center">
-                <button onclick="openAddModal()" class="bg-orange-600 hover:bg-orange-700 text-white px-3 py-2 rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 whitespace-nowrap">
+                <button onclick="openAddModal()" class="bg-orange-600 hover:bg-orange-700 text-white px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition-all shadow-sm flex items-center gap-1.5 whitespace-nowrap">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                     </svg>
@@ -75,7 +75,7 @@
         <!-- زر تحميل التطبيق -->
         <div id="installBanner" class="hidden bg-gradient-to-r from-emerald-600 to-teal-600 rounded-2xl p-4 text-white shadow-md flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <img src="logo192.png" alt="تطبيق متجر البيت" class="w-12 h-12 bg-white rounded-xl p-1 object-contain shadow-inner">
+                <img src="logo192.png" alt="تطبيق متجر البيت" class="w-12 h-12 bg-white rounded-xl p-1.5 object-contain shadow-inner">
                 <div>
                     <h3 class="font-bold text-sm md:text-base">حمل تطبيق متجر البيت الآن!</h3>
                     <p class="text-xs text-emerald-100">تصفح أسرع وأسهل بدون متصفح.</p>
@@ -86,7 +86,7 @@
             </button>
         </div>
 
-        <!-- بانر الإعلانات المميزة للشركات (تم ربطه بنافذة منبثقة خاصة) -->
+        <!-- بانر الإعلانات المميزة للشركات -->
         <div onclick="openCompaniesModal()" class="bg-gradient-to-r from-orange-600 to-amber-600 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden flex flex-col items-center text-center cursor-pointer hover:scale-[1.01] transition-transform">
             <span class="bg-black/20 text-xs px-3 py-1 rounded-full mb-2 font-medium">إعلانات مميزة للشركات</span>
             <h2 class="text-xl md:text-2xl font-black mb-2">اكتشف عروض الشركات الكبرى</h2>
@@ -94,7 +94,7 @@
             <span class="bg-white text-orange-600 px-4 py-1.5 rounded-xl text-xs font-bold shadow-sm">عرض عروض الشركات</span>
         </div>
 
-        <!-- الأقسام -->
+        <!-- الأقسام (تم جعل تصميم الأقسام مربعة وبشكل مريح للعين) -->
         <section class="space-y-3">
             <div class="flex justify-between items-center">
                 <h3 class="font-bold text-gray-800 text-base">الأقسام</h3>
@@ -102,15 +102,15 @@
             </div>
             <div class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
                 <div class="flex flex-col items-center flex-shrink-0 cursor-pointer">
-                    <div class="w-16 h-16 bg-white rounded-full shadow-sm border border-gray-100 flex items-center justify-center p-2 mb-1 hover:border-orange-500 transition-all">
-                        <img src="logo192.png" alt="المطبخ" class="w-full h-full object-cover rounded-full">
+                    <div class="w-20 h-20 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center p-2.5 mb-1.5 hover:border-orange-500 transition-all">
+                        <img src="logo192.png" alt="المطبخ" class="w-full h-full object-contain rounded-xl">
                     </div>
-                    <span class="text-xs text-gray-700 font-medium">المطبخ</span>
+                    <span class="text-xs text-gray-700 font-semibold">المطبخ</span>
                 </div>
             </div>
         </section>
 
-        <!-- أحدث الإعلانات (تم تصحيح ظهور صورة الديمو logo512.png) -->
+        <!-- أحدث الإعلانات -->
         <section class="space-y-3">
             <div class="flex justify-between items-center">
                 <h3 class="font-bold text-gray-800 text-base">أحدث الإعلانات</h3>
