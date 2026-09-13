@@ -2,229 +2,193 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر ALBET | الرئيسية</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <!-- Supabase JS Client -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>متجر البيت - الأفضل دائماً</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- PWA Manifest Link -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#e17055">
     <style>
-        :root { --main-orange: #e17055; --dark-bg: #2d3436; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
-        body { background-color: #f4f7f6; color: #333; }
-
-        header { background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
-        .navbar { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; padding: 15px 20px; }
-        .logo { font-size: 24px; font-weight: 800; color: var(--main-orange); text-decoration: none; display: flex; align-items: center; gap: 10px; }
-        .nav-btns { display: flex; gap: 10px; }
-        .btn-custom { background: #fff0ed; color: var(--main-orange); border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 14px; transition: 0.3s; }
-        .btn-custom:hover { background: var(--main-orange); color: white; }
-
-        .categories-nav { background: white; border-top: 1px solid #eee; padding: 10px 0; overflow-x: auto; }
-        .categories-container { display: flex; justify-content: center; gap: 10px; max-width: 1200px; margin: 0 auto; padding: 0 20px; white-space: nowrap; }
-        .cat-btn { border: none; background: #f1f2f6; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 14px; font-weight: 600; color: #555; transition: 0.3s; }
-        .cat-btn.active, .cat-btn:hover { background: var(--main-orange); color: white; }
-
-        .main-container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
-        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; }
-        .product-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); display: flex; flex-direction: column; }
-        .product-img { width: 100%; height: 200px; object-fit: cover; background: #f9f9f9; }
-        .product-info { padding: 15px; display: flex; flex-direction: column; flex-grow: 1; }
-        .product-cat { font-size: 12px; color: #888; margin-bottom: 5px; }
-        .product-title { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
-        .product-price { font-size: 18px; font-weight: 800; color: var(--main-orange); margin-top: auto; margin-bottom: 15px; }
-        .add-to-cart-btn { background: var(--dark-bg); color: white; border: none; width: 100%; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 600; }
-
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: white; width: 90%; max-width: 500px; padding: 25px; border-radius: 12px; max-height: 90vh; overflow-y: auto; }
-        .modal-header { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .form-input { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 6px; }
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f8f9fa;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 </head>
-<body>
+<body class="bg-gray-50 text-gray-800 pb-20">
 
-    <header>
-        <div class="navbar">
-            <a href="#" class="logo"><i class="fas fa-store"></i> ALBET Store</a>
-            <div class="nav-btns">
-                <button class="btn-custom" onclick="openModal('adminModal'); fetchOrders();"><i class="fas fa-user-shield"></i> اللوحة</button>
-                <button class="btn-custom" onclick="openModal('cartModal')"><i class="fas fa-shopping-basket"></i> السلة <span id="cart-count">(0)</span></button>
-            </div>
-        </div>
-        <div class="categories-nav">
-            <div class="categories-container">
-                <button class="cat-btn active" onclick="filterCat('all')">الكل</button>
-                <button class="cat-btn" onclick="filterCat('kitchen')">المطبخ</button>
-                <button class="cat-btn" onclick="filterCat('textiles')">المفروشات</button>
-                <button class="cat-btn" onclick="filterCat('appliances')">الأجهزة</button>
-                <button class="cat-btn" onclick="filterCat('decor')">الديكور</button>
-            </div>
+    <!-- الهيدر الرئيسي -->
+    <header class="flex items-center justify-between px-4 py-3 bg-white shadow-sm sticky top-0 z-50">
+        <!-- اللوجو والشعار المطلوبة -->
+        <a href="index.html" class="flex items-baseline gap-1.5 no-underline">
+            <span class="text-xl font-bold tracking-tight" style="color: #e17055;">متجر البيت</span>
+            <span class="text-[11px] font-medium text-gray-400">الأفضل دائماً</span>
+        </a>
+
+        <!-- أزرار الهيدر -->
+        <div class="flex items-center gap-2">
+            <!-- زر فتح القائمة المنسدلة -->
+            <button id="open-menu-btn" class="p-2 text-gray-700 hover:text-orange-600 transition-colors focus:outline-none" aria-label="فتح القائمة">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
+
+            <!-- زر أضف إعلانك -->
+            <a href="add-ad.html" class="bg-orange-600 hover:bg-orange-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors shadow-sm flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                أضف إعلانك
+            </a>
         </div>
     </header>
 
-    <div class="main-container">
-        <h2 style="margin-bottom: 20px;">المنتجات المتاحة</h2>
-        <div class="products-grid" id="products-container">
-            <p>جاري تحميل المنتجات من قاعدة البيانات...</p>
+    <!-- القائمة المنسدلة الجانبية (Drawer Menu) -->
+    <div id="drawer-overlay" class="fixed inset-0 bg-black/50 z-50 hidden transition-opacity opacity-0"></div>
+    <div id="drawer-menu" class="fixed top-0 right-0 w-72 h-full bg-white z-50 shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
+        <div class="flex items-center justify-between p-4 border-b">
+            <h3 class="font-bold text-gray-800 text-base">أقسام المتجر</h3>
+            <button id="close-menu-btn" class="p-2 text-gray-500 hover:text-gray-700 focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+        <div id="drawer-categories-list" class="p-4 overflow-y-auto flex-1 space-y-2">
+            <a href="index.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-orange-50 text-gray-700 transition-colors">
+                <span class="w-2 h-2 rounded-full bg-orange-500"></span>
+                <span class="font-medium text-sm">كل الأقسام</span>
+            </a>
         </div>
     </div>
 
-    <!-- نافذة السلة -->
-    <div class="modal" id="cartModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>سلة المشتريات</h3>
-                <span style="cursor:pointer;" onclick="closeModal('cartModal')">&times;</span>
+    <!-- المحتوى الرئيسي -->
+    <main class="max-w-md mx-auto px-4 py-4 space-y-6">
+
+        <!-- واجهة إعلانات الشركات المميزة (البانر الرئيسي) -->
+        <section class="bg-gradient-to-r from-orange-600 to-amber-600 rounded-2xl p-5 text-white shadow-md relative overflow-hidden">
+            <div class="relative z-10 space-y-2">
+                <span class="bg-white/20 text-white text-[10px] px-2.5 py-1 rounded-full font-semibold uppercase tracking-wider">إعلانات مميزة للشركات</span>
+                <h1 class="text-xl font-black">اكتشف عروض الشركات الكبرى</h1>
+                <p class="text-xs text-orange-100 leading-relaxed">أفضل المنتجات والأجهزة المضمونة بضمان الشركات وبأسعار تنافسية.</p>
             </div>
-            <div id="cart-items">فارغة حالياً</div>
-            <hr style="margin: 15px 0;">
-            <h4>إتمام الطلب</h4>
-            <form onsubmit="submitOrder(event)">
-                <input type="text" id="c_name" class="form-input" placeholder="الاسم" required>
-                <input type="tel" id="c_phone" class="form-input" placeholder="رقم الهاتف" required>
-                <textarea id="c_address" class="form-input" placeholder="العنوان" required></textarea>
-                <button type="submit" class="btn-custom" style="width:100%; background:#27ae60; color:white;">إرسال الطلب</button>
-            </form>
-        </div>
-    </div>
+            <div class="absolute -left-6 -bottom-6 w-28 h-28 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
+        </section>
 
-    <!-- نافذة لوحة التحكم البسيطة -->
-    <div class="modal" id="adminModal">
-        <div class="modal-content" style="max-width: 700px;">
-            <div class="modal-header">
-                <h3>لوحة تحكم المتجر</h3>
-                <span style="cursor:pointer;" onclick="closeModal('adminModal')">&times;</span>
+        <!-- قسم أيقونات الأقسام (شكل التطبيقات) -->
+        <section>
+            <div class="flex items-center justify-between mb-3">
+                <h2 class="text-sm font-bold text-gray-800">الأقسام</h2>
+                <span class="text-xs text-orange-600 font-semibold cursor-pointer">عرض الكل</span>
             </div>
-            
-            <h4>إضافة منتج جديد</h4>
-            <form onsubmit="addProduct(event)" style="margin-bottom: 20px;">
-                <input type="text" id="p_name" class="form-input" placeholder="اسم المنتج" required>
-                <input type="number" id="p_price" class="form-input" placeholder="السعر" required>
-                <select id="p_cat" class="form-input">
-                    <option value="kitchen">المطبخ</option>
-                    <option value="textiles">المفروشات</option>
-                    <option value="appliances">الأجهزة</option>
-                    <option value="decor">الديكور</option>
-                </select>
-                <input type="url" id="p_img" class="form-input" placeholder="رابط صورة المنتج" required>
-                <button type="submit" class="btn-custom" style="width:100%; background:#2980b9; color:white;">حفظ المنتج</button>
-            </form>
-
-            <hr style="margin: 20px 0;">
-            <h4>الطلبات الواردة</h4>
-            <div id="orders-list">جاري جلب الطلبات...</div>
-        </div>
-    </div>
-
-    <script>
-        // إعداد الاتصال بـ Supabase
-        const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5q'; // المفتاح الخص بك
-        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        let allProducts = [];
-        let cart = [];
-
-        // تحميل المنتجات من Supabase
-        async function loadProducts() {
-            const { data, error } = await _supabase.from('products').select('*');
-            if (error) { console.error(error); return; }
-            allProducts = data;
-            renderProducts(allProducts);
-        }
-
-        function renderProducts(items) {
-            const container = document.getElementById('products-container');
-            if(items.length === 0) {
-                container.innerHTML = '<p>لا يوجد منتجات حالياً. أضف منتجات من لوحة التحكم!</p>';
-                return;
-            }
-            container.innerHTML = items.map(p => `
-                <div class="product-card">
-                    <img src="${p.image}" class="product-img">
-                    <div class="product-info">
-                        <span class="product-cat">${p.category}</span>
-                        <h3 class="product-title">${p.name}</h3>
-                        <div class="product-price">${p.price} ج.م</div>
-                        <button class="add-to-cart-btn" onclick="addToCart(${p.id})">إضافة للسلة</button>
+            <!-- شبكة الأيقونات -->
+            <div id="categories-grid" class="grid grid-cols-4 gap-3">
+                <div class="flex flex-col items-center gap-1.5 cursor-pointer group">
+                    <div class="w-14 h-14 rounded-2xl bg-white shadow-sm border border-gray-100 flex items-center justify-center group-hover:border-orange-500 transition-all overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=100&auto=format&fit=crop&q=60" alt="مطبخ" class="w-full h-full object-cover">
                     </div>
+                    <span class="text-[11px] font-semibold text-gray-700 text-center">المطبخ</span>
                 </div>
-            `).join('');
+            </div>
+        </section>
+
+        <!-- قائمة الإعلانات المتاحة -->
+        <section class="space-y-4">
+            <div class="flex items-center justify-between">
+                <h2 class="text-sm font-bold text-gray-800">أحدث الإعلانات</h2>
+                <span class="text-xs text-gray-400">متجدد باستمرار</span>
+            </div>
+
+            <!-- حاوية كروت المنتجات -->
+            <div id="products-container" class="space-y-4">
+                
+                <!-- كارت منتج تجريبي مع 4 صور ومعرض مصغر -->
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden p-3 space-y-3">
+                    
+                    <!-- معرض الصور (صورة رئيسية + صور مصغرة) -->
+                    <div class="space-y-2">
+                        <div class="w-full h-48 bg-gray-100 rounded-xl overflow-hidden relative">
+                            <img id="main-img-1" src="https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=500&auto=format&fit=crop&q=80" alt="منتج" class="w-full h-full object-cover transition-all duration-300">
+                            <span class="absolute top-2.5 right-2.5 bg-emerald-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow">جديد</span>
+                        </div>
+
+                        <!-- 3 صور مصغرة للتبديل -->
+                        <div class="grid grid-cols-3 gap-2">
+                            <button onclick="changeMainImage('main-img-1', 'https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=500&auto=format&fit=crop&q=80')" class="h-14 rounded-lg bg-gray-100 overflow-hidden border-2 border-orange-500 focus:outline-none">
+                                <img src="https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=100&auto=format&fit=crop&q=60" class="w-full h-full object-cover" alt="صورة 1">
+                            </button>
+                            <button onclick="changeMainImage('main-img-1', 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=500&auto=format&fit=crop&q=80')" class="h-14 rounded-lg bg-gray-100 overflow-hidden border-2 border-transparent hover:border-gray-300 focus:outline-none">
+                                <img src="https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=100&auto=format&fit=crop&q=60" class="w-full h-full object-cover" alt="صورة 2">
+                            </button>
+                            <button onclick="changeMainImage('main-img-1', 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=500&auto=format&fit=crop&q=80')" class="h-14 rounded-lg bg-gray-100 overflow-hidden border-2 border-transparent hover:border-gray-300 focus:outline-none">
+                                <img src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=100&auto=format&fit=crop&q=60" class="w-full h-full object-cover" alt="صورة 3">
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- تفاصيل المنتج -->
+                    <div class="space-y-1">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-sm text-gray-800">طقم مطبخ تركي كامل 10 قطع</h3>
+                            <span class="text-orange-600 font-extrabold text-sm">3,500 ج.م</span>
+                        </div>
+                        <p class="text-xs text-gray-500 line-clamp-2">خامات عالية الجودة، استخدام خفيف جداً بحالة الجديد تماماً، متاح المعاينة.</p>
+                    </div>
+
+                    <!-- زر تواصل واتساب على رقمك 01227802300 -->
+                    <a href="https://wa.me/201227802300?text=مرحباً، أستفسر عن إعلان طقم مطبخ تركي" target="_blank" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-colors shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                        </svg>
+                        تواصل مع البائع عبر واتساب
+                    </a>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- JavaScript للتحكم بالواجهة -->
+    <script>
+        function changeMainImage(imgId, newSrc) {
+            document.getElementById(imgId).src = newSrc;
         }
 
-        function filterCat(cat) {
-            if(cat === 'all') renderProducts(allProducts);
-            else renderProducts(allProducts.filter(p => p.category === cat));
-        }
+        const openMenuBtn = document.getElementById('open-menu-btn');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
+        const drawerMenu = document.getElementById('drawer-menu');
+        const drawerOverlay = document.getElementById('drawer-overlay');
 
-        function addToCart(id) {
-            const p = allProducts.find(x => x.id === id);
-            cart.push(p);
-            document.getElementById('cart-count').innerText = `(${cart.length})`;
-            alert('تمت الإضافة للسلة');
-        }
-
-        // إرسال الطلب لقاعدة البيانات
-        async function submitOrder(e) {
-            e.preventDefault();
-            if(cart.length === 0) return alert('السلة فارغة');
-
-            const order = {
-                customer_name: document.getElementById('c_name').value,
-                phone: document.getElementById('c_phone').value,
-                address: document.getElementById('c_address').value,
-                items: cart,
-                total: cart.reduce((sum, item) => sum + Number(item.price), 0) + ' ج.م'
-            };
-
-            const { error } = await _supabase.from('orders').insert([order]);
-            if(error) alert('حدث خطأ أثناء الإرسال');
-            else {
-                alert('تم إرسال طلبك بنجاح!');
-                cart = [];
-                document.getElementById('cart-count').innerText = '(0)';
-                closeModal('cartModal');
+        function toggleDrawer() {
+            const isOpen = drawerMenu.classList.contains('translate-x-0');
+            if (isOpen) {
+                drawerMenu.classList.remove('translate-x-0');
+                drawerMenu.classList.add('translate-x-full');
+                drawerOverlay.classList.add('hidden');
+                setTimeout(() => drawerOverlay.classList.remove('opacity-100'), 10);
+            } else {
+                drawerOverlay.classList.remove('hidden');
+                setTimeout(() => drawerOverlay.classList.add('opacity-100'), 10);
+                drawerMenu.classList.remove('translate-x-full');
+                drawerMenu.classList.add('translate-x-0');
             }
         }
 
-        // إضافة منتج جديد من اللوحة
-        async function addProduct(e) {
-            e.preventDefault();
-            const prod = {
-                name: document.getElementById('p_name').value,
-                price: document.getElementById('p_price').value,
-                category: document.getElementById('p_cat').value,
-                image: document.getElementById('p_img').value
-            };
-
-            const { error } = await _supabase.from('products').insert([prod]);
-            if(error) alert('خطأ في إضافة المنتج');
-            else {
-                alert('تمت إضافة المنتج بنجاح!');
-                loadProducts();
-            }
-        }
-
-        // جلب الطلبات
-        async function fetchOrders() {
-            const { data, error } = await _supabase.from('orders').select('*').order('created_at', { ascending: false });
-            const list = document.getElementById('orders-list');
-            if(error || !data.length) { list.innerHTML = '<p>لا توجد طلبات حتى الآن.</p>'; return; }
-
-            list.innerHTML = data.map(o => `
-                <div style="background:#f8f9fa; padding:10px; margin-bottom:10px; border-radius:6px; border-right:4px solid var(--main-orange);">
-                    <strong>${o.customer_name}</strong> (${o.phone}) - ${o.address}<br>
-                    <small>الإجمالي: ${o.total}</small>
-                </div>
-            `).join('');
-        }
-
-        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
-        // بدء التشغيل
-        loadProducts();
+        openMenuBtn.addEventListener('click', toggleDrawer);
+        closeMenuBtn.addEventListener('click', toggleDrawer);
+        drawerOverlay.addEventListener('click', toggleDrawer);
     </script>
 </body>
 </html>
