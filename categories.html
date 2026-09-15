@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الأقسام - متجر البيت (albet.store)</title>
+    
+    <!-- حماية الصفحة -->
+    <script>
+        if (localStorage.getItem('isAdminLoggedIn') !== 'true') {
+            alert('عذراً، يجب تسجيل الدخول أولاً!');
+            window.location.href = 'admin-login.html';
+        }
+    </script>
+
+    <!-- Bootstrap 5 RTL CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/rtl.min.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <!-- Google Fonts (Cairo) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Cairo', sans-serif;
+            color: #1e293b;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* التصميم العام القائم على عمودين رئيسيين (يمين وشمال) */
+        .page-grid-container {
+            display: grid;
+            grid-template-columns: 270px 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .right-column, .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* الهيدر الأيمن (اللوجو واسم المنصة) */
+        .admin-brand-box {
+            background: #111827;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .admin-logo {
+            width: 45px;
+            height: 45px;
+            object-fit: contain;
+            background: white;
+            padding: 4px;
+            border-radius: 8px;
+        }
+
+        /* الهيدر الأيسر (زر تسجيل الخروج) */
+        .admin-logout-box {
+            background: #111827;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+        .btn-logout {
+            background-color: #e76f51;
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-logout:hover {
+            background-color: #d9532b;
+        }
+
+        /* السايدبار الجانبي */
+        .sidebar-box {
+            background: white;
+            border: 2px solid #111827;
+            border-radius: 14px;
+            padding: 15px 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+        }
+        .sidebar-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #334155;
+            padding: 8px 10px;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .sidebar-menu-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .side-pill-btn {
+            background: #ffffff;
+            color: #334155;
+            border: 1px solid #e2e8f0;
+            padding: 9px 14px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.83rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .side-pill-btn:hover {
+            background-color: #f8fafc;
+            border-color: #cbd5e1;
+            color: #0f172a;
+        }
+        .side-pill-btn.active {
+            background-color: #fff1ed;
+            color: #e76f51;
+            border-color: #fbd3c9;
+            box-shadow: 0 2px 8px rgba(231, 111, 81, 0.15);
+        }
+        .side-pill-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .side-dot-bullet {
+            width: 5px;
+            height: 5px;
+            background-color: #94a3b8;
+            border-radius: 50%;
+        }
+        .side-pill-btn.active .side-dot-bullet {
+            background-color: #e76f51;
+        }
+
+        /* منطقة المحتوى الكبيرة */
+        .content-frame-box {
+            background: white;
+            border: 2px solid #111827;
+            border-radius: 14px;
+            padding: 20px;
+            min-height: 600px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+        }
+
+        /* تنسيق الجدول ونماذج الإضافة */
+        .table th {
+            background-color: #f8fafc;
+            color: #475569;
+            font-weight: 700;
+            font-size: 0.82rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .table td {
+            font-size: 0.82rem;
+            vertical-align: middle;
+        }
+        .form-control, .form-select {
+            font-size: 0.85rem;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-grid-container">
+        
+        <!-- العمود الأيمن (اللوجو والسايدبار) -->
+        <div class="right-column">
+            <!-- اللوجو -->
+            <div class="admin-brand-box">
+                <img src="logo192.png" alt="متجر البيت" class="admin-logo">
+                <div>
+                    <h3 class="m-0 fw-bold fs-6 text-start">متجر البيت</h3>
+                    <small class="text-light opacity-75" style="font-size: 0.72rem;">لوحة تحكم المدير العام - albet.store</small>
+                </div>
+            </div>
+
+            <!-- القائمة الجانبية -->
+            <div class="sidebar-box">
+                <div class="sidebar-title">
+                    <span>أقسام الإدارة والتقارير الشاملة</span>
+                    <i class="bi bi-grid-fill text-dark"></i>
+                </div>
+                
+                <div class="sidebar-menu-list">
+                    <a href="admin-dashboard.html" class="side-pill-btn">
+                        <div class="side-pill-content">
+                            <i class="bi bi-shield-check"></i>
+                            <span>مراجعة الإعلانات</span>
+                        </div>
+                        <span class="side-dot-bullet"></span>
+                    </a>
+                    
+                    <a href="staff.html" class="side-pill-btn">
+                        <div class="side-pill-content">
+                            <i class="bi bi-people"></i>
+                            <span>إضافة موظف</span>
+                        </div>
+                        <span class="side-dot-bullet"></span>
+                    </a>
+                    
+                    <!-- إضافة قسم (نشط حالياً) -->
+                    <a href="categories.html" class="side-pill-btn active">
+                        <div class="side-pill-content">
+                            <i class="bi bi-folder-plus"></i>
+                            <span>إضافة قسم</span>
+                        </div>
+                        <span class="side-dot-bullet"></span>
+                    </a>
+                    
+                    <a href="daily-report.html" class="side-pill-btn">
+                        <div class="side-pill-content">
+                            <i class="bi bi-file-earmark-text"></i>
+                            <span>تقرير اليوم</span>
+                        </div>
+                        <span class="side-dot-bullet"></span>
+                    </a>
+                    
+                    <a href="profits.html" class="side-pill-btn">
+                        <div class="side-pill-content">
+                            <i class="bi bi-cash-coin"></i>
+                            <span>الأرباح والخسائر</span>
+                        </div>
+                        <span class="side-dot-bullet"></span>
+                    </a>
+                    
+                    <a href="salaries.html" class="side-pill-btn">
+                        <div class="side-pill-content">
+                            <i class="bi bi-wallet2"></i>
+                            <span>المرتبات</span>
+                        </div>
+                        <span class="side-dot-bullet"></span>
+                    </a>
+                    
+                    <a href="expenses.html" class="side-pill-btn">
+                        <div class="side-pill-content">
+                            <i class="bi bi-receipt"></i>
+                            <span>المصروفات</span>
+                        </div>
+                        <span class="side-dot-bullet"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- العمود الأيسر (زر الخروج والمحتوى الخاص بالأقسام) -->
+        <div class="left-column">
+            <!-- زر الخروج -->
+            <div class="admin-logout-box">
+                <button class="btn-logout" onclick="logoutAdmin()">
+                    تسجيل الخروج <i class="bi bi-box-arrow-left ms-1"></i>
+                </button>
+            </div>
+
+            <!-- المحتوى الرئيسي لإدارة الأقسام -->
+            <div class="content-frame-box">
+                <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                    <span class="fw-bold fs-6 text-secondary"><i class="bi bi-folder-plus ms-1"></i> إضافة وإدارة أقسام المنصة</span>
+                </div>
+
+                <!-- نموذج إضافة قسم جديد -->
+                <div class="card p-3 mb-4 bg-light border-0">
+                    <h6 class="fw-bold text-dark mb-3">إضافة قسم رئيسي جديد</h6>
+                    <form id="addCategoryForm" onsubmit="addNewCategory(event)">
+                        <div class="row g-3">
+                            <div class="col-md-5">
+                                <label class="form-label fw-bold" style="font-size: 0.8rem;">اسم القسم</label>
+                                <input type="text" id="categoryName" class="form-control" placeholder="مثال: عقارات، سيارات، إلكترونيات..." required>
+                            </div>
+                            <div class="col-md-5">
+                                <label class="form-label fw-bold" style="font-size: 0.8rem;">رابط الأيقونة أو الصورة</label>
+                                <input type="text" id="categoryIcon" class="form-control" placeholder="رابط أيقونة القسم (اختياري)">
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button type="submit" class="btn btn-dark w-100 fw-bold" style="font-size: 0.82rem;">حفظ القسم</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- جدول عرض الأقسام الحالية -->
+                <h6 class="fw-bold text-dark mb-3">الأقسام المتاحة حالياً</h6>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th class="text-center">#</th>
+                                <th>اسم القسم</th>
+                                <th>تاريخ الإنشاء</th>
+                                <th class="text-center">الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="categoriesTableBody">
+                            <tr><td colspan="4" class="text-center text-muted py-4">جاري تحميل الأقسام...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- المكتبات والبرمجيات -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script>
+        const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
+        const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        window.onload = () => { loadCategories(); };
+
+        // جلب الأقسام من قاعدة البيانات
+        async function loadCategories() {
+            const tbody = document.getElementById('categoriesTableBody');
+            const { data, error } = await supabaseClient.from('categories').select('*').order('id', { ascending: false });
+            
+            if (error) {
+                tbody.innerHTML = `<tr><td colspan="4" class="text-center text-danger py-3">خطأ في الاتصال بقاعدة البيانات</td></tr>`;
+                return;
+            }
+            
+            if (data && data.length > 0) {
+                tbody.innerHTML = data.map((cat, index) => `
+                    <tr>
+                        <td class="text-center fw-bold">${index + 1}</td>
+                        <td class="fw-bold">${cat.name}</td>
+                        <td>${new Date(cat.created_at).toLocaleDateString('ar-EG')}</td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-danger px-2 py-1" style="font-size:0.72rem;" onclick="deleteCategory('${cat.id}')">حذف</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } else {
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-4">لا توجد أقسام مضافة حتى الآن.</td></tr>';
+            }
+        }
+
+        // إضافة قسم جديد
+        async function addNewCategory(e) {
+            e.preventDefault();
+            const name = document.getElementById('categoryName').value;
+            
+            const { error } = await supabaseClient.from('categories').insert([{ name }]);
+            
+            if (error) {
+                alert('حدث خطأ أثناء إضافة القسم!');
+            } else {
+                alert('تم إضافة القسم بنجاح!');
+                document.getElementById('categoryName').value = '';
+                loadCategories();
+            }
+        }
+
+        // حذف قسم
+        async function deleteCategory(id) {
+            if (confirm('هل أنت متأكد من حذف هذا القسم؟')) {
+                const { error } = await supabaseClient.from('categories').delete().eq('id', id);
+                if (error) {
+                    alert('خطأ أثناء الحذف');
+                } else {
+                    loadCategories();
+                }
+            }
+        }
+
+        function logoutAdmin() {
+            localStorage.removeItem('isAdminLoggedIn');
+            window.location.href = 'admin-login.html';
+        }
+    </script>
+</body>
+</html>
