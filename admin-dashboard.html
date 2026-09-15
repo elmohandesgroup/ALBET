@@ -16,7 +16,6 @@
     <!-- Bootstrap 5 RTL CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/rtl.min.css">
     <!-- Bootstrap Icons -->
-    <link rel="jsdelivr" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <!-- Google Fonts (Cairo) -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -30,7 +29,7 @@
             padding: 20px;
         }
 
-        /* 1. الهيدر العلوي */
+        /* 1. الهيدر العلوي (لوجو واسم يمين، زر خروج شمال) */
         .admin-header {
             background: #111827;
             color: white;
@@ -70,25 +69,15 @@
             background-color: #d9532b;
         }
 
-        /* 2. التخطيط الرئيسي: السايدبار يمين (في إطار أسود سميك) والمحتوى شمال */
+        /* 2. التخطيط الرئيسي (السايدبار يمين تماماً، والمحتوى شماله) */
         .main-dashboard-layout {
             display: flex;
             gap: 20px;
             align-items: flex-start;
+            flex-direction: row-reverse; /* بيخلي الـ Sidebar يثبت في اليمين والمحتوى في الشمال بالمسطرة */
         }
 
-        /* الإطار الكبير للمحتوى الرئيسي (شمال) */
-        .content-frame-box {
-            flex-grow: 1;
-            background: white;
-            border: 2px solid #111827;
-            border-radius: 14px;
-            padding: 20px;
-            min-height: 600px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
-        }
-
-        /* السايدبار الجانبي (يمين - الإطار الأسود السميك بالظبط زي الصورة) */
+        /* السايدبار الجانبي (في اليمين) */
         .sidebar-box {
             width: 270px;
             background: white;
@@ -110,7 +99,6 @@
             justify-content: space-between;
         }
         
-        /* أزرار الكبسولة (Pill Buttons) المطابقة للصورة بالمللي */
         .sidebar-menu-list {
             display: flex;
             flex-direction: column;
@@ -136,7 +124,7 @@
             color: #0f172a;
         }
         
-        /* الزرار النشط (البرتقالي/الأحمر البارز اللي في الصورة) */
+        /* الزرار النشط (البرتقالي المميز) */
         .side-pill-btn.active {
             background-color: #fff1ed;
             color: #e76f51;
@@ -158,6 +146,17 @@
         }
         .side-pill-btn.active .side-dot-bullet {
             background-color: #e76f51;
+        }
+
+        /* منطقة المحتوى الكبيرة (في الشمال) */
+        .content-frame-box {
+            flex-grow: 1;
+            background: white;
+            border: 2px solid #111827;
+            border-radius: 14px;
+            padding: 20px;
+            min-height: 600px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
         }
 
         /* تنسيق جدول الإعلانات */
@@ -203,10 +202,83 @@
         </button>
     </div>
 
-    <!-- التخطيط الرئيسي -->
+    <!-- التخطيط الرئيسي (السايدبار يمين والمحتوى شمال) -->
     <div class="main-dashboard-layout">
         
-        <!-- 1. منطقة المحتوى الكبيرة (في الشمال) -->
+        <!-- 1. القائمة الجانبية (في اليمين) -->
+        <div class="sidebar-box">
+            <div class="sidebar-title">
+                <span>أقسام الإدارة والتقارير الشاملة</span>
+                <i class="bi bi-grid-fill text-dark"></i>
+            </div>
+            
+            <div class="sidebar-menu-list">
+                <!-- مراجعة الإعلانات (نشط) -->
+                <a href="admin-dashboard.html" class="side-pill-btn active">
+                    <div class="side-pill-content">
+                        <i class="bi bi-shield-check"></i>
+                        <span>مراجعة الإعلانات</span>
+                    </div>
+                    <span class="side-dot-bullet"></span>
+                </a>
+                
+                <!-- إضافة موظف -->
+                <a href="staff.html" class="side-pill-btn">
+                    <div class="side-pill-content">
+                        <i class="bi bi-people"></i>
+                        <span>إضافة موظف</span>
+                    </div>
+                    <span class="side-dot-bullet"></span>
+                </a>
+                
+                <!-- إضافة قسم -->
+                <a href="categories.html" class="side-pill-btn">
+                    <div class="side-pill-content">
+                        <i class="bi bi-folder-plus"></i>
+                        <span>إضافة قسم</span>
+                    </div>
+                    <span class="side-dot-bullet"></span>
+                </a>
+                
+                <!-- تقرير اليوم -->
+                <a href="daily-report.html" class="side-pill-btn">
+                    <div class="side-pill-content">
+                        <i class="bi bi-file-earmark-text"></i>
+                        <span>تقرير اليوم</span>
+                    </div>
+                    <span class="side-dot-bullet"></span>
+                </a>
+                
+                <!-- الأرباح والخسائر -->
+                <a href="profits.html" class="side-pill-btn">
+                    <div class="side-pill-content">
+                        <i class="bi bi-cash-coin"></i>
+                        <span>الأرباح والخسائر</span>
+                    </div>
+                    <span class="side-dot-bullet"></span>
+                </a>
+                
+                <!-- المرتبات -->
+                <a href="salaries.html" class="side-pill-btn">
+                    <div class="side-pill-content">
+                        <i class="bi bi-wallet2"></i>
+                        <span>المرتبات</span>
+                    </div>
+                    <span class="side-dot-bullet"></span>
+                </a>
+                
+                <!-- المصروفات -->
+                <a href="expenses.html" class="side-pill-btn">
+                    <div class="side-pill-content">
+                        <i class="bi bi-receipt"></i>
+                        <span>المصروفات</span>
+                    </div>
+                    <span class="side-dot-bullet"></span>
+                </a>
+            </div>
+        </div>
+
+        <!-- 2. منطقة المحتوى الكبيرة (في الشمال) -->
         <div class="content-frame-box">
             <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
                 <span class="fw-bold fs-6 text-secondary"><i class="bi bi-list-check ms-1"></i> الإعلانات المعلقة والإيصالات المالية</span>
@@ -232,79 +304,6 @@
                         <tr><td colspan="7" class="text-center text-muted py-5">جاري التحميل...</td></tr>
                     </tbody>
                 </table>
-            </div>
-        </div>
-
-        <!-- 2. القائمة الجانبية (في اليمين - الأزرار الكبسولة بنفس الصورة) -->
-        <div class="sidebar-box">
-            <div class="sidebar-title">
-                <span>أقسام الإدارة والتقارير الشاملة</span>
-                <i class="bi bi-grid-fill text-dark"></i>
-            </div>
-            
-            <div class="sidebar-menu-list">
-                <!-- زرار مراجعة الإعلانات (الصفحة الحالية - نشط) -->
-                <a href="admin-dashboard.html" class="side-pill-btn active">
-                    <div class="side-pill-content">
-                        <i class="bi bi-shield-check"></i>
-                        <span>مراجعة الإعلانات</span>
-                    </div>
-                    <span class="side-dot-bullet"></span>
-                </a>
-                
-                <!-- زرار إضافة موظف -->
-                <a href="staff.html" class="side-pill-btn">
-                    <div class="side-pill-content">
-                        <i class="bi bi-people"></i>
-                        <span>إضافة موظف</span>
-                    </div>
-                    <span class="side-dot-bullet"></span>
-                </a>
-                
-                <!-- زرار إضافة قسم -->
-                <a href="categories.html" class="side-pill-btn">
-                    <div class="side-pill-content">
-                        <i class="bi bi-folder-plus"></i>
-                        <span>إضافة قسم</span>
-                    </div>
-                    <span class="side-dot-bullet"></span>
-                </a>
-                
-                <!-- زرار تقرير اليوم -->
-                <a href="daily-report.html" class="side-pill-btn">
-                    <div class="side-pill-content">
-                        <i class="bi bi-file-earmark-text"></i>
-                        <span>تقرير اليوم</span>
-                    </div>
-                    <span class="side-dot-bullet"></span>
-                </a>
-                
-                <!-- زرار الأرباح والخسائر -->
-                <a href="profits.html" class="side-pill-btn">
-                    <div class="side-pill-content">
-                        <i class="bi bi-cash-coin"></i>
-                        <span>الأرباح والخسائر</span>
-                    </div>
-                    <span class="side-dot-bullet"></span>
-                </a>
-                
-                <!-- زرار المرتبات -->
-                <a href="salaries.html" class="side-pill-btn">
-                    <div class="side-pill-content">
-                        <i class="bi bi-wallet2"></i>
-                        <span>المرتبات</span>
-                    </div>
-                    <span class="side-dot-bullet"></span>
-                </a>
-                
-                <!-- زرار المصروفات -->
-                <a href="expenses.html" class="side-pill-btn">
-                    <div class="side-pill-content">
-                        <i class="bi bi-receipt"></i>
-                        <span>المصروفات</span>
-                    </div>
-                    <span class="side-dot-bullet"></span>
-                </a>
             </div>
         </div>
 
