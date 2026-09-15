@@ -3,27 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>متجر البيت - الأفضل دائماً</title>
+    <title>متجر البيت - الموقع تحت التحديث</title>
     
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-34S913WKK2"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-34S913WKK2');
-    </script>
-
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Supabase JS Client -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <!-- PWA Settings -->
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#e17055">
-    <link rel="apple-touch-icon" href="logo192.png">
 
     <!-- Google Fonts (Cairo) -->
     <style>
@@ -31,238 +14,48 @@
         body {
             font-family: 'Cairo', sans-serif;
             background-color: #f8f9fa;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 pb-20">
+<body class="bg-gray-50 text-gray-800 min-h-screen flex items-center justify-center p-4">
 
-    <!-- الهيدر الرئيسي -->
-    <header class="bg-white shadow-sm sticky top-0 z-50 px-4 py-3.5">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
-            
-            <!-- القسم الأيمن: زر القائمة + اللوجو -->
-            <div class="flex items-center gap-3">
-                <button id="open-menu-btn" class="p-1.5 text-gray-700 hover:text-orange-600 transition-colors focus:outline-none" aria-label="فتح القائمة">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                    </svg>
-                </button>
-                <a href="/" class="flex items-center">
-                    <img src="logo192.png" alt="متجر البيت" class="w-12 h-12 object-contain rounded-xl shadow-sm border border-gray-100 bg-white p-1">
-                </a>
-            </div>
-
-            <!-- القسم الأوسط: اسم المتجر والسلوجان -->
-            <div class="text-center flex-1 mx-2">
-                <a href="/" class="block">
-                    <h1 class="text-lg md:text-2xl font-black text-orange-600 leading-tight">متجر البيت</h1>
-                    <p class="text-[11px] md:text-xs text-gray-500 font-medium">الأفضل دائماً</p>
-                </a>
-            </div>
-
-            <!-- القسم الأيسر: زر أضف إعلانك (ينقل لصفحة مستقلة) -->
-            <div class="flex items-center">
-                <a href="add-ad.html" class="bg-orange-600 hover:bg-orange-700 text-white px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition-all shadow-sm flex items-center gap-1.5 whitespace-nowrap">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                    </svg>
-                    <span>أضف إعلانك</span>
-                </a>
-            </div>
-
-        </div>
-    </header>
-
-    <!-- القائمة الجانبية (Drawer Menu) -->
-    <div id="side-menu" class="fixed inset-0 z-50 hidden">
-        <!-- الخلفية المعتمة -->
-        <div id="menu-overlay" class="absolute inset-0 bg-black/50 transition-opacity"></div>
-        <!-- محتوى القائمة -->
-        <div class="absolute right-0 top-0 bottom-0 w-80 bg-white shadow-2xl p-5 flex flex-col justify-between transform transition-transform duration-300 translate-x-full overflow-y-auto" id="menu-content">
-            <div>
-                <div class="flex items-center justify-between pb-4 border-b mb-4">
-                    <div class="flex items-center gap-2">
-                        <img src="logo192.png" alt="متجر البيت" class="w-10 h-10 object-contain">
-                        <span class="font-black text-orange-600 text-lg">متجر البيت</span>
-                    </div>
-                    <button id="close-menu-btn" class="text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
-                </div>
-                
-                <nav class="space-y-2">
-                    <a href="/" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">الرئيسية</a>
-                    <a href="add-ad.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-orange-600 bg-orange-50 transition-colors">أضف إعلانك الجديد</a>
-                    <div class="pt-2 pb-1 text-xs font-bold text-gray-400 px-3">سياسات المتجر</div>
-                    <a href="privacy.html" class="block px-3 py-2 rounded-xl text-xs font-medium text-gray-600 hover:bg-gray-100">سياسة الاستخدام والخصوصية</a>
-                    <a href="terms.html" class="block px-3 py-2 rounded-xl text-xs font-medium text-gray-600 hover:bg-gray-100">الشروط والأحكام</a>
-                </nav>
-            </div>
-            <div class="text-center text-[11px] text-gray-400 pt-4 border-t">
-                جميع الحقوق محفوظة &copy; متجر البيت 2026
-            </div>
-        </div>
-    </div>
-
-    <!-- محتوى المتجر الرئيسي -->
-    <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
+    <div class="max-w-md w-full bg-white rounded-3xl shadow-xl border border-gray-100 p-8 text-center space-y-6">
         
-        <!-- زر تحميل التطبيق -->
-        <div id="installBanner" class="hidden bg-gradient-to-r from-emerald-600 to-teal-600 rounded-2xl p-4 text-white shadow-md flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <img src="logo192.png" alt="تطبيق متجر البيت" class="w-12 h-12 bg-white rounded-xl p-1.5 object-contain shadow-inner">
-                <div>
-                    <h3 class="font-bold text-sm md:text-base">حمل تطبيق متجر البيت الآن!</h3>
-                    <p class="text-xs text-emerald-100">تصفح أسرع وأسهل بدون متصفح.</p>
-                </div>
-            </div>
-            <button id="installBtn" class="bg-white text-emerald-700 hover:bg-emerald-50 px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm whitespace-nowrap">
-                تثبيت التطبيق
-            </button>
-        </div>
-
-        <!-- بانر الإعلانات المميزة للشركات -->
-        <div onclick="openCompaniesModal()" class="bg-gradient-to-r from-orange-600 to-amber-600 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden flex flex-col items-center text-center cursor-pointer hover:scale-[1.01] transition-transform">
-            <span class="bg-black/20 text-xs px-3 py-1 rounded-full mb-2 font-medium">إعلانات مميزة للشركات</span>
-            <h2 class="text-xl md:text-2xl font-black mb-2">اكتشف عروض الشركات الكبرى</h2>
-            <p class="text-xs md:text-sm text-orange-100 max-w-xl mb-3">أفضل المنتجات والأجهزة المضمونة بضمان الشركات وبأسعار تنافسية. (اضغط للعرض)</p>
-            <span class="bg-white text-orange-600 px-4 py-1.5 rounded-xl text-xs font-bold shadow-sm">عرض عروض الشركات</span>
-        </div>
-
-        <!-- الأقسام (تُعرض ديناميكياً من Supabase) -->
-        <section class="space-y-3">
-            <div class="flex justify-between items-center">
-                <h3 class="font-bold text-gray-800 text-base">الأقسام</h3>
-                <a href="categories.html" class="text-xs text-orange-600 font-semibold hover:underline">عرض الكل</a>
-            </div>
-            <div id="categories-container" class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
-                <!-- يتم حقن الأقسام هنا برمجياً -->
-                <div class="text-xs text-gray-400">جاري تحميل الأقسام...</div>
-            </div>
-        </section>
-
-        <!-- أحدث الإعلانات (تُعرض ديناميكياً من Supabase) -->
-        <section class="space-y-3">
-            <div class="flex justify-between items-center">
-                <h3 class="font-bold text-gray-800 text-base">أحدث الإعلانات</h3>
-                <span class="text-xs text-gray-400">متجدد باستمرار</span>
-            </div>
-            
-            <div id="ads-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <!-- إعلان افتراضي تجريبي لحين ربط الداتا -->
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
-                    <div class="relative rounded-xl overflow-hidden mb-3 bg-gray-100 h-48 md:h-64">
-                        <span class="absolute top-2 right-2 bg-emerald-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow z-10">جديد</span>
-                        <img src="logo512.png" alt="طقم مطبخ تركي" class="w-full h-full object-cover">
-                    </div>
-                    <div class="space-y-2">
-                        <div class="flex justify-between items-start">
-                            <h4 class="font-bold text-gray-800 text-sm md:text-base">طقم مطبخ تركي كامل 10 قطع</h4>
-                            <span class="text-orange-600 font-black text-sm md:text-base">3,500 ج.م</span>
-                        </div>
-                        <p class="text-xs text-gray-500 line-clamp-2">خامات عالية الجودة، استخدام خفيف جداً بحالة الجديد تماماً، متاع المعاينة.</p>
-                        <a href="https://wa.me/201227802300" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm">
-                            <span>تواصل مع البائع عبر واتساب</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- نافذة "إعلانات الشركات المميزة" الخاصة -->
-    <div id="companiesModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl relative transform transition-all max-h-[90vh] overflow-y-auto no-scrollbar">
-            <div class="flex justify-between items-center mb-4 border-b pb-3">
-                <h3 class="text-lg font-bold text-orange-600">عروض الشركات الكبرى المميزة</h3>
-                <button onclick="closeCompaniesModal()" class="text-gray-400 hover:text-gray-600 font-bold text-2xl">&times;</button>
-            </div>
-            <div class="space-y-4">
-                <div class="bg-orange-50 border border-orange-100 rounded-2xl p-4 flex flex-col md:flex-row gap-4 items-center">
-                    <img src="logo512.png" alt="شركة" class="w-24 h-24 object-cover rounded-xl shadow">
-                    <div class="space-y-1 text-center md:text-right flex-1">
-                        <span class="bg-orange-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">ضمان معتمد</span>
-                        <h4 class="font-bold text-gray-800 text-base">عروض الأجهزة المنزلية من الشركات الكبرى</h4>
-                        <p class="text-xs text-gray-600">احصل على أحدث الأجهزة بضمان شامل لمدة 5 سنوات وتوصيل مجاني لجميع المحافظات.</p>
-                        <a href="https://wa.me/201227802300" target="_blank" class="inline-block bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-bold mt-2 shadow-sm">استفسار عبر واتساب</a>
-                    </div>
-                </div>
+        <!-- اللوجو -->
+        <div class="flex justify-center">
+            <div class="w-24 h-24 bg-white rounded-2xl shadow-md border border-gray-100 p-2 flex items-center justify-center">
+                <img src="logo192.png" alt="متجر البيت" class="w-full h-full object-contain rounded-xl">
             </div>
         </div>
+
+        <!-- النصوص -->
+        <div class="space-y-2">
+            <h1 class="text-2xl md:text-3xl font-black text-orange-600">متجر البيت</h1>
+            <p class="text-xs md:text-sm text-gray-500 font-medium">الأفضل دائماً</p>
+        </div>
+
+        <div class="bg-orange-50 border border-orange-100 rounded-2xl p-4 space-y-2">
+            <div class="inline-block bg-orange-600 text-white text-[11px] font-bold px-3 py-1 rounded-full">
+                قريباً بحلة جديدة 🚀
+            </div>
+            <h2 class="font-bold text-gray-800 text-base">الموقع تحت التحديث الصيانة</h2>
+            <p class="text-xs text-gray-600 leading-relaxed">
+                نعمل حالياً على تطوير وتحديث متجر البيت لنقدم1 لك تجربة تصفح أسرع وأفضل. تابعونا، سنعود قريباً جداً!
+            </p>
+        </div>
+
+        <!-- تواصل سريع لو حابب -->
+        <div class="pt-2">
+            <a href="https://wa.me/201227802300" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm">
+                <span>تواصل معنا عبر واتساب</span>
+            </a>
+        </div>
+
+        <div class="text-[11px] text-gray-400 border-t pt-4">
+            جميع الحقوق محفوظة &copy; متجر البيت 2026
+        </div>
+
     </div>
 
-    <!-- السكريبتات والربط -->
-    <script>
-        // إعدادات القائمة الجانبية (Sidebar Drawer)
-        const openMenuBtn = document.getElementById('open-menu-btn');
-        const closeMenuBtn = document.getElementById('close-menu-btn');
-        const sideMenu = document.getElementById('side-menu');
-        const menuOverlay = document.getElementById('menu-overlay');
-        const menuContent = document.getElementById('menu-content');
-
-        function openMenu() {
-            sideMenu.classList.remove('hidden');
-            setTimeout(() => {
-                menuContent.classList.remove('translate-x-full');
-            }, 10);
-        }
-
-        function closeMenu() {
-            menuContent.classList.add('translate-x-full');
-            setTimeout(() => {
-                sideMenu.classList.add('hidden');
-            }, 300);
-        }
-
-        openMenuBtn.addEventListener('click', openMenu);
-        closeMenuBtn.addEventListener('click', closeMenu);
-        menuOverlay.addEventListener('click', closeMenu);
-
-        // نافذة الشركات المميزة
-        function openCompaniesModal() {
-            document.getElementById('companiesModal').classList.remove('hidden');
-        }
-        function closeCompaniesModal() {
-            document.getElementById('companiesModal').classList.add('hidden');
-        }
-
-        window.addEventListener('click', (e) => {
-            const compModal = document.getElementById('companiesModal');
-            if (e.target === compModal) closeCompaniesModal();
-        });
-
-        // PWA Install Prompt
-        let deferredPrompt;
-        const installBanner = document.getElementById('installBanner');
-        const installBtn = document.getElementById('installBtn');
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            installBanner.classList.remove('hidden');
-        });
-
-        installBtn.addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                deferredPrompt = null;
-                installBanner.classList.add('hidden');
-            }
-        });
-
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js').catch(err => console.log(err));
-            });
-        }
-    </script>
 </body>
 </html>
