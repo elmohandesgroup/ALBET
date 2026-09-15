@@ -1,6 +1,21 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+    <!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <!-- حط كود الحماية هنا في السطر الثالث -->
+    <script>
+        if (localStorage.getItem('isAdminLoggedIn') !== 'true') {
+            alert('عذراً، يجب تسجيل الدخول أولاً!');
+            window.location.href = 'admin-login.html';
+        }
+    </script>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم الرئيسية - متجر البيت</title>
+    <!-- باقي الـ head -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة التحكم الرئيسية - متجر البيت (albet.store)</title>
