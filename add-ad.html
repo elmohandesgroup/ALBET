@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>متجر البيت - أضف إعلانك الجديد</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Google Fonts (Cairo) -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f8f9fa;
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 pb-20">
+
+    <!-- الهيدر الرئيسي -->
+    <header class="bg-white shadow-sm sticky top-0 z-50 px-4 py-3.5">
+        <div class="max-w-3xl mx-auto flex items-center justify-between">
+            
+            <!-- زر العودة للرئيسية -->
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="p-2 bg-gray-100 hover:bg-orange-50 text-gray-700 hover:text-orange-600 rounded-xl transition-colors flex items-center gap-1.5 text-xs font-bold">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                    <span>الرئيسية</span>
+                </a>
+            </div>
+
+            <!-- العنوان -->
+            <div class="text-center flex-1 mx-2">
+                <h1 class="text-base md:text-xl font-black text-orange-600">أضف إعلانك الجديد</h1>
+            </div>
+
+            <!-- مساحة فارغة لتوازن التصميم -->
+            <div class="w-16"></div>
+
+        </div>
+    </header>
+
+    <!-- نموذج إضافة الإعلان -->
+    <main class="max-w-3xl mx-auto px-4 py-6">
+        
+        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 md:p-8 space-y-6">
+            
+            <div class="border-b pb-4">
+                <h2 class="font-bold text-gray-800 text-base md:text-lg">تفاصيل الإعلان</h2>
+                <p class="text-xs text-gray-500">املأ البيانات التالية بدقة ليتم نشر إعلانك في متجر البيت وإظهاره للعملاء.</p>
+            </div>
+
+            <form id="addAdForm" class="space-y-4">
+                
+                <!-- عنوان الإعلان -->
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-bold text-gray-700">عنوان الإعلان <span class="text-red-500">*</span></label>
+                    <input type="text" id="adTitle" required placeholder="مثال: طقم مطبخ تركي بحالة الجديد" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-xs md:text-sm focus:outline-none focus:border-orange-500 transition-colors">
+                </div>
+
+                <!-- القسم والسعر -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-bold text-gray-700">القسم <span class="text-red-500">*</span></label>
+                        <select id="adCategory" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-xs md:text-sm focus:outline-none focus:border-orange-500 transition-colors">
+                            <option value="">اختر القسم المناسب</option>
+                            <option value="appliances">الأجهزة المنزلية</option>
+                            <option value="electronics">الإلكترونيات</option>
+                            <option value="furniture">الأثاث والمفروشات</option>
+                            <option value="services">خدمات وصيانة</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-bold text-gray-700">السعر (جنيه مصري) <span class="text-red-500">*</span></label>
+                        <input type="number" id="adPrice" required placeholder="مثال: 3500" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-xs md:text-sm focus:outline-none focus:border-orange-500 transition-colors">
+                    </div>
+                </div>
+
+                <!-- رقم الواتساب للتواصل -->
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-bold text-gray-700">رقم الواتساب للتواصل (مثال: 201234567890+) <span class="text-red-500">*</span></label>
+                    <input type="text" id="adPhone" required placeholder="201227802300" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-xs md:text-sm focus:outline-none focus:border-orange-500 transition-colors" value="201227802300">
+                </div>
+
+                <!-- وصف الإعلان -->
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-bold text-gray-700">تفاصيل ووصف الإعلان <span class="text-red-500">*</span></label>
+                    <textarea id="adDescription" rows="4" required placeholder="اكتب تفاصيل المنتج، حالته، وسبب السبيع..." class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-xs md:text-sm focus:outline-none focus:border-orange-500 transition-colors"></textarea>
+                </div>
+
+                <!-- رفع الصور -->
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-bold text-gray-700">صورة المنتج أو الإعلان</label>
+                    <input type="file" id="adImage" accept="image/*" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-xs text-gray-500 file:ml-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-orange-50 file:text-orange-600 hover:file:bg-orange-100 transition-all">
+                    <p class="text-[10px] text-gray-400">سيتم تحويل الصورة تلقائياً لـ WebP للحفاظ على سرعة المتجر.</p>
+                </div>
+
+                <!-- زر النشر -->
+                <div class="pt-4">
+                    <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white py-3.5 rounded-xl text-sm font-bold transition-all shadow-md flex items-center justify-center gap-2">
+                        <span>نشر الإعلان الآن</span>
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </main>
+
+    <!-- سكريبت معالجة النموذج -->
+    <script>
+        document.getElementById('addAdForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('adTitle').value;
+            const price = document.getElementById('adPrice').value;
+            const phone = document.getElementById('adPhone').value;
+            const desc = document.getElementById('adDescription').value;
+
+            // تجهيز رسالة واتساب مباشرة كمثال للتواصل السريع
+            const message = `مرحباً، أريد نشر إعلان جديد على متجر البيت:\n\n*${title}*\nالسعر: ${price} ج.م\nالتفاصيل: ${desc}`;
+            const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+
+            alert('تم تجهيز إعلانك بنجاح! سيتم تحويلك الآن لتأكيد الإعلان عبر واتساب.');
+            window.open(whatsappUrl, '_blank');
+        });
+    </script>
+</body>
+</html>
