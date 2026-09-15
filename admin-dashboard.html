@@ -29,7 +29,7 @@
             padding: 20px;
         }
 
-        /* 1. الهيدر العلوي (لوجو واسم يمين، زر خروج شمال) */
+        /* 1. الهيدر العلوي (اللوجو يمين، والخروج شمال) */
         .admin-header {
             background: #111827;
             color: white;
@@ -69,15 +69,15 @@
             background-color: #d9532b;
         }
 
-        /* 2. التخطيط الرئيسي (السايدبار يمين تماماً، والمحتوى شماله) */
+        /* 2. التخطيط الرئيسي (السايدبار يمين، المحتوى شمال - بدون انعكاسات خاطئة) */
         .main-dashboard-layout {
             display: flex;
             gap: 20px;
             align-items: flex-start;
-            flex-direction: row-reverse; /* بيخلي الـ Sidebar يثبت في اليمين والمحتوى في الشمال بالمسطرة */
+            flex-direction: row; /* الترتيب الطبيعي: الـ HTML يبدأ بالسايدبار يمين ثم المحتوى شمال */
         }
 
-        /* السايدبار الجانبي (في اليمين) */
+        /* السايدبار الجانبي (في اليمين تماماً) */
         .sidebar-box {
             width: 270px;
             background: white;
@@ -86,7 +86,21 @@
             padding: 15px 12px;
             flex-shrink: 0;
             box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+            order: 1; /* يضمن وضعه يمين */
         }
+
+        /* منطقة المحتوى الكبيرة (في الشمال تماماً) */
+        .content-frame-box {
+            flex-grow: 1;
+            background: white;
+            border: 2px solid #111827;
+            border-radius: 14px;
+            padding: 20px;
+            min-height: 600px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+            order: 2; /* يضمن وضعه شمال */
+        }
+
         .sidebar-title {
             font-size: 0.8rem;
             font-weight: 700;
@@ -148,17 +162,6 @@
             background-color: #e76f51;
         }
 
-        /* منطقة المحتوى الكبيرة (في الشمال) */
-        .content-frame-box {
-            flex-grow: 1;
-            background: white;
-            border: 2px solid #111827;
-            border-radius: 14px;
-            padding: 20px;
-            min-height: 600px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
-        }
-
         /* تنسيق جدول الإعلانات */
         .table th {
             background-color: #f8fafc;
@@ -202,7 +205,7 @@
         </button>
     </div>
 
-    <!-- التخطيط الرئيسي (السايدبار يمين والمحتوى شمال) -->
+    <!-- التخطيط الرئيسي -->
     <div class="main-dashboard-layout">
         
         <!-- 1. القائمة الجانبية (في اليمين) -->
@@ -282,7 +285,7 @@
         <div class="content-frame-box">
             <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
                 <span class="fw-bold fs-6 text-secondary"><i class="bi bi-list-check ms-1"></i> الإعلانات المعلقة والإيصالات المالية</span>
-                <button class="btn btn-sm btn-outline-dark fw-bold px-3" onclick="loadPendingAds()" style="font-size: 0.78rem;">
+                <button class="btn btn-sm btn-outline-dark fw-bold px3" onclick="loadPendingAds()" style="font-size: 0.78rem;">
                     <i class="bi bi-arrow-clockwise ms-1"></i> تحديث
                 </button>
             </div>
