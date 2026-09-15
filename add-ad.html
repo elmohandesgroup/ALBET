@@ -121,7 +121,7 @@
             const image_url = document.getElementById('adImage').value || 'logo512.png';
 
             try {
-                const { data, error } = await supabaseClient
+                const { data, error } = await supabaseClient.from('ads').select('*');
                     .from('ads')
                     .insert([{ title, category, price, phone, description, image_url }]);
 
