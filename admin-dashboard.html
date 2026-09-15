@@ -344,7 +344,7 @@
 
         async function loadPendingAds() {
             const tbody = document.getElementById('pendingAdsTableBody');
-            const { data, error } = await supabaseClient.from('ads').select('*').eq('status', 'pending');
+            const { data, error } = await supabaseClient.from('ads').select('*');
             
             if (error) {
                 tbody.innerHTML = `<tr><td colspan="7" class="text-center text-danger py-4">خطأ في الاتصال بقاعدة البيانات</td></tr>`;
