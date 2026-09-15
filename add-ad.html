@@ -10,7 +10,7 @@
     
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
+
     <!-- Google Fonts (Cairo) -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
@@ -32,77 +32,88 @@
                 </svg>
                 <span>الرئيسية</span>
             </a>
-            <div class="text-center flex-1 mx-2">
-                <h1 class="text-base md:text-xl font-black text-orange-600">أضف إعلانك الجديد</h1>
-            </div>
+            <h1 class="text-base md:text-xl font-black text-orange-600">أضف إعلانك الجديد</h1>
             <div class="w-16"></div>
         </div>
     </header>
 
-    <!-- نموذج إضافة الإعلان -->
-    <main class="max-w-3xl mx-auto px-4 py-6">
-        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 md:p-8 space-y-6">
-            
-            <div class="border-b pb-4">
-                <h2 class="font-bold text-gray-800 text-base md:text-lg">تفاصيل الإعلان</h2>
-                <p class="text-xs text-gray-500">املأ البيانات التالية ليتم حفظ إعلانك وعرضه مباشرة في متجر البيت.</p>
+    <!-- محتوى صفحة إضافة الإعلان -->
+    <main class="max-w-3xl mx-auto px-4 mt-6">
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+            <div class="border-b pb-4 mb-6">
+                <h2 class="text-lg font-bold text-gray-800">تفاصيل الإعلان والدفع</h2>
+                <p class="text-xs text-gray-500 mt-1">املأ البيانات بدقة ليتم نشر إعلانك ومراجعته وعرضه في متجر البيت.</p>
             </div>
 
-            <form id="addAdForm" class="space-y-4">
-                
-                <div class="space-y-1.5">
-                    <label class="block text-xs font-bold text-gray-700">عنوان الإعلان <span class="text-red-500">*</span></label>
-                    <input type="text" id="adTitle" required placeholder="مثال: طقم مطبخ تركي بحالة الجديد" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-xs md:text-sm focus:outline-none focus:border-orange-500">
+            <form id="addAdForm" class="space-y-5">
+                <!-- عنوان الإعلان -->
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1.5">عنوان الإعلان *</label>
+                    <input type="text" id="adTitle" required placeholder="مثال: طقم مطبخ تركي بحالة الجديد" class="w-full p-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 outline-none">
                 </div>
 
+                <!-- السعر والقسم -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="space-y-1.5">
-                        <label class="block text-xs font-bold text-gray-700">القسم <span class="text-red-500">*</span></label>
-                        <select id="adCategory" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-xs md:text-sm focus:outline-none focus:border-orange-500">
-                            <option value="">اختر القسم المناسب</option>
-                            <option value="appliances">الأجهزة المنزلية</option>
-                            <option value="electronics">الإلكترونيات</option>
-                            <option value="furniture">الأثاث والمفروشات</option>
-                            <option value="services">خدمات وصيانة</option>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1.5">سعر المنتج (جنيه مصري) *</label>
+                        <input type="number" id="adPrice" required placeholder="مثال: 3500" class="w-full p-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1.5">القسم *</label>
+                        <select id="adCategory" class="w-full p-3 border border-gray-200 rounded-xl text-sm bg-white focus:ring-2 focus:ring-orange-500 outline-none">
+                            <option value="مطبخ وأجهزة">مطبخ وأجهزة</option>
+                            <option value="إلكترونيات">إلكترونيات</option>
+                            <option value="عقارات">عقارات</option>
+                            <option value="ملابس وأزياء">ملابس وأزياء</option>
+                            <option value="سيارات ومركبات">سيارات ومركبات</option>
+                            <option value="خدمات وصيانة">خدمات وصيانة</option>
                         </select>
                     </div>
+                </div>
 
-                    <div class="space-y-1.5">
-                        <label class="block text-xs font-bold text-gray-700">السعر (جنيه مصري) <span class="text-red-500">*</span></label>
-                        <input type="number" id="adPrice" required placeholder="مثال: 3500" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-xs md:text-sm focus:outline-none focus:border-orange-500">
+                <!-- رقم الواتساب للتواصل -->
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1.5">رقم الواتساب للتواصل *</label>
+                    <input type="text" id="adPhone" required placeholder="مثال: 01227802300" class="w-full p-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 outline-none">
+                </div>
+
+                <!-- تفاصيل الدفع والمحفظة -->
+                <div class="bg-orange-50 border border-orange-200 p-4 rounded-xl text-xs space-y-2">
+                    <p class="font-bold text-orange-800 text-sm">رسوم النشر وطريقة الدفع:</p>
+                    <p class="text-gray-600 leading-relaxed">برجاء تحويل رسوم النشر والمراجعة (<span class="font-bold text-orange-600">30 ج.م</span>) إلى رقم المحفظة: <span class="font-bold text-black bg-white px-2 py-0.5 rounded select-all border">01227802300</span> ثم إدخال رقم هاتفك المحول منه أدناه للمطابقة.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 pt-1">
+                        <input type="text" id="senderPhone" placeholder="رقم هاتفك المحول منه (فودافون كاش)" class="p-2.5 border rounded-lg bg-white text-xs outline-none">
+                        <select class="p-2.5 border rounded-lg bg-white text-xs outline-none">
+                            <option>فودافون كاش</option>
+                            <option>إنستا باي</option>
+                        </select>
                     </div>
                 </div>
 
-                <div class="space-y-1.5">
-                    <label class="block text-xs font-bold text-gray-700">رقم الواتساب للتواصل <span class="text-red-500">*</span></label>
-                    <input type="text" id="adPhone" required placeholder="201227802300" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-xs md:text-sm focus:outline-none focus:border-orange-500" value="201227802300">
+                <!-- صورة المنتج / الإيصال -->
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1.5">رابط صورة المنتج أو إيصال الدفع (اختياري)</label>
+                    <input type="text" id="adImage" placeholder="ضع رابط الصورة هنا (أو اتركه فارغاً وسيتم وضع صورة افتراضية)" class="w-full p-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 outline-none">
                 </div>
 
-                <div class="space-y-1.5">
-                    <label class="block text-xs font-bold text-gray-700">تفاصيل ووصف الإعلان <span class="text-red-500">*</span></label>
-                    <textarea id="adDescription" rows="4" required placeholder="اكتب تفاصيل المنتج، حالته..." class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-xs md:text-sm focus:outline-none focus:border-orange-500"></textarea>
+                <!-- وصف الإعلان -->
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1.5">تفاصيل ووصف الإعلان *</label>
+                    <textarea id="adDescription" rows="4" required placeholder="اكتب تفاصيل المنتج، حالته، ومميزاته..." class="w-full p-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 outline-none"></textarea>
                 </div>
 
-                <div class="space-y-1.5">
-                    <label class="block text-xs font-bold text-gray-700">رابط صورة المنتج (اختياري)</label>
-                    <input type="text" id="adImage" placeholder="ضع رابط الصورة هنا (أو اتركه فارغاً)" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-xs md:text-sm focus:outline-none focus:border-orange-500">
-                </div>
-
-                <div class="pt-4">
-                    <button type="submit" id="submitBtn" class="w-full bg-orange-600 hover:bg-orange-700 text-white py-3.5 rounded-xl text-sm font-bold transition-all shadow-md flex items-center justify-center gap-2">
-                        <span>نشر الإعلان في المتجر</span>
-                    </button>
-                </div>
-
+                <!-- زر الإرسال -->
+                <button type="submit" id="submitBtn" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-lg">
+                    نشر الإعلان في المتجر
+                </button>
             </form>
         </div>
     </main>
 
-    <!-- سكربت الاتصال بقاعدة البيانات وحفظ الإعلان -->
+    <!-- سكريبت الاتصال بقاعدة البيانات وحفظ البيانات -->
     <script>
-        // ضع هنا بيانات الـ Supabase الخاصة بك
         const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxq0VLujbtAXcUg_K5qf1rSB';
+        const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxq0VLjubtAXCUg_K5qf1rSb';
         
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -118,10 +129,10 @@
             const price = parseFloat(document.getElementById('adPrice').value);
             const phone = document.getElementById('adPhone').value;
             const description = document.getElementById('adDescription').value;
-            const image_url = document.getElementById('adImage').value || 'logo512.png';
+            const image_url = document.getElementById('adImage').value || 'logo12.png';
 
             try {
-                const { data, error } = await supabaseClient.from('ads').select('*');
+                const { data, error } = await supabaseClient
                     .from('ads')
                     .insert([{ title, category, price, phone, description, image_url }]);
 
