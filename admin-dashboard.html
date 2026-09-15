@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة التحكم الرئيسية - متجر البيت (albet.store)</title>
     
-    <!-- حماية الصفحة: التأكد من تسجيل دخول المدير -->
+    <!-- حماية الصفحة -->
     <script>
         if (localStorage.getItem('isAdminLoggedIn') !== 'true') {
             alert('عذراً، يجب تسجيل الدخول أولاً!');
@@ -22,18 +22,17 @@
     
     <style>
         body {
-            background-color: #f8fafc;
+            background-color: #f4f6f9;
             font-family: 'Cairo', sans-serif;
             color: #1e293b;
         }
-        /* الهيدر العلوي الفخم */
+        /* الهيدر المحسوب صح RTL */
         .admin-header {
-            background: linear-gradient(135deg, #0f172a 1e293b 100%);
-            background-color: #0f172a;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             color: white;
             padding: 20px 30px;
             border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15);
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.1);
             margin-bottom: 25px;
             display: flex;
             justify-content: space-between;
@@ -45,99 +44,83 @@
             gap: 15px;
         }
         .admin-logo {
-            width: 55px;
-            height: 55px;
+            width: 50px;
+            height: 50px;
             object-fit: contain;
             background: white;
-            padding: 6px;
+            padding: 5px;
             border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
         
-        /* تظبيط الـ Tabs فوق بشكل شيك */
-        .nav-tabs {
-            border: none;
-            gap: 12px;
+        /* شريط التنقل السريع (Tabs منسقة في كارد منفصل بدل الزحمة) */
+        .control-panel-nav {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
             margin-bottom: 25px;
         }
-        .nav-tabs .nav-link {
-            border: 1px solid #e2e8f0;
-            background: white;
-            color: #64748b;
+        .nav-pills .nav-link {
+            color: #475569;
             font-weight: 700;
-            padding: 12px 24px;
-            border-radius: 12px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-            transition: all 0.25s ease;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 10px 16px;
+            margin: 5px;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
         }
-        .nav-tabs .nav-link:hover {
-            border-color: #cbd5e1;
+        .nav-pills .nav-link:hover {
+            background: #e2e8f0;
             color: #0f172a;
         }
-        .nav-tabs .nav-link.active {
+        .nav-pills .nav-link.active {
             background: #e76f51;
             color: white;
             border-color: #e76f51;
-            box-shadow: 0 4px 15px rgba(231, 111, 81, 0.35);
+            box-shadow: 0 4px 12px rgba(231, 111, 81, 0.3);
         }
 
         /* الكاردات والجداول */
         .card {
-            border: 1px solid #e2e8f0;
+            border: none;
             border-radius: 16px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.03);
             margin-bottom: 25px;
             background: white;
-            overflow: hidden;
         }
         .card-header {
             font-weight: 700;
             padding: 18px 25px;
-            background-color: #ffffff;
+            background-color: white;
             border-bottom: 1px solid #f1f5f9;
-            font-size: 1.05rem;
-        }
-        .table {
-            margin-bottom: 0;
+            border-top-left-radius: 16px !important;
+            border-top-right-radius: 16px !important;
         }
         .table th {
             background-color: #f8fafc;
             color: #475569;
             font-weight: 700;
             padding: 15px;
-            border-bottom: 2px solid #e2e8f0;
         }
         .table td {
             padding: 15px;
             vertical-align: middle;
         }
-        
-        /* الصور والإيصالات */
-        .proof-img {
-            width: 65px;
-            height: 65px;
-            object-fit: cover;
-            cursor: pointer;
-            border-radius: 10px;
-            border: 2px solid #cbd5e1;
-            transition: transform 0.2s, border-color 0.2s;
-        }
-        .proof-img:hover {
-            transform: scale(1.08);
-            border-color: #e76f51;
-        }
-        .ad-img {
-            width: 65px;
-            height: 65px;
+        .proof-img, .ad-img {
+            width: 60px;
+            height: 60px;
             object-fit: cover;
             border-radius: 10px;
             border: 1px solid #e2e8f0;
         }
-        .btn-action {
-            border-radius: 8px;
-            font-weight: 600;
-            padding: 6px 14px;
-            font-size: 0.85rem;
+        .proof-img {
+            cursor: pointer;
+            border: 2px solid #cbd5e1;
+        }
+        .proof-img:hover {
+            border-color: #e76f51;
         }
     </style>
 </head>
@@ -145,52 +128,67 @@
 
     <div class="container py-4">
         
-        <!-- رأس الصفحة الإمبراطوري -->
+        <!-- رأس الصفحة المعدل (يمين الشعار والاسم، شمال زر الخروج) -->
         <div class="admin-header">
-            <div class="admin-brand">
-                <img src="logo192.png" alt="متجر البيت" class="admin-logo">
-                <div>
-                    <h3 class="m-0 fw-bold fs-5">إمبراطورية متجر البيت</h3>
-                    <small class="text-light opacity-75">لوحة تحكم المدير العام - albet.store</small>
-                </div>
-            </div>
             <button class="btn btn-outline-light btn-sm fw-bold px-3 py-2" onclick="logoutAdmin()">
                 <i class="bi bi-box-arrow-right ms-1"></i> تسجيل الخروج
             </button>
+            <div class="admin-brand">
+                <div>
+                    <h3 class="m-0 fw-bold fs-5 text-end">متجر البيت</h3>
+                    <small class="text-light opacity-75">لوحة تحكم المدير العام - albet.store</small>
+                </div>
+                <img src="logo192.png" alt="متجر البيت" class="admin-logo">
+            </div>
         </div>
 
-        <!-- التنقل بين الأقسام (Tabs) -->
-        <ul class="nav nav-tabs" id="adminTabs" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="ads-tab" data-bs-toggle="tab" data-bs-target="#adsSection" type="button" role="tab">
-                    <i class="bi bi-shield-check ms-1"></i> طابور مراجعة الإعلانات والإيصالات
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="staff-tab" data-bs-toggle="tab" data-bs-target="#staffSection" type="button" role="tab">
-                    <i class="bi bi-people-fill ms-1"></i> إدارة طاقم العمل والصلاحيات
-                </button>
-            </li>
-        </ul>
+        <!-- لوحة الأقسام السريعة (منظمة في مربعات بيلز لا تشعر بالزحمة) -->
+        <div class="control-panel-nav">
+            <h6 class="fw-bold mb-3 text-secondary"><i class="bi bi-grid-fill ms-1"></i> أقسام الإدارة والتقارير الشاملة</h6>
+            <ul class="nav nav-pills justify-content-start" id="adminTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#adsSection" type="button"><i class="bi bi-shield-check ms-1"></i> مراجعة الإعلانات</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#staffSection" type="button"><i class="bi bi-people-fill ms-1"></i> إضافة موظف</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#categoriesSection" type="button"><i class="bi bi-folder-plus ms-1"></i> إضافة قسم</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#reportsSection" type="button"><i class="bi bi-file-earmark-bar-graph ms-1"></i> تقرير اليوم</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#financeSection" type="button"><i class="bi bi-cash-stack ms-1"></i> الأرباح والخسائر</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#salariesSection" type="button"><i class="bi bi-wallet2 ms-1"></i> المرتبات</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#expensesSection" type="button"><i class="bi bi-receipt ms-1"></i> المصروفات</button>
+                </li>
+            </ul>
+        </div>
 
+        <!-- محتوى الأقسام -->
         <div class="tab-content" id="adminTabsContent">
             
-            <!-- القسم الأول: مراجعة الإعلانات والإيصالات المالية -->
-            <div class="tab-pane fade show active" id="adsSection" role="tabpanel">
+            <!-- القسم الأول: مراجعة الإعلانات -->
+            <div class="tab-pane fade show active" id="adsSection">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <span class="text-dark"><i class="bi bi-list-check text-primary ms-1"></i> الإعلانات الجديدة بانتظار الاعتماد والتدقيق المالي</span>
-                        <button class="btn btn-sm btn-outline-primary fw-bold px-3" onclick="loadPendingAds()">
-                            <i class="bi bi-arrow-clockwise ms-1"></i> تحديث القائمة
+                        <span><i class="bi bi-list-check text-primary ms-1"></i> الإعلانات المعلقة والإيصالات المالية</span>
+                        <button class="btn btn-sm btn-outline-primary fw-bold" onclick="loadPendingAds()">
+                            <i class="bi bi-arrow-clockwise ms-1"></i> تحديث
                         </button>
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle">
+                            <table class="table table-hover align-middle mb-0">
                                 <thead>
                                     <tr>
                                         <th class="ps-4">صورة الإعلان</th>
-                                        <th>إيصال الدفع (للمدير فقط)</th>
+                                        <th>إيصال الدفع</th>
                                         <th>عنوان الإعلان</th>
                                         <th>القسم</th>
                                         <th>السعر</th>
@@ -199,7 +197,7 @@
                                     </tr>
                                 </thead>
                                 <tbody id="pendingAdsTableBody">
-                                    <tr><td colspan="7" class="text-center text-muted py-4">جاري تحميل الإعلانات المعلقة...</td></tr>
+                                    <tr><td colspan="7" class="text-center text-muted py-4">جاري التحميل...</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -208,225 +206,91 @@
             </div>
 
             <!-- القسم الثاني: إدارة الموظفين -->
-            <div class="tab-pane fade" id="staffSection" role="tabpanel">
-                <!-- نموذج إضافة موظف -->
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <span class="text-dark"><i class="bi bi-person-plus-fill text-success ms-1"></i> إضافة موظف مراجعة جديد وتحديد القسم</span>
-                    </div>
+            <div class="tab-pane fade" id="staffSection">
+                <div class="card">
+                    <div class="card-header"><span><i class="bi bi-person-plus text-success ms-1"></i> إضافة موظف جديد</span></div>
                     <div class="card-body p-4">
                         <form id="addStaffForm" onsubmit="addNewStaff(event)">
                             <div class="row g-3">
-                                <div class="col-md-3">
-                                    <input type="text" id="staffName" class="form-control py-2" placeholder="اسم الموظف" required>
-                                </div>
-                                <div class="col-md-3">
-                                    <input type="email" id="staffEmail" class="form-control py-2" placeholder="البريد الإلكتروني" required>
-                                </div>
+                                <div class="col-md-3"><input type="text" id="staffName" class="form-control" placeholder="اسم الموظف" required></div>
+                                <div class="col-md-3"><input type="email" id="staffEmail" class="form-control" placeholder="البريد الإلكتروني" required></div>
+                                <div class="col-md-2"><input type="password" id="staffPassword" class="form-control" placeholder="كلمة المرور" required></div>
                                 <div class="col-md-2">
-                                    <input type="password" id="staffPassword" class="form-control py-2" placeholder="كلمة المرور المؤقتة" required>
-                                </div>
-                                <div class="col-md-2">
-                                    <select id="staffCategory" class="form-select py-2" required>
+                                    <select id="staffCategory" class="form-select" required>
                                         <option value="">اختر القسم</option>
                                         <option value="عقارات">عقارات</option>
                                         <option value="سيارات">سيارات</option>
                                         <option value="إلكترونيات">إلكترونيات</option>
-                                        <option value="خدمات">خدمات</option>
                                     </select>
                                 </div>
-                                <div class="col-md-2">
-                                    <button type="submit" class="btn btn-success w-100 py-2 fw-bold">إضافة وإرسال</button>
-                                </div>
+                                <div class="col-md-2"><button type="submit" class="btn btn-success w-100 fw-bold">حفظ</button></div>
                             </div>
                         </form>
                     </div>
                 </div>
+            </div>
 
-                <!-- جدول الموظفين الحاليين -->
-                <div class="card">
-                    <div class="card-header">
-                        <span class="text-dark"><i class="bi bi-people text-secondary ms-1"></i> قائمة الموظفين الحاليين</span>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle">
-                                <thead>
-                                    <tr>
-                                        <th class="ps-4">الاسم</th>
-                                        <th>البريد الإلكتروني</th>
-                                        <th>القسم المسند</th>
-                                        <th>الحالة</th>
-                                        <th class="text-center">الإجراءات</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="staffTableBody">
-                                    <!-- يتم تعبئتها ديناميكياً -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+            <!-- باقي الأقسام كمثال توضيحي للهيكل -->
+            <div class="tab-pane fade" id="categoriesSection">
+                <div class="card p-4 text-center text-muted">قسم إضافة الأقسام الجديدة (جاهز للربط)</div>
+            </div>
+            <div class="tab-pane fade" id="reportsSection">
+                <div class="card p-4 text-center text-muted">تقرير اليوم وإحصائيات المنصة</div>
+            </div>
+            <div class="tab-pane fade" id="financeSection">
+                <div class="card p-4 text-center text-muted">لوحة الأرباح والخسائر</div>
+            </div>
+            <div class="tab-pane fade" id="salariesSection">
+                <div class="card p-4 text-center text-muted">إدارة مرتبات الموظفين</div>
+            </div>
+            <div class="tab-pane fade" id="expensesSection">
+                <div class="card p-4 text-center text-muted">سجل المصروفات اليومية</div>
             </div>
 
         </div>
     </div>
 
-    <!-- مكتبات Bootstrap و Supabase -->
+    <!-- المكتبات -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="staff-management.js"></script>
     
     <script>
-        // إعدادات اتصال Supabase (تأكد من وضع المفتاح الحقيقي الخاص بك بدل placeholder)
         const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
-        const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY'; 
+        const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
         const staffManager = new StaffManager(supabaseClient);
 
-        // تحميل البيانات عند فتح الصفحة
-        window.onload = () => {
-            loadPendingAds();
-            loadStaffData();
-        };
+        window.onload = () => { loadPendingAds(); };
 
-        // 1. جلب الإعلانات المعلقة وصور الإيصالات للمراجعة
         async function loadPendingAds() {
             const tbody = document.getElementById('pendingAdsTableBody');
-            tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4">جاري البحث عن إعلانات جديدة...</td></tr>';
-
-            const { data, error } = await supabaseClient
-                .from('ads')
-                .select('*')
-                .eq('status', 'pending')
-                .order('created_at', { ascending: false });
-
+            const { data, error } = await supabaseClient.from('ads').select('*').eq('status', 'pending');
             if (error) {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center text-danger py-4">خطأ في الاتصال بقاعدة البيانات: تأكد من مفتاح Supabase صحيح.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center text-danger py-4">خطأ في الاتصال بقاعدة البيانات</td></tr>`;
                 return;
             }
-
             if (data && data.length > 0) {
-                tbody.innerHTML = '';
-                data.forEach(ad => {
-                    tbody.innerHTML += `
-                        <tr>
-                            <td class="ps-4"><img src="${ad.image_url || 'https://via.placeholder.com/60'}" class="ad-img" alt="الإعلان"></td>
-                            <td>
-                                ${ad.payment_proof_url ? `<img src="${ad.payment_proof_url}" class="proof-img" onclick="window.open('${ad.payment_proof_url}', '_blank')" title="اضغط لتكبير إيصال الدفع">` : '<span class="text-muted small">لا يوجد إيصال</span>'}
-                            </td>
-                            <td class="fw-bold">${ad.title}</td>
-                            <td><span class="badge bg-secondary">${ad.category}</span></td>
-                            <td class="fw-bold text-success">${ad.price} جنيه</td>
-                            <td>${new Date(ad.created_at).toLocaleDateString('ar-EG')}</td>
-                            <td class="text-center">
-                                <button class="btn btn-sm btn-success btn-action mb-1" onclick="approveAd('${ad.id}')">
-                                    <i class="bi bi-check-lg"></i> اعتماد
-                                </button>
-                                <button class="btn btn-sm btn-danger btn-action mb-1" onclick="rejectAd('${ad.id}')">
-                                    <i class="bi bi-x-lg"></i> رفض
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                });
+                tbody.innerHTML = data.map(ad => `
+                    <tr>
+                        <td class="ps-4"><img src="${ad.image_url || 'https://via.placeholder.com/60'}" class="ad-img"></td>
+                        <td>${ad.payment_proof_url ? `<img src="${ad.payment_proof_url}" class="proof-img" onclick="window.open('${ad.payment_proof_url}', '_blank')">` : 'لا يوجد'}</td>
+                        <td class="fw-bold">${ad.title}</td>
+                        <td><span class="badge bg-secondary">${ad.category}</span></td>
+                        <td class="fw-bold text-success">${ad.price} جنيه</td>
+                        <td>${new Date(ad.created_at).toLocaleDateString('ar-EG')}</td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-success mb-1" onclick="approveAd('${ad.id}')">اعتماد</button>
+                            <button class="btn btn-sm btnية btn-danger mb-1" onclick="rejectAd('${ad.id}')">رفض</button>
+                        </td>
+                    </tr>
+                `).join('');
             } else {
-                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-5">لا توجد إعلانات معلقة حالياً. المنصة نظيفة وتحت السيطرة!</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4">لا توجد إعلانات معلقة حالياً.</td></tr>';
             }
         }
 
-        // 2. اعتماد الإعلان ونشره على albet.store
-        async function approveAd(adId) {
-            const { error } = await supabaseClient
-                .from('ads')
-                .update({ status: 'active' })
-                .eq('id', adId);
-
-            if (!error) {
-                alert('تم اعتماد ونشر الإعلان بنجاح!');
-                loadPendingAds();
-            } else {
-                alert('حدث خطأ أثناء الاعتماد: ' + error.message);
-            }
-        }
-
-        // 3. رفض الإعلان
-        async function rejectAd(adId) {
-            const reason = prompt('الرجاء كتابة سبب رفض الإعلان لإرساله للعميل:');
-            if (!reason) return;
-
-            const { error } = await supabaseClient
-                .from('ads')
-                .update({ status: 'rejected', rejection_reason: reason })
-                .eq('id', adId);
-
-            if (!error) {
-                alert('تم رفض الإعلان وإرسال السبب.');
-                loadPendingAds();
-            } else {
-                alert('حدث خطأ: ' + error.message);
-            }
-        }
-
-        // دوال إدارة الموظفين
-        async function loadStaffData() {
-            const result = await staffManager.fetchAllStaff();
-            const tbody = document.getElementById('staffTableBody');
-            tbody.innerHTML = '';
-
-            if (result.success && result.data) {
-                result.data.forEach(staff => {
-                    tbody.innerHTML += `
-                        <tr>
-                            <td class="ps-4 fw-bold">${staff.name}</td>
-                            <td>${staff.email}</td>
-                            <td><span class="badge bg-info text-dark">${staff.assigned_category || 'عام'}</span></td>
-                            <td><span class="badge bg-${staff.is_active ? 'success' : 'danger'}">${staff.is_active ? 'نشط' : 'معطل'}</span></td>
-                            <td class="text-center">
-                                <button class="btn btn-sm btn-outline-warning btn-action" onclick="toggleStatus('${staff.id}', ${staff.is_active})">
-                                    ${staff.is_active ? 'تعطيل' : 'تفعيل'}
-                                </button>
-                                <button class="btn btn-sm btn-outline-danger btn-action" onclick="deleteStaff('${staff.id}')">
-                                    حذف
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                });
-            }
-        }
-
-        async function addNewStaff(event) {
-            event.preventDefault();
-            const name = document.getElementById('staffName5'] || document.getElementById('staffName').value; // حماية إضافية للحقل
-            const email = document.getElementById('staffEmail').value;
-            const password = document.getElementById('staffPassword').value;
-            const category = document.getElementById('staffCategory').value;
-
-            const res = await staffManager.addStaffMemberWithEmail(name, email, 'moderator', category, password);
-            if (res.success) {
-                alert(res.message);
-                document.getElementById('addStaffForm').reset();
-                loadStaffData();
-            } else {
-                alert('خطأ: ' + res.error);
-            }
-        }
-
-        async function toggleStatus(id, currentStatus) {
-            await staffManager.toggleStaffStatus(id, currentStatus);
-            loadStaffData();
-        }
-
-        async function deleteStaff(id) {
-            if (confirm('هل أنت متأكد من حذف هذا الموظف نهائياً؟')) {
-                await staffManager.deleteStaffMember(id);
-                loadStaffData();
-            }
-        }
-
-        function logoutAdmin() {
+        async function logoutAdmin() {
             localStorage.removeItem('isAdminLoggedIn');
             window.location.href = 'admin-login.html';
         }
