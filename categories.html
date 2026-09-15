@@ -29,7 +29,6 @@
             padding: 20px;
         }
 
-        /* التصميم العام القائم على عمودين رئيسيين (يمين وشمال) */
         .page-grid-container {
             display: grid;
             grid-template-columns: 270px 1fr;
@@ -43,7 +42,6 @@
             gap: 20px;
         }
 
-        /* الهيدر الأيمن (اللوجو واسم المنصة) */
         .admin-brand-box {
             background: #111827;
             color: white;
@@ -63,7 +61,6 @@
             border-radius: 8px;
         }
 
-        /* الهيدر الأيسر (زر تسجيل الخروج) */
         .admin-logout-box {
             background: #111827;
             color: white;
@@ -89,7 +86,6 @@
             background-color: #d9532b;
         }
 
-        /* السايدبار الجانبي */
         .sidebar-box {
             background: white;
             border: 2px solid #111827;
@@ -153,7 +149,6 @@
             background-color: #e76f51;
         }
 
-        /* منطقة المحتوى الكبيرة */
         .content-frame-box {
             background: white;
             border: 2px solid #111827;
@@ -163,7 +158,6 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.02);
         }
 
-        /* معاينة الصورة */
         .preview-img-box {
             width: 60px;
             height: 60px;
@@ -181,7 +175,6 @@
             object-fit: cover;
         }
 
-        /* تنسيق الجدول */
         .table th {
             background-color: #f8fafc;
             color: #475569;
@@ -203,9 +196,8 @@
 
     <div class="page-grid-container">
         
-        <!-- العمود الأيمن (اللوجو والسايدبار) -->
+        <!-- العمود الأيمن -->
         <div class="right-column">
-            <!-- اللوجو -->
             <div class="admin-brand-box">
                 <img src="logo192.png" alt="متجر البيت" class="admin-logo">
                 <div>
@@ -214,7 +206,6 @@
                 </div>
             </div>
 
-            <!-- القائمة الجانبية -->
             <div class="sidebar-box">
                 <div class="sidebar-title">
                     <span>أقسام الإدارة والتقارير الشاملة</span>
@@ -223,98 +214,90 @@
                 
                 <div class="sidebar-menu-list">
                     <a href="admin-dashboard.html" class="side-pill-btn">
-                        <div class="side-pill-content">
-                            <i class="bi bi-shield-check"></i>
-                            <span>مراجعة الإعلانات</span>
-                        </div>
+                        <div class="side-pill-content"><i class="bi bi-shield-check"></i><span>مراجعة الإعلانات</span></div>
                         <span class="side-dot-bullet"></span>
                     </a>
-                    
                     <a href="staff.html" class="side-pill-btn">
-                        <div class="side-pill-content">
-                            <i class="bi bi-people"></i>
-                            <span>إضافة موظف</span>
-                        </div>
+                        <div class="side-pill-content"><i class="bi bi-people"></i><span>إضافة موظف</span></div>
                         <span class="side-dot-bullet"></span>
                     </a>
-                    
                     <a href="categories.html" class="side-pill-btn active">
-                        <div class="side-pill-content">
-                            <i class="bi bi-folder-plus"></i>
-                            <span>إضافة قسم</span>
-                        </div>
+                        <div class="side-pill-content"><i class="bi bi-folder-plus"></i><span>إضافة قسم</span></div>
                         <span class="side-dot-bullet"></span>
                     </a>
-                    
                     <a href="daily-report.html" class="side-pill-btn">
-                        <div class="side-pill-content">
-                            <i class="bi bi-file-earmark-text"></i>
-                            <span>تقرير اليوم</span>
-                        </div>
+                        <div class="side-pill-content"><i class="bi bi-file-earmark-text"></i><span>تقرير اليوم</span></div>
                         <span class="side-dot-bullet"></span>
                     </a>
-                    
                     <a href="profits.html" class="side-pill-btn">
-                        <div class="side-pill-content">
-                            <i class="bi bi-cash-coin"></i>
-                            <span>الأرباح والخسائر</span>
-                        </div>
+                        <div class="side-pill-content"><i class="bi bi-cash-coin"></i><span>الأرباح والخسائر</span></div>
                         <span class="side-dot-bullet"></span>
                     </a>
-                    
                     <a href="salaries.html" class="side-pill-btn">
-                        <div class="side-pill-content">
-                            <i class="bi bi-wallet2"></i>
-                            <span>المرتبات</span>
-                        </div>
+                        <div class="side-pill-content"><i class="bi bi-wallet2"></i><span>المرتبات</span></div>
                         <span class="side-dot-bullet"></span>
                     </a>
-                    
                     <a href="expenses.html" class="side-pill-btn">
-                        <div class="side-pill-content">
-                            <i class="bi bi-receipt"></i>
-                            <span>المصروفات</span>
-                        </div>
+                        <div class="side-pill-content"><i class="bi bi-receipt"></i><span>المصروفات</span></div>
                         <span class="side-dot-bullet"></span>
                     </a>
                 </div>
             </div>
         </div>
 
-        <!-- العمود الأيسر (زر الخروج والمحتوى الرئيسي) -->
+        <!-- العمود الأيسر والمحتوى -->
         <div class="left-column">
-            <!-- زر الخروج -->
             <div class="admin-logout-box">
                 <button class="btn-logout" onclick="logoutAdmin()">
                     تسجيل الخروج <i class="bi bi-box-arrow-left ms-1"></i>
                 </button>
             </div>
 
-            <!-- المحتوى الرئيسي -->
             <div class="content-frame-box">
                 <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
                     <span class="fw-bold fs-6 text-secondary"><i class="bi bi-folder-plus ms-1"></i> إضافة وإدارة أقسام المنصة (رئيسية وفرعية)</span>
                 </div>
 
-                <!-- نموذج إضافة / تعديل قسم -->
+                <!-- نموذج الإضافة والتعديل -->
                 <div class="card p-4 mb-5 bg-light border-0 shadow-sm">
                     <h6 class="fw-bold text-dark mb-3" id="formTitle">إضافة قسم جديد</h6>
                     <form id="categoryForm" onsubmit="saveCategory(event)">
                         <input type="hidden" id="editingCategoryId">
+                        
                         <div class="row g-3 align-items-end">
+                            <!-- اسم القسم -->
                             <div class="col-md-3">
                                 <label class="form-label fw-bold" style="font-size: 0.8rem;">اسم القسم</label>
-                                <input type="text" id="categoryName" class="form-control" placeholder="مثال: عقارات، شقق..." required>
+                                <input type="text" id="categoryName" class="form-control" placeholder="مثال: عقارات، سيارات..." required>
                             </div>
+
+                            <!-- نوع القسم (رئيسي أو فرعي) -->
                             <div class="col-md-3">
-                                <label class="form-label fw-bold" style="font-size: 0.8rem;">القسم الرئيسي (اختياري)</label>
-                                <select id="parentCategorySelect" class="form-select">
-                                    <option value="">-- قسم رئيسي (بدون أب) --</option>
+                                <label class="form-label fw-bold" style="font-size: 0.8rem;">نوع القسم</label>
+                                <div class="d-flex gap-3 mt-1">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="categoryType" id="typeMain" value="main" checked onchange="toggleParentSelect()">
+                                        <label class="form-check-label fw-semibold" for="typeMain" style="font-size: 0.82rem;">رئيسي</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="categoryType" id="typeSub" value="sub" onchange="toggleParentSelect()">
+                                        <label class="form-check-label fw-semibold" for="typeSub" style="font-size: 0.82rem;">فرعي</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- اختيار القسم الرئيسي (يظهر فقط لو فرعي) -->
+                            <div class="col-md-3" id="parentSelectWrapper" style="display: none;">
+                                <label class="form-label fw-bold text-danger" style="font-size: 0.8rem;">اختر القسم الرئيسي الأب</label>
+                                <select id="parentCategorySelect" class="form-select border-danger">
+                                    <option value="">-- اختر القسم الأب --</option>
                                 </select>
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold" style="font-size: 0.8rem;">صورة القسم (WebP أو PNG/JPG)</label>
-                                <div class="d-flex align-items-center gap-3">
+
+                            <!-- رفع الصورة -->
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold" style="font-size: 0.8rem;">صورة القسم (WebP)</label>
+                                <div class="d-flex align-items-center gap-2">
                                     <input type="file" id="categoryImageFile" class="form-control" accept="image/webp, image/png, image/jpeg" onchange="previewImage(event)">
                                     <div class="preview-img-box" id="imagePreviewContainer">
                                         <i class="bi bi-image text-muted fs-4"></i>
@@ -322,7 +305,8 @@
                                 </div>
                                 <input type="hidden" id="categoryImageUrl">
                             </div>
-                            <div class="col-md-2">
+
+                            <div class="col-md-2 mt-3">
                                 <button type="submit" id="saveBtn" class="btn btn-dark w-100 fw-bold" style="font-size: 0.82rem;">حفظ القسم</button>
                             </div>
                         </div>
@@ -332,7 +316,7 @@
                     </form>
                 </div>
 
-                <!-- جدول عرض الأقسام في أسفل الصفحة -->
+                <!-- جدول الأقسام -->
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h6 class="fw-bold text-dark m-0">الأقسام المتاحة حالياً (الرئيسية والفرعية)</h6>
                 </div>
@@ -358,6 +342,22 @@
 
     </div>
 
+    <!-- نافذة منبثقة مخصصة للرسائل في منتصف الشاشة (مودال بلولو متجر البيت) -->
+    <div class="modal fade" id="customAlertModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 360px;">
+            <div class="modal-content border-0 shadow-lg rounded-4 text-center p-3">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <img src="logo192.png" alt="متجر البيت" style="width: 55px; height: 55px; object-fit: contain; background: #111827; padding: 6px; border-radius: 12px;">
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2">متجر البيت</h5>
+                    <p id="customAlertMessage" class="text-secondary mb-4" style="font-size: 0.88rem;"></p>
+                    <button type="button" class="btn btn-dark w-100 fw-bold py-2 rounded-3" data-bs-dismiss="modal" style="font-size: 0.85rem;">حسناً</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- المكتبات والبرمجيات -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -373,21 +373,39 @@
             loadCategories();
         };
 
-        // معاينة الصورة المختارة من الجهاز
+        // دالة إظهار رسالة منبثقة في منتصف الشاشة مع اللوجو
+        function showCustomAlert(message) {
+            document.getElementById('customAlertMessage').innerText = message;
+            const modal = new bootstrap.Modal(document.getElementById('customAlertModal'));
+            modal.show();
+        }
+
+        // التحكم في ظهور قائمة الأقسام الرئيسية بناءً على اختيار رئيسي أو فرعي
+        function toggleParentSelect() {
+            const isSub = document.getElementById('typeSub').checked;
+            const wrapper = document.getElementById('parentSelectWrapper');
+            if (isSub) {
+                wrapper.style.display = 'block';
+                document.getElementById('parentCategorySelect').setAttribute('required', 'true');
+            } else {
+                wrapper.style.display = 'none';
+                document.getElementById('parentCategorySelect').removeAttribute('required');
+                document.getElementById('parentCategorySelect').value = '';
+            }
+        }
+
         function previewImage(event) {
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     document.getElementById('imagePreviewContainer').innerHTML = `<img src="${e.target.result}" alt="Preview">`;
-                    // حفظ الصورة كـ Base64 أو رابط مؤقت لحين ربطها بسيرفر الرفع
                     document.getElementById('categoryImageUrl').value = e.target.result;
                 }
                 reader.readAsDataURL(file);
             }
         }
 
-        // جلب الأقسام من Supabase
         async function loadCategories() {
             const tbody = document.getElementById('categoriesTableBody');
             const parentSelect = document.getElementById('parentCategorySelect');
@@ -401,10 +419,9 @@
             
             allCategories = data || [];
 
-            // تعبئة قائمة الأقسام الرئيسية في نموذج الإضافة
-            parentSelect.innerHTML = '<option value="">-- قسم رئيسي (بدون أب) --</option>';
+            parentSelect.innerHTML = '<option value="">-- اختر القسم الأب --</option>';
             allCategories.forEach(cat => {
-                if (!cat.parent_id) { // الأقسام الرئيسية فقط تظهر كأباء
+                if (!cat.parent_id) {
                     parentSelect.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
                 }
             });
@@ -412,7 +429,7 @@
             if (allCategories.length > 0) {
                 tbody.innerHTML = allCategories.map((cat, index) => {
                     const parentCat = allCategories.find(p => p.id == cat.parent_id);
-                    const typeLabel = parentCat ? `<span class="badge bg-secondary">فرعي تتبع (${parentCat.name})</span>` : `<span class="badge bg-success">رئيسي</span>`;
+                    const typeLabel = parentCat ? `<span class="badge bg-secondary">فرعي (يتبع: ${parentCat.name})</span>` : `<span class="badge bg-success">رئيسي</span>`;
                     const imgTag = cat.image_url ? `<img src="${cat.image_url}" width="35" height="35" class="rounded object-fit-cover">` : `<span class="text-muted small">بدون</span>`;
                     
                     return `
@@ -434,13 +451,18 @@
             }
         }
 
-        // حفظ أو تحديث القسم
         async function saveCategory(e) {
             e.preventDefault();
             const id = document.getElementById('editingCategoryId').value;
             const name = document.getElementById('categoryName').value;
-            const parent_id = document.getElementById('parentCategorySelect').value || null;
+            const isSub = document.getElementById('typeSub').checked;
+            const parent_id = isSub ? document.getElementById('parentCategorySelect').value : null;
             const image_url = document.getElementById('categoryImageUrl').value;
+
+            if (isSub && !parent_id) {
+                showCustomAlert('يرجى تحديد القسم الرئيسي الأب لهذا القسم الفرعي!');
+                return;
+            }
 
             const categoryData = { name, parent_id };
             if (image_url) {
@@ -448,38 +470,43 @@
             }
 
             if (id) {
-                // تعديل قسم موجود
                 const { error } = await supabaseClient.from('categories').update(categoryData).eq('id', id);
                 if (error) {
-                    alert('حدث خطأ أثناء تعديل القسم!');
+                    showCustomAlert('حدث خطأ أثناء تعديل القسم!');
                 } else {
-                    alert('تم تعديل القسم بنجاح!');
+                    showCustomAlert('تم تعديل القسم بنجاح!');
                     resetForm();
                     loadCategories();
                 }
             } else {
-                // إضافة قسم جديد
                 const { error } = await supabaseClient.from('categories').insert([categoryData]);
                 if (error) {
-                    alert('حدث خطأ أثناء إضافة القسم!');
+                    showCustomAlert('حدث خطأ أثناء إضافة القسم!');
                 } else {
-                    alert('تم إضافة القسم بنجاح!');
+                    showCustomAlert('تم إضافة القسم بنجاح!');
                     resetForm();
                     loadCategories();
                 }
             }
         }
 
-        // تعبئة البيانات في النموذج لتعديلها
         function editCategory(id) {
             const cat = allCategories.find(c => c.id == id);
             if (!cat) return;
 
             document.getElementById('editingCategoryId').value = cat.id;
             document.getElementById('categoryName').value = cat.name;
-            document.getElementById('parentCategorySelect').value = cat.parent_id || '';
-            document.getElementById('categoryImageUrl').value = cat.image_url || '';
             
+            if (cat.parent_id) {
+                document.getElementById('typeSub').checked = true;
+                toggleParentSelect();
+                document.getElementById('parentCategorySelect').value = cat.parent_id;
+            } else {
+                document.getElementById('typeMain').checked = true;
+                toggleParentSelect();
+            }
+
+            document.getElementById('categoryImageUrl').value = cat.image_url || '';
             if (cat.image_url) {
                 document.getElementById('imagePreviewContainer').innerHTML = `<img src="${cat.image_url}" alt="Preview">`;
             }
@@ -490,10 +517,11 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // إعادة ضبط النموذج
         function resetForm() {
             document.getElementById('categoryForm').reset();
             document.getElementById('editingCategoryId').value = '';
+            document.getElementById('typeMain').checked = true;
+            toggleParentSelect();
             document.getElementById('imagePreviewContainer').innerHTML = `<i class="bi bi-image text-muted fs-4"></i>`;
             document.getElementById('categoryImageUrl').value = '';
             document.getElementById('formTitle').innerText = 'إضافة قسم جديد';
@@ -501,13 +529,13 @@
             document.getElementById('cancelEditBox').style.display = 'none';
         }
 
-        // حذف قسم
         async function deleteCategory(id) {
             if (confirm('هل أنت متأكد من حذف هذا القسم؟')) {
                 const { error } = await supabaseClient.from('categories').delete().eq('id', id);
                 if (error) {
-                    alert('خطأ أثناء الحذف، تأكد من عدم وجود أقسام فرعية مرتبطة به.');
+                    showCustomAlert('خطأ أثناء الحذف، تأكد من عدم وجود أقسام فرعية مرتبطة به.');
                 } else {
+                    showCustomAlert('تم حذف القسم بنجاح.');
                     loadCategories();
                 }
             }
