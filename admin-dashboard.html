@@ -16,6 +16,7 @@
     <!-- Bootstrap 5 RTL CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/rtl.min.css">
     <!-- Bootstrap Icons -->
+    <link rel="jsdelivr" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <!-- Google Fonts (Cairo) -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -69,75 +70,14 @@
             background-color: #d9532b;
         }
 
-        /* 2. التخطيط الرئيسي: السايدبار يمين والمحتوى شمال */
+        /* 2. التخطيط الرئيسي: السايدبار يمين (في إطار أسود سميك) والمحتوى شمال */
         .main-dashboard-layout {
             display: flex;
             gap: 20px;
             align-items: flex-start;
-            flex-direction: row; /* يضمن الترتيب الصح: يمين سايدبار، شمال محتوى */
         }
 
-        /* السايدبار الجانبي (في اليمين تماماً) */
-        .sidebar-box {
-            width: 260px;
-            background: white;
-            border: 2px solid #111827;
-            border-radius: 14px;
-            padding: 15px 10px;
-            flex-shrink: 0;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
-        }
-        .sidebar-title {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: #334155;
-            padding: 8px 10px;
-            border-bottom: 1px solid #e2e8f0;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .sidebar-menu-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .side-btn {
-            background: transparent;
-            color: #334155;
-            border: 1px solid transparent;
-            padding: 10px 14px;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 0.85rem;
-            text-align: right;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-        .side-btn:hover {
-            background-color: #f1f5f9;
-            color: #0f172a;
-        }
-        .side-btn.active {
-            background-color: #fef2f2;
-            color: #dc2626;
-            border-color: #fecaca;
-        }
-        .side-btn .badge-dot {
-            width: 6px;
-            height: 6px;
-            background-color: #0f172a;
-            border-radius: 50%;
-        }
-        .side-btn.active .badge-dot {
-            background-color: #dc2626;
-        }
-
-        /* منطقة المحتوى الكبيرة (في الشمال تماماً) */
+        /* الإطار الكبير للمحتوى الرئيسي (شمال) */
         .content-frame-box {
             flex-grow: 1;
             background: white;
@@ -148,21 +88,93 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.02);
         }
 
-        /* تنسيق الجدول */
+        /* السايدبار الجانبي (يمين - الإطار الأسود السميك بالظبط زي الصورة) */
+        .sidebar-box {
+            width: 270px;
+            background: white;
+            border: 2px solid #111827;
+            border-radius: 14px;
+            padding: 15px 12px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+        }
+        .sidebar-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #334155;
+            padding: 8px 10px;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        /* أزرار الكبسولة (Pill Buttons) المطابقة للصورة بالمللي */
+        .sidebar-menu-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .side-pill-btn {
+            background: #ffffff;
+            color: #334155;
+            border: 1px solid #e2e8f0;
+            padding: 9px 14px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.83rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .side-pill-btn:hover {
+            background-color: #f8fafc;
+            border-color: #cbd5e1;
+            color: #0f172a;
+        }
+        
+        /* الزرار النشط (البرتقالي/الأحمر البارز اللي في الصورة) */
+        .side-pill-btn.active {
+            background-color: #fff1ed;
+            color: #e76f51;
+            border-color: #fbd3c9;
+            box-shadow: 0 2px 8px rgba(231, 111, 81, 0.15);
+        }
+        
+        .side-pill-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .side-dot-bullet {
+            width: 5px;
+            height: 5px;
+            background-color: #94a3b8;
+            border-radius: 50%;
+        }
+        .side-pill-btn.active .side-dot-bullet {
+            background-color: #e76f51;
+        }
+
+        /* تنسيق جدول الإعلانات */
         .table th {
             background-color: #f8fafc;
             color: #475569;
             font-weight: 700;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             border-bottom: 2px solid #e2e8f0;
         }
         .table td {
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             vertical-align: middle;
         }
         .ad-img, .proof-img {
-            width: 55px;
-            height: 55px;
+            width: 50px;
+            height: 50px;
             object-fit: cover;
             border-radius: 8px;
             border: 1px solid #cbd5e1;
@@ -181,7 +193,7 @@
             <img src="logo192.png" alt="متجر البيت" class="admin-logo">
             <div>
                 <h3 class="m-0 fw-bold fs-6 text-start">متجر البيت</h3>
-                <small class="text-light opacity-75" style="font-size: 0.75rem;">لوحة تحكم المدير العام - albet.store</small>
+                <small class="text-light opacity-75" style="font-size: 0.72rem;">لوحة تحكم المدير العام - albet.store</small>
             </div>
         </div>
 
@@ -191,53 +203,14 @@
         </button>
     </div>
 
-    <!-- التخطيط الرئيسي (السايدبار يمين والمحتوى شمال) -->
+    <!-- التخطيط الرئيسي -->
     <div class="main-dashboard-layout">
         
-        <!-- 1. القائمة الجانبية (في اليمين) -->
-        <div class="sidebar-box">
-            <div class="sidebar-title">
-                <span>أقسام الإدارة والتقارير الشاملة</span>
-                <i class="bi bi-grid-fill text-dark"></i>
-            </div>
-            
-            <div class="sidebar-menu-list">
-                <a href="admin-dashboard.html" class="side-btn active">
-                    <span>مراجعة الإعلانات</span>
-                    <span class="badge-dot"></span>
-                </a>
-                <a href="staff.html" class="side-btn">
-                    <span>إضافة موظف</span>
-                    <span class="badge-dot"></span>
-                </a>
-                <a href="categories.html" class="side-btn">
-                    <span>إضافة قسم</span>
-                    <span class="badge-dot"></span>
-                </a>
-                <a href="daily-report.html" class="side-btn">
-                    <span>تقرير اليوم</span>
-                    <span class="badge-dot"></span>
-                </a>
-                <a href="profits.html" class="side-btn">
-                    <span>الأرباح والخسائر</span>
-                    <span class="badge-dot"></span>
-                </a>
-                <a href="salaries.html" class="side-btn">
-                    <span>المرتبات</span>
-                    <span class="badge-dot"></span>
-                </a>
-                <a href="expenses.html" class="side-btn">
-                    <span>المصروفات</span>
-                    <span class="badge-dot"></span>
-                </a>
-            </div>
-        </div>
-
-        <!-- 2. منطقة المحتوى الكبيرة (في الشمال) -->
+        <!-- 1. منطقة المحتوى الكبيرة (في الشمال) -->
         <div class="content-frame-box">
             <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
                 <span class="fw-bold fs-6 text-secondary"><i class="bi bi-list-check ms-1"></i> الإعلانات المعلقة والإيصالات المالية</span>
-                <button class="btn btn-sm btn-outline-dark fw-bold px-3" onclick="loadPendingAds()" style="font-size: 0.8rem;">
+                <button class="btn btn-sm btn-outline-dark fw-bold px-3" onclick="loadPendingAds()" style="font-size: 0.78rem;">
                     <i class="bi bi-arrow-clockwise ms-1"></i> تحديث
                 </button>
             </div>
@@ -259,6 +232,79 @@
                         <tr><td colspan="7" class="text-center text-muted py-5">جاري التحميل...</td></tr>
                     </tbody>
                 </table>
+            </div>
+        </div>
+
+        <!-- 2. القائمة الجانبية (في اليمين - الأزرار الكبسولة بنفس الصورة) -->
+        <div class="sidebar-box">
+            <div class="sidebar-title">
+                <span>أقسام الإدارة والتقارير الشاملة</span>
+                <i class="bi bi-grid-fill text-dark"></i>
+            </div>
+            
+            <div class="sidebar-menu-list">
+                <!-- زرار مراجعة الإعلانات (الصفحة الحالية - نشط) -->
+                <a href="admin-dashboard.html" class="side-pill-btn active">
+                    <div class="side-pill-content">
+                        <i class="bi bi-shield-check"></i>
+                        <span>مراجعة الإعلانات</span>
+                    </div>
+                    <span class="side-dot-bullet"></span>
+                </a>
+                
+                <!-- زرار إضافة موظف -->
+                <a href="staff.html" class="side-pill-btn">
+                    <div class="side-pill-content">
+                        <i class="bi bi-people"></i>
+                        <span>إضافة موظف</span>
+                    </div>
+                    <span class="side-dot-bullet"></span>
+                </a>
+                
+                <!-- زرار إضافة قسم -->
+                <a href="categories.html" class="side-pill-btn">
+                    <div class="side-pill-content">
+                        <i class="bi bi-folder-plus"></i>
+                        <span>إضافة قسم</span>
+                    </div>
+                    <span class="side-dot-bullet"></span>
+                </a>
+                
+                <!-- زرار تقرير اليوم -->
+                <a href="daily-report.html" class="side-pill-btn">
+                    <div class="side-pill-content">
+                        <i class="bi bi-file-earmark-text"></i>
+                        <span>تقرير اليوم</span>
+                    </div>
+                    <span class="side-dot-bullet"></span>
+                </a>
+                
+                <!-- زرار الأرباح والخسائر -->
+                <a href="profits.html" class="side-pill-btn">
+                    <div class="side-pill-content">
+                        <i class="bi bi-cash-coin"></i>
+                        <span>الأرباح والخسائر</span>
+                    </div>
+                    <span class="side-dot-bullet"></span>
+                </a>
+                
+                <!-- زرار المرتبات -->
+                <a href="salaries.html" class="side-pill-btn">
+                    <div class="side-pill-content">
+                        <i class="bi bi-wallet2"></i>
+                        <span>المرتبات</span>
+                    </div>
+                    <span class="side-dot-bullet"></span>
+                </a>
+                
+                <!-- زرار المصروفات -->
+                <a href="expenses.html" class="side-pill-btn">
+                    <div class="side-pill-content">
+                        <i class="bi bi-receipt"></i>
+                        <span>المصروفات</span>
+                    </div>
+                    <span class="side-dot-bullet"></span>
+                </a>
             </div>
         </div>
 
@@ -287,15 +333,15 @@
             if (data && data.length > 0) {
                 tbody.innerHTML = data.map(ad => `
                     <tr>
-                        <td class="text-center"><img src="${ad.image_url || 'https://via.placeholder.com/55'}" class="ad-img"></td>
+                        <td class="text-center"><img src="${ad.image_url || 'https://via.placeholder.com/50'}" class="ad-img"></td>
                         <td class="text-center">${ad.payment_proof_url ? `<img src="${ad.payment_proof_url}" class="proof-img" onclick="window.open('${ad.payment_proof_url}', '_blank')">` : 'لا يوجد'}</td>
                         <td class="fw-bold">${ad.title}</td>
                         <td><span class="badge bg-secondary" style="font-size:0.75rem;">${ad.category}</span></td>
                         <td class="fw-bold text-success">${ad.price} جنيه</td>
                         <td>${new Date(ad.created_at).toLocaleDateString('ar-EG')}</td>
                         <td class="text-center">
-                            <button class="btn btn-sm btn-success px-2 py-1 mb-1" style="font-size:0.75rem;" onclick="approveAd('${ad.id}')">اعتماد</button>
-                            <button class="btn btn-sm btn-danger px-2 py-1 mb-1" style="font-size:0.75rem;" onclick="rejectAd('${ad.id}')">رفض</button>
+                            <button class="btn btn-sm btn-success px-2 py-1 mb-1" style="font-size:0.72rem;" onclick="approveAd('${ad.id}')">اعتماد</button>
+                            <button class="btn btn-sm btn-danger px-2 py-1 mb-1" style="font-size:0.72rem;" onclick="rejectAd('${ad.id}')">رفض</button>
                         </td>
                     </tr>
                 `).join('');
