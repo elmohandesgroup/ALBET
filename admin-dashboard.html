@@ -26,11 +26,11 @@
             font-family: 'Cairo', sans-serif;
             color: #1e293b;
         }
-        /* الهيدر المحسوب صح RTL */
+        /* الهيدر العلوي الأصلي (اللوجو يمين والخروج شمال) */
         .admin-header {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             color: white;
-            padding: 20px 30px;
+            padding: 18px 30px;
             border-radius: 16px;
             box-shadow: 0 8px 20px rgba(15, 23, 42, 0.1);
             margin-bottom: 25px;
@@ -51,35 +51,61 @@
             padding: 5px;
             border-radius: 12px;
         }
-        
-        /* شريط التنقل السريع (Tabs منسقة في كارد منفصل بدل الزحمة) */
-        .control-panel-nav {
-            background: white;
-            padding: 20px;
-            border-radius: 16px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
-            margin-bottom: 25px;
+
+        /* تخطيط اللوحة: Sidebar يمين ومحتوى رئيسي شمال */
+        .dashboard-layout {
+            display: flex;
+            gap: 25px;
+            align-items: flex-start;
         }
-        .nav-pills .nav-link {
+
+        /* الـ Sidebar الجانبي الأنيق للأقسام */
+        .sidebar-menu {
+            width: 280px;
+            background: white;
+            padding: 20px 15px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            flex-shrink: 0;
+        }
+        .sidebar-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #64748b;
+            padding: 0 10px 15px 10px;
+            border-bottom: 1px solid #f1f5f9;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .sidebar-menu .nav-pills .nav-link {
             color: #475569;
             font-weight: 700;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
+            background: transparent;
             border-radius: 10px;
-            padding: 10px 16px;
-            margin: 5px;
+            padding: 12px 15px;
+            margin-bottom: 6px;
             transition: all 0.2s ease;
             font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        .nav-pills .nav-link:hover {
-            background: #e2e8f0;
+        .sidebar-menu .nav-pills .nav-link:hover {
+            background: #f8fafc;
             color: #0f172a;
         }
-        .nav-pills .nav-link.active {
+        .sidebar-menu .nav-pills .nav-link.active {
             background: #e76f51;
             color: white;
-            border-color: #e76f51;
             box-shadow: 0 4px 12px rgba(231, 111, 81, 0.3);
+        }
+
+        /* منطقة المحتوى الرئيسي العريضة في الشمال */
+        .main-content-area {
+            flex-grow: 1;
+            min-width: 0;
         }
 
         /* الكاردات والجداول */
@@ -87,8 +113,8 @@
             border: none;
             border-radius: 16px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-            margin-bottom: 25px;
             background: white;
+            margin-bottom: 0;
         }
         .card-header {
             font-weight: 700;
@@ -103,6 +129,7 @@
             color: #475569;
             font-weight: 700;
             padding: 15px;
+            border-bottom: 2px solid #e2e8f0;
         }
         .table td {
             padding: 15px;
@@ -122,129 +149,173 @@
         .proof-img:hover {
             border-color: #e76f51;
         }
+
+        /* الاستجابة للشاشات الصغيرة */
+        @media (max-width: 992px) {
+            .dashboard-layout {
+                flex-direction: column;
+            }
+            .sidebar-menu {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <div class="container py-4">
+    <div class="container-fluid px-4 py-4">
         
-        <!-- رأس الصفحة المعدل (يمين الشعار والاسم، شمال زر الخروج) -->
+        <!-- الهيدر العلوي: الشعار والاسم يمين، تسجيل الخروج شمال -->
         <div class="admin-header">
+            <div class="admin-brand">
+                <img src="logo192.png" alt="متجر البيت" class="admin-logo">
+                <div>
+                    <h3 class="m-0 fw-bold fs-5">متجر البيت</h3>
+                    <small class="text-light opacity-75">لوحة تحكم المدير العام - albet.store</small>
+                </div>
+            </div>
             <button class="btn btn-outline-light btn-sm fw-bold px-3 py-2" onclick="logoutAdmin()">
                 <i class="bi bi-box-arrow-right ms-1"></i> تسجيل الخروج
             </button>
-            <div class="admin-brand">
-                <div>
-                    <h3 class="m-0 fw-bold fs-5 text-end">متجر البيت</h3>
-                    <small class="text-light opacity-75">لوحة تحكم المدير العام - albet.store</small>
-                </div>
-                <img src="logo192.png" alt="متجر البيت" class="admin-logo">
-            </div>
         </div>
 
-        <!-- لوحة الأقسام السريعة (منظمة في مربعات بيلز لا تشعر بالزحمة) -->
-        <div class="control-panel-nav">
-            <h6 class="fw-bold mb-3 text-secondary"><i class="bi bi-grid-fill ms-1"></i> أقسام الإدارة والتقارير الشاملة</h6>
-            <ul class="nav nav-pills justify-content-start" id="adminTabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#adsSection" type="button"><i class="bi bi-shield-check ms-1"></i> مراجعة الإعلانات</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#staffSection" type="button"><i class="bi bi-people-fill ms-1"></i> إضافة موظف</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#categoriesSection" type="button"><i class="bi bi-folder-plus ms-1"></i> إضافة قسم</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#reportsSection" type="button"><i class="bi bi-file-earmark-bar-graph ms-1"></i> تقرير اليوم</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#financeSection" type="button"><i class="bi bi-cash-stack ms-1"></i> الأرباح والخسائر</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#salariesSection" type="button"><i class="bi bi-wallet2 ms-1"></i> المرتبات</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#expensesSection" type="button"><i class="bi bi-receipt ms-1"></i> المصروفات</button>
-                </li>
-            </ul>
-        </div>
-
-        <!-- محتوى الأقسام -->
-        <div class="tab-content" id="adminTabsContent">
+        <!-- تخطيط اللوحة (Sidebar يمين ومحتوى شمال) -->
+        <div class="dashboard-layout">
             
-            <!-- القسم الأول: مراجعة الإعلانات -->
-            <div class="tab-pane fade show active" id="adsSection">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <span><i class="bi bi-list-check text-primary ms-1"></i> الإعلانات المعلقة والإيصالات المالية</span>
-                        <button class="btn btn-sm btn-outline-primary fw-bold" onclick="loadPendingAds()">
-                            <i class="bi bi-arrow-clockwise ms-1"></i> تحديث
-                        </button>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle mb-0">
-                                <thead>
-                                    <tr>
-                                        <th class="ps-4">صورة الإعلان</th>
-                                        <th>إيصال الدفع</th>
-                                        <th>عنوان الإعلان</th>
-                                        <th>القسم</th>
-                                        <th>السعر</th>
-                                        <th>تاريخ الرفع</th>
-                                        <th class="text-center">الإجراءات</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="pendingAdsTableBody">
-                                    <tr><td colspan="7" class="text-center text-muted py-4">جاري التحميل...</td></tr>
-                                </tbody>
-                            </table>
+            <!-- القائمة الجانبية (Sidebar) للأقسام -->
+            <div class="sidebar-menu">
+                <div class="sidebar-title">
+                    <i class="bi bi-grid-fill text-primary"></i> أقسام الإدارة الشاملة
+                </div>
+                <div class="nav nav-pills flex-column" id="adminTabs" role="tablist">
+                    <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#adsSection" type="button" role="tab">
+                        <i class="bi bi-shield-check"></i> مراجعة الإعلانات
+                    </button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#staffSection" type="button" role="tab">
+                        <i class="bi bi-people-fill"></i> إضافة موظف
+                    </button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#categoriesSection" type="button" role="tab">
+                        <i class="bi bi-folder-plus"></i> إضافة قسم
+                    </button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#reportsSection" type="button" role="tab">
+                        <i class="bi bi-file-earmark-bar-graph"></i> تقرير اليوم
+                    </button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#financeSection" type="button" role="tab">
+                        <i class="bi bi-cash-stack"></i> الأرباح والخسائر
+                    </button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#salariesSection" type="button" role="tab">
+                        <i class="bi bi-wallet2"></i> المرتبات
+                    </button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#expensesSection" type="button" role="tab">
+                        <i class="bi bi-receipt"></i> المصروفات
+                    </button>
+                </div>
+            </div>
+
+            <!-- منطقة المحتوى الرئيسي (كل تاب تظهر في منطقتها ومفيش بيانات تتدخل في بعضها) -->
+            <div class="main-content-area">
+                <div class="tab-content" id="adminTabsContent">
+                    
+                    <!-- 1. قسم مراجعة الإعلانات -->
+                    <div class="tab-pane fade show active" id="adsSection" role="tabpanel">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span><i class="bi bi-list-check text-primary ms-1"></i> الإعلانات المعلقة والإيصالات المالية</span>
+                                <button class="btn btn-sm btn-outline-primary fw-bold" onclick="loadPendingAds()">
+                                    <i class="bi bi-arrow-clockwise ms-1"></i> تحديث
+                                </button>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th class="ps-4">صورة الإعلان</th>
+                                                <th>إيصال الدفع</th>
+                                                <th>عنوان الإعلان</th>
+                                                <th>القسم</th>
+                                                <th>السعر</th>
+                                                <th>تاريخ الرفع</th>
+                                                <th class="text-center">الإجراءات</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="pendingAdsTableBody">
+                                            <tr><td colspan="7" class="text-center text-muted py-4">جاري التحميل...</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- القسم الثاني: إدارة الموظفين -->
-            <div class="tab-pane fade" id="staffSection">
-                <div class="card">
-                    <div class="card-header"><span><i class="bi bi-person-plus text-success ms-1"></i> إضافة موظف جديد</span></div>
-                    <div class="card-body p-4">
-                        <form id="addStaffForm" onsubmit="addNewStaff(event)">
-                            <div class="row g-3">
-                                <div class="col-md-3"><input type="text" id="staffName" class="form-control" placeholder="اسم الموظف" required></div>
-                                <div class="col-md-3"><input type="email" id="staffEmail" class="form-control" placeholder="البريد الإلكتروني" required></div>
-                                <div class="col-md-2"><input type="password" id="staffPassword" class="form-control" placeholder="كلمة المرور" required></div>
-                                <div class="col-md-2">
-                                    <select id="staffCategory" class="form-select" required>
-                                        <option value="">اختر القسم</option>
-                                        <option value="عقارات">عقارات</option>
-                                        <option value="سيارات">سيارات</option>
-                                        <option value="إلكترونيات">إلكترونيات</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2"><button type="submit" class="btn btn-success w-100 fw-bold">حفظ</button></div>
+                    <!-- 2. قسم إضافة موظف -->
+                    <div class="tab-pane fade" id="staffSection" role="tabpanel">
+                        <div class="card">
+                            <div class="card-header"><span><i class="bi bi-person-plus text-success ms-1"></i> إضافة موظف مراجعة جديد</span></div>
+                            <div class="card-body p-4">
+                                <form id="addStaffForm" onsubmit="addNewStaff(event)">
+                                    <div class="row g-3">
+                                        <div class="col-md-6"><input type="text" id="staffName" class="form-control" placeholder="اسم الموظف" required></div>
+                                        <div class="col-md-6"><input type="email" id="staffEmail" class="form-control" placeholder="البريد الإلكتروني" required></div>
+                                        <div class="col-md-6"><input type="password" id="staffPassword" class="form-control" placeholder="كلمة المرور المؤقتة" required></div>
+                                        <div class="col-md-6">
+                                            <select id="staffCategory" class="form-select" required>
+                                                <option value="">اختر القسم المسند</option>
+                                                <option value="عقارات">عقارات</option>
+                                                <option value="سيارات">سيارات</option>
+                                                <option value="إلكترونيات">إلكترونيات</option>
+                                                <option value="خدمات">خدمات</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-12 text-end"><button type="submit" class="btn btn-success px-4 fw-bold">حفظ وإضافة الموظف</button></div>
+                                    </div>
+                                </form>
                             </div>
-                        </form>
+                        </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- باقي الأقسام كمثال توضيحي للهيكل -->
-            <div class="tab-pane fade" id="categoriesSection">
-                <div class="card p-4 text-center text-muted">قسم إضافة الأقسام الجديدة (جاهز للربط)</div>
-            </div>
-            <div class="tab-pane fade" id="reportsSection">
-                <div class="card p-4 text-center text-muted">تقرير اليوم وإحصائيات المنصة</div>
-            </div>
-            <div class="tab-pane fade" id="financeSection">
-                <div class="card p-4 text-center text-muted">لوحة الأرباح والخسائر</div>
-            </div>
-            <div class="tab-pane fade" id="salariesSection">
-                <div class="card p-4 text-center text-muted">إدارة مرتبات الموظفين</div>
-            </div>
-            <div class="tab-pane fade" id="expensesSection">
-                <div class="card p-4 text-center text-muted">سجل المصروفات اليومية</div>
+                    <!-- 3. باقي الأقسام (كل قسم منفصل تماماً) -->
+                    <div class="tab-pane fade" id="categoriesSection" role="tabpanel">
+                        <div class="card p-5 text-center text-muted">
+                            <i class="bi bi-folder-plus fs-1 mb-2 text-secondary"></i>
+                            <h5>قسم إضافة وتعديل الأقسام الرئيسية والفرعية</h5>
+                            <p class="small text-muted">هنا سيظهر نموذج إدارة أقسام المنصة بالكامل.</p>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="reportsSection" role="tabpanel">
+                        <div class="card p-5 text-center text-muted">
+                            <i class="bi bi-file-earmark-bar-graph fs-1 mb-2 text-secondary"></i>
+                            <h5>تقرير اليوم وإحصائيات المنصة</h5>
+                            <p class="small text-muted">حركة الزيارات، الإعلانات المنشورة اليوم، والنشاط العام.</p>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="financeSection" role="tabpanel">
+                        <div class="card p-5 text-center text-muted">
+                            <i class="bi bi-cash-stack fs-1 mb-2 text-secondary"></i>
+                            <h5>لوحة الأرباح والخسائر</h5>
+                            <p class="small text-muted">حسابات الإيرادات من الإعلانات المميزة والاشتراكات.</p>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="salariesSection" role="tabpanel">
+                        <div class="card p-5 text-center text-muted">
+                            <i class="bi bi-wallet2 fs-1 mb-2 text-secondary"></i>
+                            <h5>إدارة مرتبات طاقم العمل</h5>
+                            <p class="small text-muted">متابعة مرتبات الموظفين وسجلات الصرف الشهرية.</p>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="expensesSection" role="tabpanel">
+                        <div class="card p-5 text-center text-muted">
+                            <i class="bi bi-receipt fs-1 mb-2 text-secondary"></i>
+                            <h5>سجل المصروفات اليومية</h5>
+                            <p class="small text-muted">تسجيل مصروفات التشغيل والسيرفرات والصيانة.</p>
+                        </div>
+                    </div>
+
+                </div>
             </div>
 
         </div>
@@ -281,12 +352,12 @@
                         <td>${new Date(ad.created_at).toLocaleDateString('ar-EG')}</td>
                         <td class="text-center">
                             <button class="btn btn-sm btn-success mb-1" onclick="approveAd('${ad.id}')">اعتماد</button>
-                            <button class="btn btn-sm btnية btn-danger mb-1" onclick="rejectAd('${ad.id}')">رفض</button>
+                            <button class="btn btn-sm btn-danger mb-1" onclick="rejectAd('${ad.id}')">رفض</button>
                         </td>
                     </tr>
                 `).join('');
             } else {
-                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4">لا توجد إعلانات معلقة حالياً.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4">لا توجد إعلانات معلقة حالياً. المنصة نظيفة تماماً!</td></tr>';
             }
         }
 
