@@ -264,17 +264,14 @@
             });
         }
     </script>
-    <!-- هنا نهاية محتوى الصفحة والمنتجات والتصميم -->
-    
-    <!-- سكربت جلب الإعلانات من Supabase وعرضها تلقائياً -->
-    <script>
-        const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
-        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+   <script>
+        const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxq0VLujbtAXcUg_K5qf1rSB';
         const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         async function fetchAds() {
             const container = document.getElementById('ads-container');
-            if (!container) return; // لو الحاوية مش موجودة في الصفحة ميكملش
+            if (!container) return;
             
             try {
                 const { data: ads, error } = await db
@@ -288,7 +285,7 @@
                     return; 
                 }
 
-                container.innerHTML = ''; // تفريغ القسم وعرض الإعلانات الحقيقية
+                container.innerHTML = ''; 
 
                 ads.forEach(ad => {
                     const adCard = `
@@ -317,7 +314,6 @@
             }
         }
 
-        // تشغيل الدالة فور تحميل الصفحة
         fetchAds();
     </script>
 
