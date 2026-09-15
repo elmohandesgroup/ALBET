@@ -29,7 +29,7 @@
             padding: 20px;
         }
 
-        /* 1. الهيدر العلوي (مطابق للصورة بالمللي: اللوجو يمين والخروج شمال) */
+        /* 1. الهيدر العلوي */
         .admin-header {
             background: #111827;
             color: white;
@@ -69,25 +69,15 @@
             background-color: #d9532b;
         }
 
-        /* 2. تخطيط الصفحة الرئيسي (محتوى شمال - سايدبار يمين) */
+        /* 2. التخطيط الرئيسي: السايدبار يمين والمحتوى شمال */
         .main-dashboard-layout {
             display: flex;
             gap: 20px;
             align-items: flex-start;
+            flex-direction: row; /* يضمن الترتيب الصح: يمين سايدبار، شمال محتوى */
         }
 
-        /* الإطار الكبير للمحتوى الرئيسي (شمال) */
-        .content-frame-box {
-            flex-grow: 1;
-            background: white;
-            border: 2px solid #111827;
-            border-radius: 14px;
-            padding: 20px;
-            min-height: 600px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
-        }
-
-        /* السايدبار الجانبي (يمين - مطابق للصورة) */
+        /* السايدبار الجانبي (في اليمين تماماً) */
         .sidebar-box {
             width: 260px;
             background: white;
@@ -108,8 +98,6 @@
             align-items: center;
             justify-content: space-between;
         }
-        
-        /* أزرار القائمة الجانبية (كل زرار يوديك لصفحة مستقلة) */
         .sidebar-menu-list {
             display: flex;
             flex-direction: column;
@@ -134,7 +122,6 @@
             background-color: #f1f5f9;
             color: #0f172a;
         }
-        /* الزرار النشط (مراجعة الإعلانات افتراضياً) */
         .side-btn.active {
             background-color: #fef2f2;
             color: #dc2626;
@@ -150,7 +137,18 @@
             background-color: #dc2626;
         }
 
-        /* تنسيق الجدول داخل الإطار */
+        /* منطقة المحتوى الكبيرة (في الشمال تماماً) */
+        .content-frame-box {
+            flex-grow: 1;
+            background: white;
+            border: 2px solid #111827;
+            border-radius: 14px;
+            padding: 20px;
+            min-height: 600px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+        }
+
+        /* تنسيق الجدول */
         .table th {
             background-color: #f8fafc;
             color: #475569;
@@ -178,25 +176,64 @@
 
     <!-- الهيدر العلوي -->
     <div class="admin-header">
+        <!-- اللوجو والاسم في أقصى اليمين -->
+        <div class="admin-brand">
+            <img src="logo192.png" alt="متجر البيت" class="admin-logo">
+            <div>
+                <h3 class="m-0 fw-bold fs-6 text-start">متجر البيت</h3>
+                <small class="text-light opacity-75" style="font-size: 0.75rem;">لوحة تحكم المدير العام - albet.store</small>
+            </div>
+        </div>
+
         <!-- زر تسجيل الخروج في أقصى الشمال -->
         <button class="btn-logout" onclick="logoutAdmin()">
             تسجيل الخروج <i class="bi bi-box-arrow-left ms-1"></i>
         </button>
-        
-        <!-- اللوجو والاسم في أقصى اليمين -->
-        <div class="admin-brand">
-            <div>
-                <h3 class="m-0 fw-bold fs-6 text-end">متجر البيت</h3>
-                <small class="text-light opacity-75" style="font-size: 0.75rem;">لوحة تحكم المدير العام - albet.store</small>
-            </div>
-            <img src="logo192.png" alt="متجر البيت" class="admin-logo">
-        </div>
     </div>
 
-    <!-- التخطيط الرئيسي (الشمال محتوى / اليمين سايدبار) -->
+    <!-- التخطيط الرئيسي (السايدبار يمين والمحتوى شمال) -->
     <div class="main-dashboard-layout">
         
-        <!-- 1. منطقة المحتوى الكبيرة (في الشمال) -->
+        <!-- 1. القائمة الجانبية (في اليمين) -->
+        <div class="sidebar-box">
+            <div class="sidebar-title">
+                <span>أقسام الإدارة والتقارير الشاملة</span>
+                <i class="bi bi-grid-fill text-dark"></i>
+            </div>
+            
+            <div class="sidebar-menu-list">
+                <a href="admin-dashboard.html" class="side-btn active">
+                    <span>مراجعة الإعلانات</span>
+                    <span class="badge-dot"></span>
+                </a>
+                <a href="staff.html" class="side-btn">
+                    <span>إضافة موظف</span>
+                    <span class="badge-dot"></span>
+                </a>
+                <a href="categories.html" class="side-btn">
+                    <span>إضافة قسم</span>
+                    <span class="badge-dot"></span>
+                </a>
+                <a href="daily-report.html" class="side-btn">
+                    <span>تقرير اليوم</span>
+                    <span class="badge-dot"></span>
+                </a>
+                <a href="profits.html" class="side-btn">
+                    <span>الأرباح والخسائر</span>
+                    <span class="badge-dot"></span>
+                </a>
+                <a href="salaries.html" class="side-btn">
+                    <span>المرتبات</span>
+                    <span class="badge-dot"></span>
+                </a>
+                <a href="expenses.html" class="side-btn">
+                    <span>المصروفات</span>
+                    <span class="badge-dot"></span>
+                </a>
+            </div>
+        </div>
+
+        <!-- 2. منطقة المحتوى الكبيرة (في الشمال) -->
         <div class="content-frame-box">
             <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
                 <span class="fw-bold fs-6 text-secondary"><i class="bi bi-list-check ms-1"></i> الإعلانات المعلقة والإيصالات المالية</span>
@@ -222,58 +259,6 @@
                         <tr><td colspan="7" class="text-center text-muted py-5">جاري التحميل...</td></tr>
                     </tbody>
                 </table>
-            </div>
-        </div>
-
-        <!-- 2. القائمة الجانبية (في اليمين - كل زرار يربط بصفحة مستقلة) -->
-        <div class="sidebar-box">
-            <div class="sidebar-title">
-                <span>أقسام الإدارة والتقارير الشاملة</span>
-                <i class="bi bi-grid-fill text-dark"></i>
-            </div>
-            
-            <div class="sidebar-menu-list">
-                <!-- زرار مراجعة الإعلانات (الصفحة الحالية) -->
-                <a href="admin-dashboard.html" class="side-btn active">
-                    <span class="badge-dot"></span>
-                    <span>مراجعة الإعلانات</span>
-                </a>
-                
-                <!-- زرار إضافة موظف (يربط بصفحة مستقلة staff.html) -->
-                <a href="staff.html" class="side-btn">
-                    <span class="badge-dot"></span>
-                    <span>إضافة موظف</span>
-                </a>
-                
-                <!-- زرار إضافة قسم (يربط بصفحة مستقلة categories.html) -->
-                <a href="categories.html" class="side-btn">
-                    <span class="badge-dot"></span>
-                    <span>إضافة قسم</span>
-                </a>
-                
-                <!-- زرار تقرير اليوم (يربط بصفحة مستقلة daily-report.html) -->
-                <a href="daily-report.html" class="side-btn">
-                    <span class="badge-dot"></span>
-                    <span>تقرير اليوم</span>
-                </a>
-                
-                <!-- زرار الأرباح والخسائر (يربط بصفحة مستقلة profits.html) -->
-                <a href="profits.html" class="side-btn">
-                    <span class="badge-dot"></span>
-                    <span>الأرباح والخسائر</span>
-                </a>
-                
-                <!-- زرار المرتبات (يربط بصفحة مستقلة salaries.html) -->
-                <a href="salaries.html" class="side-btn">
-                    <span class="badge-dot"></span>
-                    <span>المرتبات</span>
-                </a>
-                
-                <!-- زرار المصروفات (يربط بصفحة مستقلة expenses.html) -->
-                <a href="expenses.html" class="side-btn">
-                    <span class="badge-dot"></span>
-                    <span>المصروفات</span>
-                </a>
             </div>
         </div>
 
