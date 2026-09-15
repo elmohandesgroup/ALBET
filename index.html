@@ -264,5 +264,64 @@
             });
         }
     </script>
+    <!-- هنا نهاية محتوى الصفحة والمنتجات والتصميم -->
+    
+    <!-- سكربت جلب الإعلانات من Supabase وعرضها تلقائياً -->
+    <script>
+        const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function fetchAds() {
+            const container = document.getElementById('ads-container');
+            if (!container) return; // لو الحاوية مش موجودة في الصفحة ميكملش
+            
+            try {
+                const { data: ads, error } = await db
+                    .from('ads')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                if (!ads || ads.length === 0) {
+                    return; 
+                }
+
+                container.innerHTML = ''; // تفريغ القسم وعرض الإعلانات الحقيقية
+
+                ads.forEach(ad => {
+                    const adCard = `
+                        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
+                            <div class="relative rounded-xl overflow-hidden mb-3 bg-gray-100 h-48 md:h-64">
+                                <span class="absolute top-2 right-2 bg-emerald-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow z-10">جديد</span>
+                                <img src="${ad.image_url}" alt="${ad.title}" class="w-full h-full object-cover">
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-start">
+                                    <h4 class="font-bold text-gray-800 text-sm md:text-base">${ad.title}</h4>
+                                    <span class="text-orange-600 font-black text-sm md:text-base">${ad.price.toLocaleString()} ج.م</span>
+                                </div>
+                                <p class="text-xs text-gray-500 line-clamp-2">${ad.description}</p>
+                                <a href="https://wa.me/${ad.phone}?text=${encodeURIComponent('مرحباً، أريد الاستفسار عن إعلانك: ' + ad.title)}" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm">
+                                    <span>تواصل مع البائع عبر واتساب</span>
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                    container.innerHTML += adCard;
+                });
+
+            } catch (err) {
+                console.error('خطأ في جلب الإعلانات:', err.message);
+            }
+        }
+
+        // تشغيل الدالة فور تحميل الصفحة
+        fetchAds();
+    </script>
+
+</body>
+</html>
 </body>
 </html>
