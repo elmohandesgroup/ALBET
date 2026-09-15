@@ -265,13 +265,11 @@
                         <input type="hidden" id="editingCategoryId">
                         
                         <div class="row g-3 align-items-end">
-                            <!-- اسم القسم -->
                             <div class="col-md-3">
                                 <label class="form-label fw-bold" style="font-size: 0.8rem;">اسم القسم</label>
                                 <input type="text" id="categoryName" class="form-control" placeholder="مثال: عقارات، سيارات..." required>
                             </div>
 
-                            <!-- نوع القسم (رئيسي أو فرعي) -->
                             <div class="col-md-3">
                                 <label class="form-label fw-bold" style="font-size: 0.8rem;">نوع القسم</label>
                                 <div class="d-flex gap-3 mt-1">
@@ -286,7 +284,6 @@
                                 </div>
                             </div>
 
-                            <!-- اختيار القسم الرئيسي (يظهر فقط لو فرعي) -->
                             <div class="col-md-3" id="parentSelectWrapper" style="display: none;">
                                 <label class="form-label fw-bold text-danger" style="font-size: 0.8rem;">اختر القسم الرئيسي الأب</label>
                                 <select id="parentCategorySelect" class="form-select border-danger">
@@ -294,7 +291,6 @@
                                 </select>
                             </div>
 
-                            <!-- رفع الصورة -->
                             <div class="col-md-3">
                                 <label class="form-label fw-bold" style="font-size: 0.8rem;">صورة القسم (WebP)</label>
                                 <div class="d-flex align-items-center gap-2">
@@ -342,7 +338,7 @@
 
     </div>
 
-    <!-- نافذة منبثقة مخصصة للرسائل في منتصف الشاشة (مودال بلولو متجر البيت) -->
+    <!-- نافذة منبثقة مخصصة في منتصف الشاشة -->
     <div class="modal fade" id="customAlertModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" style="max-width: 360px;">
             <div class="modal-content border-0 shadow-lg rounded-4 text-center p-3">
@@ -358,13 +354,12 @@
         </div>
     </div>
 
-    <!-- المكتبات والبرمجيات -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <script>
         const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
-       const SUPABASE_KEY = 'sb_publishable_he-h5ysxqK0VLuJbtAXcUg_K5qf1rSB';
+        const SUPABASE_KEY = 'sb_publishable_he-h5ysxqK0VLuJbtAXcUg_K5qf1rSB';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let allCategories = [];
@@ -373,14 +368,12 @@
             loadCategories();
         };
 
-        // دالة إظهار رسالة منبثقة في منتصف الشاشة مع اللوجو
         function showCustomAlert(message) {
             document.getElementById('customAlertMessage').innerText = message;
             const modal = new bootstrap.Modal(document.getElementById('customAlertModal'));
             modal.show();
         }
 
-        // التحكم في ظهور قائمة الأقسام الرئيسية بناءً على اختيار رئيسي أو فرعي
         function toggleParentSelect() {
             const isSub = document.getElementById('typeSub').checked;
             const wrapper = document.getElementById('parentSelectWrapper');
@@ -441,7 +434,7 @@
                             <td>${new Date(cat.created_at).toLocaleDateString('ar-EG')}</td>
                             <td class="text-center">
                                 <button class="btn btn-sm btn-primary px-2 py-1 ms-1" style="font-size:0.72rem;" onclick="editCategory('${cat.id}')">تعديل</button>
-                                <button class="btn btn-sm btn-danger px-2 py-1" style="font-size:0.72rem;" onclick="deleteCategory('${cat.id}')">حذف</button>
+                                <button class="btn btn-sm btn-danger px-2 py-1" style="font-size:0.72rem;" onclick="deleteCategory('${cat.id}')">حذف</i></button>
                             </td>
                         </tr>
                     `;
