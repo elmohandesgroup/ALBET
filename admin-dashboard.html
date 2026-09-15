@@ -29,19 +29,35 @@
             padding: 20px;
         }
 
-        /* 1. الهيدر العلوي (اللوجو يمين، والخروج شمال) */
-        .admin-header {
+        /* التصميم العام القائم على عمودين رئيسيين (يمين وشمال) */
+        .page-grid-container {
+            display: grid;
+            grid-template-columns: 270px 1fr; /* العمود اليمين للسايدبار، والعمود الشمال للمحتوى الكبير */
+            gap: 20px;
+            align-items: start;
+        }
+
+        /* العمود الأيمن (اللوجو وتحته السايدبار) */
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* العمود الأيسر (زر الخروج وتحته المحتوى الكبير) */
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* 1. الهيدر الأيمن (اللوجو واسم المنصة) */
+        .admin-brand-box {
             background: #111827;
             color: white;
-            padding: 15px 25px;
+            padding: 15px 20px;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            margin-bottom: 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .admin-brand {
             display: flex;
             align-items: center;
             gap: 15px;
@@ -53,6 +69,18 @@
             background: white;
             padding: 4px;
             border-radius: 8px;
+        }
+
+        /* 2. الهيدر الأيسر (زر تسجيل الخروج) */
+        .admin-logout-box {
+            background: #111827;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
         }
         .btn-logout {
             background-color: #e76f51;
@@ -69,38 +97,14 @@
             background-color: #d9532b;
         }
 
-        /* 2. التخطيط الرئيسي (السايدبار يمين، المحتوى شمال - بدون انعكاسات خاطئة) */
-        .main-dashboard-layout {
-            display: flex;
-            gap: 20px;
-            align-items: flex-start;
-            flex-direction: row; /* الترتيب الطبيعي: الـ HTML يبدأ بالسايدبار يمين ثم المحتوى شمال */
-        }
-
-        /* السايدبار الجانبي (في اليمين تماماً) */
+        /* السايدبار الجانبي (تحت اللوجو مباشرة في اليمين) */
         .sidebar-box {
-            width: 270px;
             background: white;
             border: 2px solid #111827;
             border-radius: 14px;
             padding: 15px 12px;
-            flex-shrink: 0;
             box-shadow: 0 4px 20px rgba(0,0,0,0.02);
-            order: 1; /* يضمن وضعه يمين */
         }
-
-        /* منطقة المحتوى الكبيرة (في الشمال تماماً) */
-        .content-frame-box {
-            flex-grow: 1;
-            background: white;
-            border: 2px solid #111827;
-            border-radius: 14px;
-            padding: 20px;
-            min-height: 600px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
-            order: 2; /* يضمن وضعه شمال */
-        }
-
         .sidebar-title {
             font-size: 0.8rem;
             font-weight: 700;
@@ -162,6 +166,16 @@
             background-color: #e76f51;
         }
 
+        /* منطقة المحتوى الكبيرة (تحت زر الخروج مباشرة في الشمال) */
+        .content-frame-box {
+            background: white;
+            border: 2px solid #111827;
+            border-radius: 14px;
+            padding: 20px;
+            min-height: 600px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+        }
+
         /* تنسيق جدول الإعلانات */
         .table th {
             background-color: #f8fafc;
@@ -188,125 +202,130 @@
 </head>
 <body>
 
-    <!-- الهيدر العلوي -->
-    <div class="admin-header">
-        <!-- اللوجو والاسم في أقصى اليمين -->
-        <div class="admin-brand">
-            <img src="logo192.png" alt="متجر البيت" class="admin-logo">
-            <div>
-                <h3 class="m-0 fw-bold fs-6 text-start">متجر البيت</h3>
-                <small class="text-light opacity-75" style="font-size: 0.72rem;">لوحة تحكم المدير العام - albet.store</small>
-            </div>
-        </div>
-
-        <!-- زر تسجيل الخروج في أقصى الشمال -->
-        <button class="btn-logout" onclick="logoutAdmin()">
-            تسجيل الخروج <i class="bi bi-box-arrow-left ms-1"></i>
-        </button>
-    </div>
-
-    <!-- التخطيط الرئيسي -->
-    <div class="main-dashboard-layout">
+    <!-- التخطيط الشبكي العام (عن طريق Grid مقسوم لعمودين يمين وشمال) -->
+    <div class="page-grid-container">
         
-        <!-- 1. القائمة الجانبية (في اليمين) -->
-        <div class="sidebar-box">
-            <div class="sidebar-title">
-                <span>أقسام الإدارة والتقارير الشاملة</span>
-                <i class="bi bi-grid-fill text-dark"></i>
+        <!-- العمود الأيمن: (اللوجو فوق وتحته السايدبار) -->
+        <div class="right-column">
+            <!-- 1. اللوجو في اليمين -->
+            <div class="admin-brand-box">
+                <img src="logo192.png" alt="متجر البيت" class="admin-logo">
+                <div>
+                    <h3 class="m-0 fw-bold fs-6 text-start">متجر البيت</h3>
+                    <small class="text-light opacity-75" style="font-size: 0.72rem;">لوحة تحكم المدير العام - albet.store</small>
+                </div>
             </div>
-            
-            <div class="sidebar-menu-list">
-                <!-- مراجعة الإعلانات (نشط) -->
-                <a href="admin-dashboard.html" class="side-pill-btn active">
-                    <div class="side-pill-content">
-                        <i class="bi bi-shield-check"></i>
-                        <span>مراجعة الإعلانات</span>
-                    </div>
-                    <span class="side-dot-bullet"></span>
-                </a>
+
+            <!-- 2. السايدبار تحت اللوجو مباشرة -->
+            <div class="sidebar-box">
+                <div class="sidebar-title">
+                    <span>أقسام الإدارة والتقارير الشاملة</span>
+                    <i class="bi bi-grid-fill text-dark"></i>
+                </div>
                 
-                <!-- إضافة موظف -->
-                <a href="staff.html" class="side-pill-btn">
-                    <div class="side-pill-content">
-                        <i class="bi bi-people"></i>
-                        <span>إضافة موظف</span>
-                    </div>
-                    <span class="side-dot-bullet"></span>
-                </a>
-                
-                <!-- إضافة قسم -->
-                <a href="categories.html" class="side-pill-btn">
-                    <div class="side-pill-content">
-                        <i class="bi bi-folder-plus"></i>
-                        <span>إضافة قسم</span>
-                    </div>
-                    <span class="side-dot-bullet"></span>
-                </a>
-                
-                <!-- تقرير اليوم -->
-                <a href="daily-report.html" class="side-pill-btn">
-                    <div class="side-pill-content">
-                        <i class="bi bi-file-earmark-text"></i>
-                        <span>تقرير اليوم</span>
-                    </div>
-                    <span class="side-dot-bullet"></span>
-                </a>
-                
-                <!-- الأرباح والخسائر -->
-                <a href="profits.html" class="side-pill-btn">
-                    <div class="side-pill-content">
-                        <i class="bi bi-cash-coin"></i>
-                        <span>الأرباح والخسائر</span>
-                    </div>
-                    <span class="side-dot-bullet"></span>
-                </a>
-                
-                <!-- المرتبات -->
-                <a href="salaries.html" class="side-pill-btn">
-                    <div class="side-pill-content">
-                        <i class="bi bi-wallet2"></i>
-                        <span>المرتبات</span>
-                    </div>
-                    <span class="side-dot-bullet"></span>
-                </a>
-                
-                <!-- المصروفات -->
-                <a href="expenses.html" class="side-pill-btn">
-                    <div class="side-pill-content">
-                        <i class="bi bi-receipt"></i>
-                        <span>المصروفات</span>
-                    </div>
-                    <span class="side-dot-bullet"></span>
-                </a>
+                <div class="sidebar-menu-list">
+                    <!-- مراجعة الإعلانات (نشط) -->
+                    <a href="admin-dashboard.html" class="side-pill-btn active">
+                        <div class="side-pill-content">
+                            <i class="bi bi-shield-check"></i>
+                            <span>مراجعة الإعلانات</span>
+                        </div>
+                        <span class="side-dot-bullet"></span>
+                    </a>
+                    
+                    <!-- إضافة موظف -->
+                    <a href="staff.html" class="side-pill-btn">
+                        <div class="side-pill-content">
+                            <i class="bi bi-people"></i>
+                            <span>إضافة موظف</span>
+                        </div>
+                        <span class="side-dot-bullet"></span>
+                    </a>
+                    
+                    <!-- إضافة قسم -->
+                    <a href="categories.html" class="side-pill-btn">
+                        <div class="side-pill-content">
+                            <i class="bi bi-folder-plus"></i>
+                            <span>إضافة قسم</span>
+                        </div>
+                        <span class="side-dot-bullet"></span>
+                    </a>
+                    
+                    <!-- تقرير اليوم -->
+                    <a href="daily-report.html" class="side-pill-btn">
+                        <div class="side-pill-content">
+                            <i class="bi bi-file-earmark-text"></i>
+                            <span>تقرير اليوم</span>
+                        </div>
+                        <span class="side-dot-bullet"></span>
+                    </a>
+                    
+                    <!-- الأرباح والخسائر -->
+                    <a href="profits.html" class="side-pill-btn">
+                        <div class="side-pill-content">
+                            <i class="bi bi-cash-coin"></i>
+                            <span>الأرباح والخسائر</span>
+                        </div>
+                        <span class="side-dot-bullet"></span>
+                    </a>
+                    
+                    <!-- المرتبات -->
+                    <a href="salaries.html" class="side-pill-btn">
+                        <div class="side-pill-content">
+                            <i class="bi bi-wallet2"></i>
+                            <span>المرتبات</span>
+                        </div>
+                        <span class="side-dot-bullet"></span>
+                    </a>
+                    
+                    <!-- المصروفات -->
+                    <a href="expenses.html" class="side-pill-btn">
+                        <div class="side-pill-content">
+                            <i class="bi bi-receipt"></i>
+                            <span>المصروفات</span>
+                        </div>
+                        <span class="side-dot-bullet"></span>
+                    </a>
+                </div>
             </div>
         </div>
 
-        <!-- 2. منطقة المحتوى الكبيرة (في الشمال) -->
-        <div class="content-frame-box">
-            <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
-                <span class="fw-bold fs-6 text-secondary"><i class="bi bi-list-check ms-1"></i> الإعلانات المعلقة والإيصالات المالية</span>
-                <button class="btn btn-sm btn-outline-dark fw-bold px3" onclick="loadPendingAds()" style="font-size: 0.78rem;">
-                    <i class="bi bi-arrow-clockwise ms-1"></i> تحديث
+        <!-- العمود الأيسر: (زر الخروج فوق وتحته المحتوى الكبير) -->
+        <div class="left-column">
+            <!-- 1. زر تسجيل الخروج في الشمال -->
+            <div class="admin-logout-box">
+                <button class="btn-logout" onclick="logoutAdmin()">
+                    تسجيل الخروج <i class="bi bi-box-arrow-left ms-1"></i>
                 </button>
             </div>
 
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead>
-                        <tr>
-                            <th class="text-center">صورة الإعلان</th>
-                            <th class="text-center">إيصال الدفع</th>
-                            <th>عنوان الإعلان</th>
-                            <th>القسم</th>
-                            <th>السعر</th>
-                            <th>تاريخ الرفع</th>
-                            <th class="text-center">الإجراءات</th>
-                        </tr>
-                    </thead>
-                    <tbody id="pendingAdsTableBody">
-                        <tr><td colspan="7" class="text-center text-muted py-5">جاري التحميل...</td></tr>
-                    </tbody>
-                </table>
+            <!-- 2. المحتوى الكبير تحت زر الخروج مباشرة -->
+            <div class="content-frame-box">
+                <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                    <span class="fw-bold fs-6 text-secondary"><i class="bi bi-list-check ms-1"></i> الإعلانات المعلقة والإيصالات المالية</span>
+                    <button class="btn btn-sm btn-outline-dark fw-bold px-3" onclick="loadPendingAds()" style="font-size: 0.78rem;">
+                        <i class="bi bi-arrow-clockwise ms-1"></i> تحديث
+                    </button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th class="text-center">صورة الإعلان</th>
+                                <th class="text-center">إيصال الدفع</th>
+                                <th>عنوان الإعلان</th>
+                                <th>القسم</th>
+                                <th>السعر</th>
+                                <th>تاريخ الرفع</th>
+                                <th class="text-center">الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pendingAdsTableBody">
+                            <tr><td colspan="7" class="text-center text-muted py-5">جاري التحميل...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
