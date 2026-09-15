@@ -22,18 +22,19 @@
     
     <style>
         body {
-            background-color: #f4f7f6;
+            background-color: #f8fafc;
             font-family: 'Cairo', sans-serif;
-            color: #333;
+            color: #1e293b;
         }
-        /* الهيدر الفخم للوحة التحكم */
+        /* الهيدر العلوي الفخم */
         .admin-header {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            background: linear-gradient(135deg, #0f172a 1e293b 100%);
+            background-color: #0f172a;
             color: white;
             padding: 20px 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            margin-bottom: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15);
+            margin-bottom: 25px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -44,76 +45,98 @@
             gap: 15px;
         }
         .admin-logo {
-            width: 50px;
-            height: 50px;
+            width: 55px;
+            height: 55px;
             object-fit: contain;
             background: white;
-            padding: 5px;
-            border-radius: 10px;
+            padding: 6px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
-        /* تصميم الكاردات */
-        .card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.03);
-            margin-bottom: 25px;
-            overflow: hidden;
-        }
-        .card-header {
-            font-weight: 700;
-            padding: 15px 20px;
-            background-color: white;
-            border-bottom: 1px solid #edf2f7;
-        }
-        /* التنقل (Tabs) */
+        
+        /* تظبيط الـ Tabs فوق بشكل شيك */
         .nav-tabs {
-            border-bottom: none;
-            gap: 10px;
-            margin-bottom: 20px;
+            border: none;
+            gap: 12px;
+            margin-bottom: 25px;
         }
         .nav-tabs .nav-link {
-            border: none;
+            border: 1px solid #e2e8f0;
             background: white;
             color: #64748b;
             font-weight: 700;
-            padding: 12px 25px;
-            border-radius: 10px;
+            padding: 12px 24px;
+            border-radius: 12px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-            transition: all 0.2s;
+            transition: all 0.25s ease;
+        }
+        .nav-tabs .nav-link:hover {
+            border-color: #cbd5e1;
+            color: #0f172a;
         }
         .nav-tabs .nav-link.active {
             background: #e76f51;
             color: white;
-            box-shadow: 0 4px 12px rgba(231, 111, 81, 0.3);
+            border-color: #e76f51;
+            box-shadow: 0 4px 15px rgba(231, 111, 81, 0.35);
         }
-        /* الصور والجداول */
-        .proof-img {
-            max-width: 60px;
-            max-height: 60px;
-            cursor: pointer;
-            border-radius: 8px;
-            border: 2px solid #e2e8f0;
-            transition: transform 0.2s;
+
+        /* الكاردات والجداول */
+        .card {
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            margin-bottom: 25px;
+            background: white;
+            overflow: hidden;
         }
-        .proof-img:hover {
-            transform: scale(1.05);
+        .card-header {
+            font-weight: 700;
+            padding: 18px 25px;
+            background-color: #ffffff;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 1.05rem;
         }
-        .ad-img {
-            width: 60px;
-            height: 60px;
-            object-fit: cover;
-            border-radius: 8px;
+        .table {
+            margin-bottom: 0;
         }
-        .table align-middle th {
+        .table th {
             background-color: #f8fafc;
             color: #475569;
             font-weight: 700;
+            padding: 15px;
+            border-bottom: 2px solid #e2e8f0;
         }
-        /* أزرار العمليات */
+        .table td {
+            padding: 15px;
+            vertical-align: middle;
+        }
+        
+        /* الصور والإيصالات */
+        .proof-img {
+            width: 65px;
+            height: 65px;
+            object-fit: cover;
+            cursor: pointer;
+            border-radius: 10px;
+            border: 2px solid #cbd5e1;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .proof-img:hover {
+            transform: scale(1.08);
+            border-color: #e76f51;
+        }
+        .ad-img {
+            width: 65px;
+            height: 65px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
         .btn-action {
             border-radius: 8px;
             font-weight: 600;
-            padding: 6px 12px;
+            padding: 6px 14px;
             font-size: 0.85rem;
         }
     </style>
@@ -128,7 +151,7 @@
                 <img src="logo192.png" alt="متجر البيت" class="admin-logo">
                 <div>
                     <h3 class="m-0 fw-bold fs-5">إمبراطورية متجر البيت</h3>
-                    <small class="text-muted text-light opacity-75">لوحة تحكم المدير العام - albet.store</small>
+                    <small class="text-light opacity-75">لوحة تحكم المدير العام - albet.store</small>
                 </div>
             </div>
             <button class="btn btn-outline-light btn-sm fw-bold px-3 py-2" onclick="logoutAdmin()">
@@ -154,16 +177,16 @@
             
             <!-- القسم الأول: مراجعة الإعلانات والإيصالات المالية -->
             <div class="tab-pane fade show active" id="adsSection" role="tabpanel">
-                <div class="card shadow-sm">
-                    <div class="card-header d-flex justify-content-between align-items-center bg-white py-3">
-                        <span class="fw-bold text-dark"><i class="bi bi-list-check text-primary ms-1"></i> الإعلانات الجديدة بانتظار الاعتماد والتدقيق المالي</span>
-                        <button class="btn btn-sm btn-outline-primary fw-bold" onclick="loadPendingAds()">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span class="text-dark"><i class="bi bi-list-check text-primary ms-1"></i> الإعلانات الجديدة بانتظار الاعتماد والتدقيق المالي</span>
+                        <button class="btn btn-sm btn-outline-primary fw-bold px-3" onclick="loadPendingAds()">
                             <i class="bi bi-arrow-clockwise ms-1"></i> تحديث القائمة
                         </button>
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle mb-0">
+                            <table class="table table-hover align-middle">
                                 <thead>
                                     <tr>
                                         <th class="ps-4">صورة الإعلان</th>
@@ -187,24 +210,24 @@
             <!-- القسم الثاني: إدارة الموظفين -->
             <div class="tab-pane fade" id="staffSection" role="tabpanel">
                 <!-- نموذج إضافة موظف -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-white py-3">
-                        <span class="fw-bold text-dark"><i class="bi bi-person-plus-fill text-success ms-1"></i> إضافة موظف مراجعة جديد وتحديد القسم</span>
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <span class="text-dark"><i class="bi bi-person-plus-fill text-success ms-1"></i> إضافة موظف مراجعة جديد وتحديد القسم</span>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body p-4">
                         <form id="addStaffForm" onsubmit="addNewStaff(event)">
                             <div class="row g-3">
                                 <div class="col-md-3">
-                                    <input type="text" id="staffName" class="form-control" placeholder="اسم الموظف" required>
+                                    <input type="text" id="staffName" class="form-control py-2" placeholder="اسم الموظف" required>
                                 </div>
                                 <div class="col-md-3">
-                                    <input type="email" id="staffEmail" class="form-control" placeholder="البريد الإلكتروني" required>
+                                    <input type="email" id="staffEmail" class="form-control py-2" placeholder="البريد الإلكتروني" required>
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="password" id="staffPassword" class="form-control" placeholder="كلمة المرور المؤقتة" required>
+                                    <input type="password" id="staffPassword" class="form-control py-2" placeholder="كلمة المرور المؤقتة" required>
                                 </div>
                                 <div class="col-md-2">
-                                    <select id="staffCategory" class="form-select" required>
+                                    <select id="staffCategory" class="form-select py-2" required>
                                         <option value="">اختر القسم</option>
                                         <option value="عقارات">عقارات</option>
                                         <option value="سيارات">سيارات</option>
@@ -213,7 +236,7 @@
                                     </select>
                                 </div>
                                 <div class="col-md-2">
-                                    <button type="submit" class="btn btn-success w-100 fw-bold">إضافة وإرسال</button>
+                                    <button type="submit" class="btn btn-success w-100 py-2 fw-bold">إضافة وإرسال</button>
                                 </div>
                             </div>
                         </form>
@@ -221,13 +244,13 @@
                 </div>
 
                 <!-- جدول الموظفين الحاليين -->
-                <div class="card shadow-sm">
-                    <div class="card-header bg-white py-3">
-                        <span class="fw-bold text-dark"><i class="bi bi-people text-secondary ms-1"></i> قائمة الموظفين الحاليين</span>
+                <div class="card">
+                    <div class="card-header">
+                        <span class="text-dark"><i class="bi bi-people text-secondary ms-1"></i> قائمة الموظفين الحاليين</span>
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle mb-0">
+                            <table class="table table-hover align-middle">
                                 <thead>
                                     <tr>
                                         <th class="ps-4">الاسم</th>
@@ -255,9 +278,9 @@
     <script src="staff-management.js"></script>
     
     <script>
-        // إعدادات اتصال Supabase (تأكد من وضع المفتاح الصحيح هنا لو لم يكن معرفاً في ملف خارجي)
+        // إعدادات اتصال Supabase (تأكد من وضع المفتاح الحقيقي الخاص بك بدل placeholder)
         const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
-        const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY'; // استبدل المفتاح لو لزم الأمر
+        const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY'; 
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const staffManager = new StaffManager(supabaseClient);
@@ -280,7 +303,7 @@
                 .order('created_at', { ascending: false });
 
             if (error) {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center text-danger py-4">خطأ في جلب البيانات: ${error.message}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center text-danger py-4">خطأ في الاتصال بقاعدة البيانات: تأكد من مفتاح Supabase صحيح.</td></tr>`;
                 return;
             }
 
@@ -309,7 +332,7 @@
                     `;
                 });
             } else {
-                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-5">لا توجد إعلانات معلقة حالياً. كل شيء مراجع ومنظم!</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-5">لا توجد إعلانات معلقة حالياً. المنصة نظيفة وتحت السيطرة!</td></tr>';
             }
         }
 
@@ -321,7 +344,7 @@
                 .eq('id', adId);
 
             if (!error) {
-                alert('تم اعتماد ونشر الإعلان بنجاح وأصبح مرئياً للزوار!');
+                alert('تم اعتماد ونشر الإعلان بنجاح!');
                 loadPendingAds();
             } else {
                 alert('حدث خطأ أثناء الاعتماد: ' + error.message);
@@ -339,7 +362,7 @@
                 .eq('id', adId);
 
             if (!error) {
-                alert('تم رفض الإعلان.');
+                alert('تم رفض الإعلان وإرسال السبب.');
                 loadPendingAds();
             } else {
                 alert('حدث خطأ: ' + error.message);
@@ -376,7 +399,7 @@
 
         async function addNewStaff(event) {
             event.preventDefault();
-            const name = document.getElementById('staffName').value;
+            const name = document.getElementById('staffName5'] || document.getElementById('staffName').value; // حماية إضافية للحقل
             const email = document.getElementById('staffEmail').value;
             const password = document.getElementById('staffPassword').value;
             const category = document.getElementById('staffCategory').value;
@@ -405,7 +428,7 @@
 
         function logoutAdmin() {
             localStorage.removeItem('isAdminLoggedIn');
-            window.location.href = 'employee-login.html';
+            window.location.href = 'admin-login.html';
         }
     </script>
 </body>
