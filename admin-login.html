@@ -3,171 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسجيل دخول المدير العام الفاخر - متجر البيت</title>
+    <title>تسجيل دخول المدير العام - متجر البيت</title>
     <!-- Bootstrap CSS RTL -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/rtl.min.css">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <!-- Google Font Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         body {
-            background-color: #edf2f7; /* لون خلفية أفتح وأهدأ */
+            background-color: #f8fafc;
             height: 100vh;
             display: flex;
             flex-direction: column;
-            font-family: 'Cairo', sans-serif; /* نفترض إن خط كايرا مفعل في الموقع */
+            font-family: 'Cairo', sans-serif;
+            margin: 0;
+            overflow: hidden;
         }
-        /* هيدر الموقع */
+        /* الهيدر العلوي */
         .site-header {
             background: white;
-            padding: 15px 30px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            padding: 12px 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 3px solid #e76f51; /* لمسة برتقالية */
+            border-bottom: 3px solid #e76f51;
         }
         .header-logo-area {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
         .header-logo-img {
-            height: 40px; /* لوجو صغير في الهيدر */
-            width: auto;
+            height: 45px;
+            width: 45px;
+            object-fit: contain;
         }
         .site-title {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 800;
-            color: #333;
+            color: #2d3748;
             margin: 0;
+            line-height: 1.2;
         }
         .site-subtitle {
             font-size: 0.75rem;
-            color: #888;
+            color: #718096;
             margin: 0;
         }
 
-        /* منطقة المحتوى الرئيسي (الفورم) */
+        /* منطقة المحتوى */
         .main-content-wrapper {
             flex: 1;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 15px;
         }
 
         /* الكارد الفاخر */
         .admin-login-card {
             width: 100%;
-            max-width: 450px;
-            padding: 40px;
+            max-width: 420px;
+            padding: 35px;
             background: white;
             border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 1px solid #edf2f7;
         }
+        
         /* اللوجو الكبير */
         .large-logo-area {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
         .large-logo-img {
-            height: 100px; /* لوجو كبير ومبهر */
-            width: auto;
-            margin-bottom: 10px;
+            height: 75px;
+            width: 75px;
+            object-fit: contain;
+            margin-bottom: 12px;
         }
         .login-title {
-            font-size: 1.5rem;
+            font-size: 1.35rem;
             font-weight: 800;
-            color: #2d3748;
-            margin-bottom: 5px;
+            color: #1a202c;
+            margin-bottom: 3px;
         }
         .login-subtitle {
-            font-size: 0.9rem;
+            font-size: 0.82rem;
             color: #718096;
         }
 
-        /* حقول الإدخال بالأيقونات */
-        .input-group-text {
-            background-color: #f8fafc;
-            border-right: none;
-            color: #a0aec0;
+        /* حقول الإدخال */
+        .form-label {
+            font-weight: 700;
+            color: #4a5568;
+            font-size: 0.88rem;
+            margin-bottom: 0.4rem;
+        }
+        .input-group {
+            direction: ltr; /* لضبط التناسق البرمجي للأيقونات والحقول بالعربي والانجليزي */
         }
         .form-control {
-            border-left: none;
-            padding: 15px;
+            direction: rtl;
+            text-align: right;
+            padding: 12px 15px;
             font-size: 0.95rem;
+            border-color: #cbd5e0;
         }
         .form-control:focus {
-            box-shadow: none;
+            box-shadow: 0 0 0 3px rgba(231, 111, 81, 0.15);
             border-color: #e76f51;
         }
-        .input-group:focus-within .input-group-text {
-             border-color: #e76f51;
-             color: #e76f51;
+        .input-group-text {
+            background-color: #f7fafc;
+            color: #a0aec0;
+            border-color: #cbd5e0;
+            padding: 0 15px;
         }
-        .form-label {
-             font-weight: 600;
-             color: #4a5568;
-             margin-bottom: 0.5rem;
+        .input-group:focus-within .input-group-text {
+            border-color: #e76f51;
+            color: #e76f51;
         }
 
-        /* زر الدخول الجامد */
+        /* زر الدخول */
         .btn-admin {
-            background: linear-gradient(135deg, #e76f51 0%, #d75f41 100%);
+            background: #e76f51;
             color: white;
             border: none;
-            border-radius: 12px;
-            padding: 18px;
-            font-size: 1.1rem;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 1rem;
             font-weight: 700;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(231, 111, 81, 0.3);
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(231, 111, 81, 0.25);
         }
         .btn-admin:hover {
-            background: linear-gradient(135deg, #d75f41 0%, #c74f31 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(231, 111, 81, 0.4);
+            background: #d75f41;
+            transform: translateY(-1px);
         }
-
-        /* تنبيهات */
         .alert {
-            border-radius: 10px;
-            font-size: 0.9rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            padding: 10px;
         }
     </style>
 </head>
 <body>
 
-    <!-- 1. الهيدر العلوي -->
+    <!-- الهيدر العلوي مع اللوجو الفعلي -->
     <header class="site-header">
         <div class="header-logo-area">
-            <img src="path-to-your-header-logo.png" alt="لوجو متجر البيت" class="header-logo-img">
+            <img src="logo192.png" alt="لوجو متجر البيت" class="header-logo-img">
             <div>
                 <h1 class="site-title">متجر البيت</h1>
-                <p class="site-subtitle">المنصة المتكاملة للإعلانات المبوبة</p>
+                <p class="site-subtitle">albet.store</p>
             </div>
         </div>
     </header>
 
-    <!-- 2. منطقة المحتوى الرئيسي (الفورم) -->
+    <!-- منطقة المحتوى الرئيسي -->
     <div class="main-content-wrapper">
         <div class="admin-login-card">
             
-            <!-- 3. اللوجو الكبير والعنوان -->
+            <!-- اللوجو الكبير في منتصف الكارد -->
             <div class="large-logo-area">
-                <img src="path-to-your-large-logo.png" alt="لوجو الإدارة الكبير" class="large-logo-img">
+                <img src="logo192.png" alt="لوجو الإدارة" class="large-logo-img">
                 <h2 class="login-title">لوحة تحكم الإدارة</h2>
-                <p class="login-subtitle">تسجيل دخول المدير العام - albet.store</p>
+                <p class="login-subtitle">تسجيل دخول المدير العام</p>
             </div>
             
-            <!-- 4. نموذج الدخول بالأيقونات -->
+            <!-- نموذج الدخول -->
             <form id="adminLoginForm" onsubmit="handleAdminLogin(event)">
                 
-                <!-- حقل اسم المستخدم مع أيقونة -->
-                <div class="mb-4">
+                <div class="mb-3">
                     <label for="adminUser" class="form-label">اسم المستخدم</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
@@ -175,7 +185,6 @@
                     </div>
                 </div>
                 
-                <!-- حقل كلمة المرور مع أيقونة -->
                 <div class="mb-4">
                     <label for="adminPass" class="form-label">كلمة المرور</label>
                     <div class="input-group">
@@ -184,18 +193,16 @@
                     </div>
                 </div>
                 
-                <button type="submit" class="btn btn-admin w-100 py-3 fw-bold">
+                <button type="submit" class="btn btn-admin w-100 fw-bold">
                     <i class="bi bi-box-arrow-in-left ms-2"></i> تسجيل الدخول الآمن
                 </button>
             </form>
             
-            <!-- 5. مكان التنبيهات -->
-            <div id="adminLoginAlert" class="mt-4 text-center small alert" role="alert" style="display: none;"></div>
+            <div id="adminLoginAlert" class="mt-3 text-center alert" role="alert" style="display: none;"></div>
         </div>
     </div>
 
     <script>
-        // نفس الجافاسكريبت القديم، بس هنعدل التوجيه والإظهار
         function handleAdminLogin(event) {
             event.preventDefault();
             const usernameInput = document.getElementById('adminUser').value.trim();
@@ -206,22 +213,20 @@
             const ADMIN_PASSWORD = "S@ndst0rm79sabry";
 
             if (usernameInput === ADMIN_USERNAME && passwordInput === ADMIN_PASSWORD) {
-                alertDiv.innerHTML = '<i class="bi bi-check-circle-fill ms-1"></i> تم التحقق بنجاح! جاري توجيهك للوحة التحكم...';
-                alertDiv.classList.remove('alert-danger');
-                alertDiv.classList.add('alert-success');
+                alertDiv.innerHTML = '<i class="bi bi-check-circle-fill ms-1"></i> تم التحقق بنجاح! جاري التوجيه...';
+                alertDiv.className = 'mt-3 text-center alert alert-success';
                 alertDiv.style.display = 'block';
                 
                 localStorage.setItem('isAdminLoggedIn', 'true');
 
                 setTimeout(() => {
                     window.location.href = 'admin-dashboard.html';
-                }, 1200); // زودنا الوقت شوية عشان تظهر رسالة النجاح
+                }, 1000);
             } else {
-                alertDiv.innerHTML = '<i class="bi bi-exclamation-triangle-fill ms-1"></i> اسم المستخدم أو كلمة المرور غير صحيحة! يرجى المحاولة مرة أخرى.';
-                alertDiv.classList.remove('alert-success');
-                alertDiv.classList.add('alert-danger');
+                alertDiv.innerHTML = '<i class="bi bi-exclamation-triangle-fill ms-1"></i> اسم المستخدم أو كلمة المرور غير صحيحة!';
+                alertDiv.className = 'mt-3 text-center alert alert-danger';
                 alertDiv.style.display = 'block';
-                document.getElementById('adminPass').value = ''; // مسح الباسورد عند الخطأ
+                document.getElementById('adminPass').value = '';
             }
         }
     </script>
