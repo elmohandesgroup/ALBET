@@ -175,16 +175,39 @@
             object-fit: cover;
         }
 
-        .table th {
-            background-color: #f8fafc;
-            color: #475569;
-            font-weight: 700;
-            font-size: 0.82rem;
-            border-bottom: 2px solid #e2e8f0;
+        /* تصميم بطاقات الأقسام الهرمية (الرئيسي والفرعي جنبه) */
+        .main-category-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            background: #ffffff;
+            padding: 16px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.01);
         }
-        .table td {
-            font-size: 0.82rem;
-            vertical-align: middle;
+        .main-category-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+        .sub-categories-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+            padding-right: 15px;
+        }
+        .sub-category-chip {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
         }
         .form-control, .form-select {
             font-size: 0.85rem;
@@ -312,27 +335,15 @@
                     </form>
                 </div>
 
-                <!-- جدول الأقسام -->
+                <!-- الهيكل المرئي للأقسام (كل رئيسي وبجانبه/تحته فرعياته) -->
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h6 class="fw-bold text-dark m-0">الأقسام المتاحة حالياً (الرئيسية والفرعية)</h6>
+                    <h6 class="fw-bold text-dark m-0">هيكلة الأقسام (الرئيسية والأقسام الفرعية التابعة لها)</h6>
                 </div>
-                <div class="table-responsive bg-white rounded-3 border">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead>
-                            <tr>
-                                <th class="text-center">#</th>
-                                <th class="text-center">الصورة</th>
-                                <th>اسم القسم</th>
-                                <th>نوع القسم</th>
-                                <th>تاريخ الإنشاء</th>
-                                <th class="text-center">الإجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="categoriesTableBody">
-                            <tr><td colspan="6" class="text-center text-muted py-4">جاري تحميل الأقسام...</td></tr>
-                        </tbody>
-                    </table>
+                
+                <div id="hierarchicalCategoriesContainer">
+                    <div class="text-center text-muted py-4">جاري تحميل الأقسام...</div>
                 </div>
+
             </div>
         </div>
 
@@ -400,18 +411,19 @@
         }
 
         async function loadCategories() {
-            const tbody = document.getElementById('categoriesTableBody');
+            const container = document.getElementById('hierarchicalCategoriesContainer');
             const parentSelect = document.getElementById('parentCategorySelect');
             
             const { data, error } = await supabaseClient.from('categories').select('*').order('id', { ascending: false });
             
             if (error) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center text-danger py-3">خطأ في الاتصال بقاعدة البيانات</td></tr>`;
+                container.innerHTML = `<div class="text-center text-danger py-3">خطأ في الاتصال بقاعدة البيانات</div>`;
                 return;
             }
             
             allCategories = data || [];
 
+            // تعبئة قائمة الأقسام الرئيسية في الـ Select الخاص بالإضافة
             parentSelect.innerHTML = '<option value="">-- اختر القسم الأب --</option>';
             allCategories.forEach(cat => {
                 if (!cat.parent_id) {
@@ -419,67 +431,58 @@
                 }
             });
 
-            if (allCategories.length > 0) {
-                tbody.innerHTML = allCategories.map((cat, index) => {
-                    const parentCat = allCategories.find(p => p.id == cat.parent_id);
-                    const typeLabel = parentCat ? `<span class="badge bg-secondary">فرعي (يتبع: ${parentCat.name})</span>` : `<span class="badge bg-success">رئيسي</span>`;
-                    const imgTag = cat.image_url ? `<img src="${cat.image_url}" width="35" height="35" class="rounded object-fit-cover">` : `<span class="text-muted small">بدون</span>`;
+            // تصفية الأقسام الرئيسية والفرعية وعرضها بالشكل الهرمي المطلوب
+            const mainCategories = allCategories.filter(cat => !cat.parent_id);
+
+            if (mainCategories.length > 0) {
+                container.innerHTML = mainCategories.map(mainCat => {
+                    const subCategories = allCategories.filter(sub => sub.parent_id == mainCat.id);
+                    const mainImg = mainCat.image_url ? `<img src="${mainCat.image_url}" width="40" height="40" class="rounded object-fit-cover border">` : `<div class="bg-light rounded d-flex align-items-center justify-content-center border" style="width:40px;height:40px;"><i class="bi bi-folder text-muted"></i></div>`;
                     
+                    let subsHtml = '';
+                    if (subCategories.length > 0) {
+                        subsHtml = `
+                            <div class="sub-categories-grid">
+                                ${subCategories.map(sub => {
+                                    const subImg = sub.image_url ? `<img src="${sub.image_url}" width="28" height="28" class="rounded object-fit-cover border">` : `<i class="bi bi-folder2 text-muted"></i>`;
+                                    return `
+                                        <div class="sub-category-chip">
+                                            ${subImg}
+                                            <span>${sub.name}</span>
+                                            <div class="ms-auto d-flex gap-1">
+                                                <button class="btn btn-sm text-primary p-0" onclick="editCategory('${sub.id}')" title="تعديل"><i class="bi bi-pencil-square" style="font-size:0.75rem;"></i></button>
+                                                <button class="btn btn-sm text-danger p-0" onclick="deleteCategory('${sub.id}')" title="حذف"><i class="bi bi-trash" style="font-size:0.75rem;"></i></button>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        `;
+                    } else {
+                        subsHtml = `<div class="text-muted small mt-2" style="font-size:0.78rem; padding-right:15px;">لا توجد أقسام فرعية تابعة لهذا القسم حالياً.</div>`;
+                    }
+
                     return `
-                        <tr>
-                            <td class="text-center fw-bold">${index + 1}</td>
-                            <td class="text-center">${imgTag}</td>
-                            <td class="fw-bold">${cat.name}</td>
-                            <td>${typeLabel}</td>
-                            <td>${new Date(cat.created_at).toLocaleDateString('ar-EG')}</td>
-                            <td class="text-center">
-                                <button class="btn btn-sm btn-primary px-2 py-1 ms-1" style="font-size:0.72rem;" onclick="editCategory('${cat.id}')">تعديل</button>
-                                <button class="btn btn-sm btn-danger px-2 py-1" style="font-size:0.72rem;" onclick="deleteCategory('${cat.id}')">حذف</i></button>
-                            </td>
-                        </tr>
+                        <div class="main-category-card">
+                            <div class="main-category-header">
+                                <div class="d-flex align-items-center gap-3">
+                                    ${mainImg}
+                                    <div>
+                                        <h6 class="fw-bold m-0 text-dark" style="font-size:0.9rem;">${mainCat.name}</h6>
+                                        <span class="badge bg-success" style="font-size:0.65rem;">قسم رئيسي</span>
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-sm btn-outline-primary py-1 px-2" style="font-size:0.75rem;" onclick="editCategory('${mainCat.id}')">تعديل</button>
+                                    <button class="btn btn-sm btn-outline-danger py-1 px-2" style="font-size:0.75rem;" onclick="deleteCategory('${mainCat.id}')">حذف</button>
+                                </div>
+                            </div>
+                            ${subsHtml}
+                        </div>
                     `;
                 }).join('');
             } else {
-                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">لا توجد أقسام مضافة حتى الآن.</td></tr>';
-            }
-        }
-
-        async function saveCategory(e) {
-            e.preventDefault();
-            const id = document.getElementById('editingCategoryId').value;
-            const name = document.getElementById('categoryName').value;
-            const isSub = document.getElementById('typeSub').checked;
-            const parent_id = isSub ? document.getElementById('parentCategorySelect').value : null;
-            const image_url = document.getElementById('categoryImageUrl').value;
-
-            if (isSub && !parent_id) {
-                showCustomAlert('يرجى تحديد القسم الرئيسي الأب لهذا القسم الفرعي!');
-                return;
-            }
-
-            const categoryData = { name, parent_id };
-            if (image_url) {
-                categoryData.image_url = image_url;
-            }
-
-            if (id) {
-                const { error } = await supabaseClient.from('categories').update(categoryData).eq('id', id);
-                if (error) {
-                    showCustomAlert('حدث خطأ أثناء تعديل القسم!');
-                } else {
-                    showCustomAlert('تم تعديل القسم بنجاح!');
-                    resetForm();
-                    loadCategories();
-                }
-            } else {
-                const { error } = await supabaseClient.from('categories').insert([categoryData]);
-                if (error) {
-                    showCustomAlert('حدث خطأ أثناء إضافة القسم!');
-                } else {
-                    showCustomAlert('تم إضافة القسم بنجاح!');
-                    resetForm();
-                    loadCategories();
-                }
+                container.innerHTML = '<div class="text-center text-muted py-4">لا توجد أقسام مضافة حتى الآن.</div>';
             }
         }
 
@@ -520,6 +523,45 @@
             document.getElementById('formTitle').innerText = 'إضافة قسم جديد';
             document.getElementById('saveBtn').innerText = 'حفظ القسم';
             document.getElementById('cancelEditBox').style.display = 'none';
+        }
+
+        async function saveCategory(e) {
+            e.preventDefault();
+            const id = document.getElementById('editingCategoryId').value;
+            const name = document.getElementById('categoryName').value;
+            const isSub = document.getElementById('typeSub').checked;
+            const parent_id = isSub ? document.getElementById('parentCategorySelect').value : null;
+            const image_url = document.getElementById('categoryImageUrl').value;
+
+            if (isSub && !parent_id) {
+                showCustomAlert('يرجى تحديد القسم الرئيسي الأب لهذا القسم الفرعي!');
+                return;
+            }
+
+            const categoryData = { name, parent_id };
+            if (image_url) {
+                categoryData.image_url = image_url;
+            }
+
+            if (id) {
+                const { error } = await supabaseClient.from('categories').update(categoryData).eq('id', id);
+                if (error) {
+                    showCustomAlert('حدث خطأ أثناء تعديل القسم!');
+                } else {
+                    showCustomAlert('تم تعديل القسم بنجاح!');
+                    resetForm();
+                    loadCategories();
+                }
+            } else {
+                const { error } = await supabaseClient.from('categories').insert([categoryData]);
+                if (error) {
+                    showCustomAlert('حدث خطأ أثناء إضافة القسم!');
+                } else {
+                    showCustomAlert('تم إضافة القسم بنجاح!');
+                    resetForm();
+                    loadCategories();
+                }
+            }
         }
 
         async function deleteCategory(id) {
