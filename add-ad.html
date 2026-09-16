@@ -34,7 +34,7 @@
         </div>
     </header>
 
-    <!-- نافذة منبه مخصصة (Custom Modal) -->
+    <!-- نافذة تنبيه مخصصة -->
     <div id="customModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden transition-opacity duration-300">
         <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center transform scale-95 transition-transform duration-300 border border-orange-100">
             <div class="w-16 h-16 bg-orange-50 border-2 border-orange-200 text-orange-600 rounded-2xl mx-auto flex items-center justify-center mb-4 shadow-inner overflow-hidden p-1">
@@ -65,11 +65,19 @@
                     <input type="text" id="adTitle" required placeholder="مثال: طقم مطبخ تركي بحالة الجديد" class="w-full p-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 outline-none">
                 </div>
 
-                <!-- السعر والقسم -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- السعر، الحالة، والقسم (3 أعمدة بالتصميم المطلوب) -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-gray-700 mb-1.5">سعر المنتج (جنيه مصري) *</label>
                         <input type="number" id="adPrice" required placeholder="مثال: 3500" class="w-full p-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1.5">الحالة *</label>
+                        <select id="adCondition" class="w-full p-3 border border-gray-200 rounded-xl text-sm bg-white focus:ring-2 focus:ring-orange-500 outline-none">
+                            <option value="جديد">جديد</option>
+                            <option value="استعمال خفيف">استعمال خفيف</option>
+                            <option value="مستعمل">مستعمل</option>
+                        </select>
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-gray-700 mb-1.5">القسم *</label>
@@ -90,18 +98,38 @@
                     <input type="text" id="adPhone" required placeholder="مثال: 01227802300" class="w-full p-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 outline-none">
                 </div>
 
-                <!-- تفاصيل الدفع والمحفظة -->
+                <!-- تفاصيل الدفع والمحفظة (التصميم المرتب) -->
                 <div class="bg-orange-50 border border-orange-200 p-4 rounded-xl text-xs space-y-3">
                     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                         <p class="font-bold text-orange-800 text-sm">طريقة الدفع (رسوم النشر والمراجعة):</p>
                         <span class="bg-red-500 text-white font-bold px-2.5 py-1 rounded-md text-[11px] shadow-sm">عرض خاص: خصم 70% لمدة شهر كامل</span>
                     </div>
                     
-                    <p class="text-gray-600 leading-relaxed">
-                        برجاء تحويل مبلغ (<span class="font-bold text-orange-600 text-sm line-through">170 ج.م</span> <span class="font-bold text-orange-600 text-sm bg-orange-100 px-1.5 py-0.5 rounded text-orange-700">50 ج.م</span>) إلى رقم المحفظة: <span class="font-bold text-black bg-white px-2.5 py-1 rounded select-all border text-sm inline-block my-1">01227802300</span> ثم إدخال رقم هاتفك المحول منه أدناه للمطابقة.
-                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                        <div class="md:col-span-2">
+                            <p class="text-gray-600 leading-relaxed">
+                                برجاء تحويل مبلغ (<span class="font-bold text-orange-600 text-sm line-through">170 ج.م</span> <span class="font-bold text-orange-600 text-sm bg-orange-100 px-1.5 py-0.5 rounded text-orange-700">50 ج.م</span>) إلى رقم المحفظة: <span class="font-bold text-black bg-white px-2 py-1 rounded select-all border text-sm inline-block my-1">01227802300</span> ثم إدخال بيانات التحويل أدناه للمطابقة.
+                            </p>
+                        </div>
+                        <!-- صندوق رفع إيصال التحويل المصغر داخل قسم الدفع -->
+                        <div class="bg-white p-3 rounded-xl border border-orange-200 text-center">
+                            <label class="block text-[11px] font-black text-gray-800 mb-1">إيصال التحويل *</label>
+                            <label class="flex items-center justify-center gap-1.5 p-2 border border-dashed border-orange-300 rounded-lg cursor-pointer hover:bg-orange-50/50 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                <span id="receiptLabelText" class="text-[10px] font-bold text-gray-700">اختر صورة الإيصال</span>
+                                <input type="file" id="receiptImageFile" accept="image/*" class="hidden" onchange="handleReceiptImage(event)">
+                            </label>
+                            
+                            <div id="receiptImagePreviewContainer" class="hidden relative w-16 h-16 mx-auto mt-2 border rounded-md overflow-hidden shadow-sm bg-white">
+                                <img id="receiptImagePreview" src="" alt="معاينة الإيصال" class="w-full h-full object-cover">
+                                <button type="button" onclick="removeReceiptImage()" class="absolute top-0.5 left-0.5 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-bold shadow">✕</button>
+                            </div>
+                        </div>
+                    </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 pt-1">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 pt-1 border-t border-orange-200/60 pt-3">
                         <div>
                             <label class="block text-[11px] font-bold text-gray-700 mb-1">رقم هاتف المحفظة المحول منها:</label>
                             <input type="text" id="senderPhone" placeholder="مثال: 01227802300" class="w-full p-2.5 border rounded-lg bg-white text-xs outline-none">
@@ -116,42 +144,22 @@
                     </div>
                 </div>
 
-                <!-- قسم رفع الصور -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 pt-2">
-                    <!-- صور المنتج الدعائي (8 صور) -->
-                    <div class="lg:col-span-2 space-y-2 bg-gray-50/70 p-4 rounded-2xl border border-gray-200">
-                        <div class="flex items-center justify-between">
-                            <label class="block text-xs font-black text-gray-800">صور المنتج (حد أقصى 8 صور) *</label>
-                            <span class="text-[10px] bg-orange-100 text-orange-800 font-bold px-2 py-0.5 rounded">تحويل تلقائي لـ WEBP</span>
-                        </div>
-                        
-                        <label class="flex flex-col items-center justify-center p-6 border-2 border-dashed border-orange-300 rounded-xl cursor-pointer bg-white hover:bg-orange-50/50 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-orange-500 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                            </svg>
-                            <span class="text-xs font-bold text-gray-700">اضغط لإضافة صور جديدة (تضاف ولا تحذف القديمة)</span>
-                            <input type="file" id="adImagesFiles" accept="image/*" multiple class="hidden" onchange="handleAdImages(event)">
-                        </label>
-
-                        <div id="adImagesPreviewContainer" class="hidden flex flex-wrap gap-2.5 pt-2"></div>
+                <!-- قسم رفع صور المنتج -->
+                <div class="space-y-2 bg-gray-50/70 p-4 rounded-2xl border border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-black text-gray-800">صور المنتج (حد أقصى 8 صور) *</label>
+                        <span class="text-[10px] bg-orange-100 text-orange-800 font-bold px-2 py-0.5 rounded">تحويل تلقائي لـ WEBP</span>
                     </div>
+                    
+                    <label class="flex flex-col items-center justify-center p-6 border-2 border-dashed border-orange-300 rounded-xl cursor-pointer bg-white hover:bg-orange-50/50 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-orange-500 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <span class="text-xs font-bold text-gray-700">اضغط لإضافة صور جديدة (تضاف ولا تحذف القديمة)</span>
+                        <input type="file" id="adImagesFiles" accept="image/*" multiple class="hidden" onchange="handleAdImages(event)">
+                    </label>
 
-                    <!-- إيصال التحويل -->
-                    <div class="space-y-2 bg-gray-50/70 p-4 rounded-2xl border border-gray-200">
-                        <label class="block text-xs font-black text-gray-800">إيصال التحويل *</label>
-                        <label class="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-white hover:bg-orange-50/50 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-orange-500 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                            </svg>
-                            <span id="receiptLabelText" class="text-[11px] font-bold text-gray-700 text-center">اختر صورة الإيصال</span>
-                            <input type="file" id="receiptImageFile" accept="image/*" class="hidden" onchange="handleReceiptImage(event)">
-                        </label>
-                        
-                        <div id="receiptImagePreviewContainer" class="hidden relative w-24 h-24 mx-auto border rounded-lg overflow-hidden shadow-sm bg-white">
-                            <img id="receiptImagePreview" src="" alt="معاينة الإيصال" class="w-full h-full object-cover">
-                            <button type="button" onclick="removeReceiptImage()" class="absolute top-1 left-1 bg-red-600 hover:bg-red-700 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shadow-md transition-transform hover:scale-110" title="حذف الإيصال">✕</button>
-                        </div>
-                    </div>
+                    <div id="adImagesPreviewContainer" class="hidden flex flex-wrap gap-2.5 pt-2"></div>
                 </div>
 
                 <!-- وصف الإعلان -->
@@ -168,7 +176,7 @@
         </div>
     </main>
 
-    <!-- السكريبت البرمجي المنقح للتعامل مع Supabase -->
+    <!-- السكريبت البرمجي للتعامل مع قاعدة البيانات وإرسال حقل الحالة (condition) -->
     <script>
         const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
@@ -191,7 +199,7 @@
                 const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
                 if (!allowedTypes.includes(file.type)) {
                     showCustomModal('عذراً، مسموح برفع ملفات الصور فقط بصيغة (JPG أو PNG أو WEBP).');
-                    return reject(new Error('Invalid file type. Only images are allowed.'));
+                    return reject(new Error('Invalid file type.'));
                 }
 
                 const reader = new FileReader();
@@ -217,14 +225,10 @@
                         const webpData = canvas.toDataURL('image/webp', 0.8);
                         resolve(webpData);
                     };
-                    img.onerror = function() {
-                        reject(new Error('Failed to load image for conversion.'));
-                    };
+                    img.onerror = function() { reject(new Error('Failed to load image.')); };
                     img.src = e.target.result;
                 };
-                reader.onerror = function(error) {
-                    reject(error);
-                };
+                reader.onerror = function(error) { reject(error); };
                 reader.readAsDataURL(file);
             });
         }
@@ -288,7 +292,7 @@
                     const previewImg = document.getElementById('receiptImagePreview');
                     previewImg.src = receiptImageWebp;
                     document.getElementById('receiptImagePreviewContainer').classList.remove('hidden');
-                    document.getElementById('receiptLabelText').textContent = 'تم اختيار الإيصال (تغيير)';
+                    document.getElementById('receiptLabelText').textContent = 'تم اختيار الإيصال';
                 } catch(err) {
                     console.error(err);
                 }
@@ -322,8 +326,9 @@
 
             try {
                 const title = document.getElementById('adTitle').value;
-                const category = document.getElementById('adCategory').value;
                 const price = parseFloat(document.getElementById('adPrice').value);
+                const item_condition = document.getElementById('adCondition').value; // حقل الحالة الجديد
+                const category = document.getElementById('adCategory').value;
                 const phone = document.getElementById('adPhone').value;
                 const description = document.getElementById('adDescription').value;
                 const sender_phone = document.getElementById('senderPhone').value;
@@ -342,8 +347,9 @@
                     },
                     body: JSON.stringify({
                         title, 
-                        category, 
                         price, 
+                        condition: item_condition, // تم إضافتها لترسل للقاعدة مباشرة
+                        category, 
                         phone, 
                         description, 
                         image_url,
