@@ -34,10 +34,9 @@
         </div>
     </header>
 
-    <!-- نافذة منبه مخصصة (Custom Modal) باللوجو الحقيقي لمتجر البيت وتصميم فخم -->
+    <!-- نافذة منبه مخصصة (Custom Modal) -->
     <div id="customModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden transition-opacity duration-300">
         <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center transform scale-95 transition-transform duration-300 border border-orange-100">
-            <!-- لوجو متجر البيت الحقيقي داخل التنبيه -->
             <div class="w-16 h-16 bg-orange-50 border-2 border-orange-200 text-orange-600 rounded-2xl mx-auto flex items-center justify-center mb-4 shadow-inner overflow-hidden p-1">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-orange-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
@@ -169,7 +168,7 @@
         </div>
     </main>
 
-    <!-- السكريبت البرمجي المنقح للتعامل مع Supabase وتجاوز مشكلة مفتاح الربط -->
+    <!-- السكريبت البرمجي المنقح للتعامل مع Supabase -->
     <script>
         const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
@@ -187,46 +186,45 @@
             document.getElementById('customModal').classList.add('hidden');
         }
 
-       function convertImageToWebp(file) {
-    return new Promise((resolve, reject) => {
-        // حماية أمنية صارمة: التأكد من أن الملف المدخل هو صورة حقيقية فقط
-        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-        if (!allowedTypes.includes(file.type)) {
-            showCustomModal('عذراً، مسموح برفع ملفات الصور فقط بصيغة (JPG أو PNG أو WEBP).');
-            return reject(new Error('Invalid file type. Only images are allowed.'));
-        }
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const img = new Image();
-            img.onload = function() {
-                const canvas = document.createElement('canvas');
-                let width = img.width;
-                let height = img.height;
-                
-                const MAX_WIDTH = 1000;
-                if (width > MAX_WIDTH) {
-                    height = Math.round((height * MAX_WIDTH) / width);
-                    width = MAX_WIDTH;
+        function convertImageToWebp(file) {
+            return new Promise((resolve, reject) => {
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+                if (!allowedTypes.includes(file.type)) {
+                    showCustomModal('عذراً، مسموح برفع ملفات الصور فقط بصيغة (JPG أو PNG أو WEBP).');
+                    return reject(new Error('Invalid file type. Only images are allowed.'));
                 }
-                
-                canvas.width = width;
-                canvas.height = height;
-                
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, width, height);
-                
-                const webpData = canvas.toDataURL('image/webp', 0.8);
-                resolve(webpData);
-            };
-            img.img_onerror = reject; // للتصحيح لو الصورة تالفة
-            img.src = e.target.result;
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-    });
-}
-                reader.onerror = reject;
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        const MAX_WIDTH = 1000;
+                        if (width > MAX_WIDTH) {
+                            height = Math.round((height * MAX_WIDTH) / width);
+                            width = MAX_WIDTH;
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        const webpData = canvas.toDataURL('image/webp', 0.8);
+                        resolve(webpData);
+                    };
+                    img.onerror = function() {
+                        reject(new Error('Failed to load image for conversion.'));
+                    };
+                    img.src = e.target.result;
+                };
+                reader.onerror = function(error) {
+                    reject(error);
+                };
                 reader.readAsDataURL(file);
             });
         }
@@ -242,11 +240,15 @@
             }
 
             for (let file of files) {
-                const webpUrl = await convertImageToWebp(file);
-                selectedAdImages.push({
-                    id: Date.now() + Math.random(),
-                    webp: webpUrl
-                });
+                try {
+                    const webpUrl = await convertImageToWebp(file);
+                    selectedAdImages.push({
+                        id: Date.now() + Math.random(),
+                        webp: webpUrl
+                    });
+                } catch(err) {
+                    console.error(err);
+                }
             }
 
             event.target.value = '';
@@ -281,11 +283,15 @@
         async function handleReceiptImage(event) {
             const file = event.target.files[0];
             if (file) {
-                receiptImageWebp = await convertImageToWebp(file);
-                const previewImg = document.getElementById('receiptImagePreview');
-                previewImg.src = receiptImageWebp;
-                document.getElementById('receiptImagePreviewContainer').classList.remove('hidden');
-                document.getElementById('receiptLabelText').textContent = 'تم اختيار الإيصال (تغيير)';
+                try {
+                    receiptImageWebp = await convertImageToWebp(file);
+                    const previewImg = document.getElementById('receiptImagePreview');
+                    previewImg.src = receiptImageWebp;
+                    document.getElementById('receiptImagePreviewContainer').classList.remove('hidden');
+                    document.getElementById('receiptLabelText').textContent = 'تم اختيار الإيصال (تغيير)';
+                } catch(err) {
+                    console.error(err);
+                }
                 event.target.value = '';
             }
         }
@@ -328,7 +334,7 @@
 
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/ads`, {
                     method: 'POST',
-                   headers: {
+                    headers: {
                        'Content-Type': 'application/json',
                        'apikey': SUPABASE_ANON_KEY,
                        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
@@ -358,7 +364,6 @@
                     window.location.href = 'index.html';
                 }, 2000);
             } catch (err) {
-                // إذا واجهتك مشكلة API Key في الـ REST، تأكد من ضبط الـ RLS Policies في Supabase لجدول ads لتسمح بإدخال الـ anon
                 showCustomModal('عذراً، يرجى التحقق من إعدادات الـ RLS في سوبابيس (أو مفتاح الـ API). تفاصيل الخطأ: ' + err.message);
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'إرسال الإعلان للدفع والمراجعة';
