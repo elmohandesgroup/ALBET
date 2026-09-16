@@ -7,9 +7,6 @@
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Supabase JS Client -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <!-- Google Fonts (Cairo) -->
     <style>
@@ -152,16 +149,10 @@
         </div>
     </main>
 
-    <!-- سكريبت البرمجة ومعالجة الملفات -->
+    <!-- سكريبت الاتصال المباشر المحدث -->
     <script>
-        // مفاتيح الاتصال المحدثة والخاصة بقاعدة بيانات Supabase
         const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVzYXFpeWx2Y25tY2NncG54d2FxIiwicm9sZSI6ImFub24iLCJpYX.K5qf1rSb...'; // تأكد من مفتاح الـ Anon الصحيح من مشروعك لو حدث خطأ، أو استبدله بمفتاحك المنسوخ من لوحة التحكم
-        
-        // جلب المفتاح الصحيح المباشر من لوحة تحكم سوبابيس (Project Settings -> API -> anon public)
-        const activeSupabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVzYXFpeWx2Y25tY2NncG54d2FxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjU5NDY3MDAsImV4cCI6MjA0MTUyMjcwMH0...'; // حط مفتاحك هنا لو مشتغلش اللي فوق، أو تأكد منه
-
-        const supabaseClient = supabase.createClient(SUPABASE_URL, 'sb_publishable_he-h5ysxq0VLjubtAXCUg_K5qf1rSb'); // أو حط الـ Anon Key هنا مباشرة بين العلامتين
+        const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxq0VLjubtAXCUg_K5qf1rSb'; // المفتاح المحدث الظاهر في لوحتك
 
         // دالة لعرض الصورة المصغرة فور اختيارها من الجهاز
         function previewImage(event, previewId) {
@@ -209,9 +200,16 @@
                 const image_url = await convertFileToBase64(adImageFile);
                 const receipt_url = await convertFileToBase64(receiptImageFile);
 
-                const { data, error } = await supabaseClient
-                    .from('ads')
-                    .insert([{ 
+                // إرسال البيانات مباشرة عبر سوبابيس ريست API بال مفتاح الجديد
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/ads`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                        'Prefer': 'return=representation'
+                    },
+                    body: JSON.stringify({
                         title, 
                         category, 
                         price, 
@@ -221,9 +219,13 @@
                         receipt_url,
                         sender_phone,
                         payment_method
-                    }]);
+                    })
+                });
 
-                if (error) throw error;
+                if (!response.ok) {
+                    const errData = await response.json();
+                    throw new Error(errData.message || 'حدث خطأ أثناء الاتصال بقاعدة البيانات');
+                }
 
                 alert('تم إرسال إعلانك وصورة الإيصال بنجاح للمراجعة في متجر البيت!');
                 window.location.href = 'index.html';
