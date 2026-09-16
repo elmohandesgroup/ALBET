@@ -187,34 +187,45 @@
             document.getElementById('customModal').classList.add('hidden');
         }
 
-        function convertImageToWebp(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = new Image();
-                    img.onload = function() {
-                        const canvas = document.createElement('canvas');
-                        let width = img.width;
-                        let height = img.height;
+       function convertImageToWebp(file) {
+    return new Promise((resolve, reject) => {
+        // حماية أمنية صارمة: التأكد من أن الملف المدخل هو صورة حقيقية فقط
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+        if (!allowedTypes.includes(file.type)) {
+            showCustomModal('عذراً، مسموح برفع ملفات الصور فقط بصيغة (JPG أو PNG أو WEBP).');
+            return reject(new Error('Invalid file type. Only images are allowed.'));
+        }
 
-                        const MAX_WIDTH = 1000;
-                        if (width > MAX_WIDTH) {
-                            height = Math.round((height * MAX_WIDTH) / width);
-                            width = MAX_WIDTH;
-                        }
-
-                        canvas.width = width;
-                        canvas.height = height;
-
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-
-                        const webpData = canvas.toDataURL('image/webp', 0.8);
-                        resolve(webpData);
-                    };
-                    img.onerror = reject;
-                    img.src = e.target.result;
-                };
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+                
+                const MAX_WIDTH = 1000;
+                if (width > MAX_WIDTH) {
+                    height = Math.round((height * MAX_WIDTH) / width);
+                    width = MAX_WIDTH;
+                }
+                
+                canvas.width = width;
+                canvas.height = height;
+                
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                const webpData = canvas.toDataURL('image/webp', 0.8);
+                resolve(webpData);
+            };
+            img.img_onerror = reject; // للتصحيح لو الصورة تالفة
+            img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
                 reader.onerror = reject;
                 reader.readAsDataURL(file);
             });
