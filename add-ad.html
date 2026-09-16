@@ -39,7 +39,7 @@
         <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
             <div class="border-b pb-4 mb-6">
                 <h2 class="text-lg font-bold text-gray-800">تفاصيل الإعلان والدفع</h2>
-                <p class="text-xs text-gray-500 mt-1">املأ البيانات بدقة، ارفع صور منتجك (حتى 5 صور مع إمكانية الحذف والإضافة)، وإيصال الدفع.</p>
+                <p class="text-xs text-gray-500 mt-1">املأ البيانات بدقة، ارفع صور منتجك (حتى 5 صور)، وإيصال الدفع.</p>
             </div>
 
             <form id="addAdForm" class="space-y-5">
@@ -118,9 +118,7 @@
                         </label>
 
                         <!-- حاوية المعاينة المصغرة لصور المنتج مع زر الحذف -->
-                        <div id="adImagesPreviewContainer" class="hidden flex flex-wrap gap-2.5 pt-2">
-                            <!-- الصور ستظهر هنا ديناميكياً مع زر الـ X -->
-                        </div>
+                        <div id="adImagesPreviewContainer" class="hidden flex flex-wrap gap-2.5 pt-2"></div>
                     </div>
 
                     <!-- إيصال التحويل (يأخذ عمود واحد) -->
@@ -130,11 +128,12 @@
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-orange-500 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                             </svg>
-                            <span class="text-[11px] font-bold text-gray-700 text-center">اختر صورة الإيصال</span>
-                            <input type="file" id="receiptImageFile" accept="image/*" required class="hidden" onchange="handleReceiptImage(event)">
+                            <span id="receiptLabelText" class="text-[11px] font-bold text-gray-700 text-center">اختر صورة الإيصال</span>
+                            <input type="file" id="receiptImageFile" accept="image/*" class="hidden" onchange="handleReceiptImage(event)">
                         </label>
-                        <!-- معاينة إيصال التحويل مع إمكانية الحذف -->
-                        <div id="receiptImagePreviewContainer" class="hidden relative w-20 h-20 mx-auto border rounded-lg overflow-hidden shadow-sm bg-white">
+                        
+                        <!-- معاينة إيصال التحويل -->
+                        <div id="receiptImagePreviewContainer" class="hidden relative w-24 h-24 mx-auto border rounded-lg overflow-hidden shadow-sm bg-white">
                             <img id="receiptImagePreview" src="" alt="معاينة الإيصال" class="w-full h-full object-cover">
                             <button type="button" onclick="removeReceiptImage()" class="absolute top-1 left-1 bg-red-600 hover:bg-red-700 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shadow-md transition-transform hover:scale-110" title="حذف الإيصال">✕</button>
                         </div>
@@ -155,15 +154,14 @@
         </div>
     </main>
 
-    <!-- السكريبت البرمجي للتحويل التلقائي لـ WEBP، وإدارة وتراكم الصور، وإمكانية الحذف -->
+    <!-- السكريبت البرمجي المعدل -->
     <script>
         const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxq0VLjubtAXCUg_K5qf1rSB';
 
-        let selectedAdImages = []; // مصفوفة تحمل كائنات الصور (الملف + رابط المعاينة الـ WEBP)
-        let receiptImageWebp = ''; // صورة الإيصال بصيغة WEBP
+        let selectedAdImages = []; 
+        let receiptImageWebp = ''; 
 
-        // دالة تحويل الصورة إلى WEBP Base64
         function convertImageToWebp(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -197,32 +195,28 @@
             });
         }
 
-        // معالجة واختيار صور المنتج (بحيث تتراكم ولا تُحذف إلا بعلامة X)
         async function handleAdImages(event) {
             const files = Array.from(event.target.files);
             if (files.length === 0) return;
 
-            // التحقق من عدم تجاوز الحد الأقصى (5 صور إجمالاً)
             if (selectedAdImages.length + files.length > 5) {
                 alert(`عذراً، الحد الأقصى المسموح به هو 5 صور فقط. لديك حالياً ${selectedAdImages.length} صور محددة.`);
-                event.target.value = ''; // إعادة تعيين الـ input
+                event.target.value = '';
                 return;
             }
 
             for (let file of files) {
                 const webpUrl = await convertImageToWebp(file);
                 selectedAdImages.push({
-                    id: Date.now() + Math.random(), // معرف فريد لكل صورة لحذفها بدقة
+                    id: Date.now() + Math.random(),
                     webp: webpUrl
                 });
             }
 
-            // تصفير الـ input للسماح باختيار نفس الصور مرة أخرى إذا لزم الأمر
             event.target.value = '';
             renderAdImagesPreviews();
         }
 
-        // رسم وترتيب صور المنتج مع زر الحذف (✕)
         function renderAdImagesPreviews() {
             const container = document.getElementById('adImagesPreviewContainer');
             container.innerHTML = '';
@@ -243,13 +237,11 @@
             }
         }
 
-        // حذف صورة معينة من صور المنتج بناءً على الـ ID الخاص بها
         function removeAdImage(id) {
             selectedAdImages = selectedAdImages.filter(img => img.id !== id);
             renderAdImagesPreviews();
         }
 
-        // معالجة صورة إيصال التحويل
         async function handleReceiptImage(event) {
             const file = event.target.files[0];
             if (file) {
@@ -257,18 +249,18 @@
                 const previewImg = document.getElementById('receiptImagePreview');
                 previewImg.src = receiptImageWebp;
                 document.getElementById('receiptImagePreviewContainer').classList.remove('hidden');
-                event.target.value = ''; // تصفير الـ input
+                document.getElementById('receiptLabelText').textContent = 'تم اختيار الإيصال (تغيير)';
+                event.target.value = '';
             }
         }
 
-        // حذف صورة الإيصال
         function removeReceiptImage() {
             receiptImageWebp = '';
             document.getElementById('receiptImagePreviewContainer').classList.add('hidden');
             document.getElementById('receiptImageFile').value = '';
+            document.getElementById('receiptLabelText').textContent = 'اختر صورة الإيصال';
         }
 
-        // إرسال النموذج وحفظ البيانات في Supabase
         document.getElementById('addAdForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
@@ -284,7 +276,7 @@
             
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
-            submitBtn.textContent = 'جاري إرسال الإعلان وحفظ الصور...';
+            submitBtn.textContent = 'جاري إرسال الإعلان وحفظ البيانات...';
 
             try {
                 const title = document.getElementById('adTitle').value;
@@ -295,7 +287,6 @@
                 const sender_phone = document.getElementById('senderPhone').value;
                 const payment_method = document.getElementById('paymentMethod').value;
 
-                // استخراج الروابط بصيغة WEBP ودمجها بفاصلة
                 const image_url = selectedAdImages.map(img => img.webp).join('||');
                 const receipt_url = receiptImageWebp;
 
