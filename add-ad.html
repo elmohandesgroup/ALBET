@@ -39,7 +39,7 @@
         <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
             <div class="border-b pb-4 mb-6">
                 <h2 class="text-lg font-bold text-gray-800">تفاصيل الإعلان والدفع</h2>
-                <p class="text-xs text-gray-500 mt-1">املأ البيانات بدقة ورسوم النشر ليتم مراجعة ونشر إعلانك في متجر البيت.</p>
+                <p class="text-xs text-gray-500 mt-1">املأ البيانات بدقة، ارفع صور منتجك (حتى 5 صور)، وإيصال الدفع ليتم مراجعة ونشر إعلانك.</p>
             </div>
 
             <form id="addAdForm" class="space-y-5">
@@ -100,33 +100,38 @@
                     </div>
                 </div>
 
-                <!-- رفع صور المنتج وإيصال التحويل -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- رفع صورة المنتج -->
-                    <div class="space-y-2">
-                        <label class="block text-xs font-bold text-gray-700">صورة المنتج *</label>
-                        <label class="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50 hover:bg-orange-50 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-orange-500 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <!-- قسم رفع الصور (تصميم شبكي مخصص) -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 pt-2">
+                    <!-- صور المنتج الدعائي (تأخذ المساحة الأكبر: عمودين) -->
+                    <div class="lg:col-span-2 space-y-2 bg-gray-50/70 p-4 rounded-2xl border border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <label class="block text-xs font-black text-gray-800">صور المنتج (حد أقصى 5 صور) *</label>
+                            <span class="text-[10px] bg-orange-100 text-orange-800 font-bold px-2 py-0.5 rounded">تحويل تلقائي لـ WEBP</span>
+                        </div>
+                        
+                        <label class="flex flex-col items-center justify-center p-6 border-2 border-dashed border-orange-300 rounded-xl cursor-pointer bg-white hover:bg-orange-50/50 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-orange-500 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                             </svg>
-                            <span class="text-xs font-bold text-gray-600">اختر صورة المنتج من الجهاز</span>
-                            <input type="file" id="adImageFile" accept="image/*" required class="hidden" onchange="previewImage(event, 'adImagePreview')">
+                            <span class="text-xs font-bold text-gray-700">اضغط لاختيار صور المنتج (اختر حتى 5 صور معاً)</span>
+                            <input type="file" id="adImagesFiles" accept="image/*" multiple required class="hidden" onchange="handleAdImages(event)">
                         </label>
-                        <!-- معاينة صورة المنتج -->
-                        <div id="adImagePreviewContainer" class="hidden relative w-20 h-20 mx-auto border rounded-lg overflow-hidden shadow-sm">
-                            <img id="adImagePreview" src="" alt="معاينة المنتج" class="w-full h-full object-cover">
+
+                        <!-- حاوية المعاينة المصغرة لصور المنتج -->
+                        <div id="adImagesPreviewContainer" class="hidden flex flex-wrap gap-2.5 pt-2">
+                            <!-- الصور ستظهر هنا ديناميكياً -->
                         </div>
                     </div>
 
-                    <!-- رفع إيصال التحويل -->
-                    <div class="space-y-2">
-                        <label class="block text-xs font-bold text-gray-700">إيصال التحويل *</label>
-                        <label class="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50 hover:bg-orange-50 transition-colors">
+                    <!-- إيصال التحويل (يأخذ عمود واحد) -->
+                    <div class="space-y-2 bg-gray-50/70 p-4 rounded-2xl border border-gray-200">
+                        <label class="block text-xs font-black text-gray-800">إيصال التحويل *</label>
+                        <label class="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-white hover:bg-orange-50/50 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-orange-500 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                             </svg>
-                            <span class="text-xs font-bold text-gray-600">اختر إيصال التحويل من الجهاز</span>
-                            <input type="file" id="receiptImageFile" accept="image/*" required class="hidden" onchange="previewImage(event, 'receiptImagePreview')">
+                            <span class="text-[11px] font-bold text-gray-700 text-center">اختر صورة الإيصال</span>
+                            <input type="file" id="receiptImageFile" accept="image/*" required class="hidden" onchange="handleReceiptImage(event)">
                         </label>
                         <!-- معاينة إيصال التحويل -->
                         <div id="receiptImagePreviewContainer" class="hidden relative w-20 h-20 mx-auto border rounded-lg overflow-hidden shadow-sm">
@@ -149,41 +154,101 @@
         </div>
     </main>
 
-    <!-- سكريبت الاتصال المباشر المحدث -->
+    <!-- السكريبت البرمجي للتحويل التلقائي لـ WEBP والاتصال المباشر -->
     <script>
-       const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxq0VLjubtAXCUg_K5qf1rSB';
+        const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxq0VLjubtAXCUg_K5qf1rSB';
 
-        // دالة لعرض الصورة المصغرة فور اختيارها من الجهاز
-        function previewImage(event, previewId) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const imgElement = document.getElementById(previewId);
-                    imgElement.src = e.target.result;
-                    const containerId = previewId + 'Container';
-                    document.getElementById(containerId).classList.remove('hidden');
-                }
-                reader.readAsDataURL(file);
-            }
-        }
+        let selectedAdImages = []; // مصفوفة لحفظ ملفات صور المنتج
+        let receiptImageBase64 = ''; // صورة الإيصال
 
-        function convertFileToBase64(file) {
+        // دالة تحويل الصورة الحالية إلى WEBP Base64 بجودة عالية وسرعة فائقة
+        function convertImageToWebp(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+
+                        // تصغير الأبعاد المفرطة لو الصورة ضخمة للحفاظ على السرعة (أقصى عرض 1000 بكسل)
+                        const MAX_WIDTH = 1000;
+                        if (width > MAX_WIDTH) {
+                            height = Math.round((height * MAX_WIDTH) / width);
+                            width = MAX_WIDTH;
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        // تحويل لـ WEBP بجودة 0.8
+                        const webpData = canvas.toDataURL('image/webp', 0.8);
+                        resolve(webpData);
+                    };
+                    img.onerror = reject;
+                    img.src = e.target.result;
+                };
+                reader.onerror = reject;
                 reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = error => reject(error);
             });
         }
 
+        // معالجة واختيار صور المنتج (بحد أقصى 5 صور)
+        async function handleAdImages(event) {
+            const files = Array.from(event.target.files);
+            if (files.length > 5) {
+                alert('عذراً، الحد الأقصى المسموح به هو 5 صور فقط للمنتج.');
+                event.target.value = '';
+                return;
+            }
+
+            selectedAdImages = files;
+            const container = document.getElementById('adImagesPreviewContainer');
+            container.innerHTML = '';
+            container.classList.remove('hidden');
+
+            for (let file of files) {
+                const webpUrl = await convertImageToWebp(file);
+                const div = document.createElement('div');
+                div.className = 'relative w-20 h-20 border rounded-lg overflow-hidden shadow-sm bg-white';
+                div.innerHTML = `<img src="${webpUrl}" class="w-full h-full object-cover">`;
+                container.appendChild(div);
+            }
+        }
+
+        // معالجة صورة إيصال التحويل
+        async function handleReceiptImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                receiptImageBase64 = await convertImageToWebp(file);
+                const previewImg = document.getElementById('receiptImagePreview');
+                previewImg.src = receiptImageBase64;
+                document.getElementById('receiptImagePreviewContainer').classList.remove('hidden');
+            }
+        }
+
+        // إرسال النموذج وحفظ البيانات في Supabase
         document.getElementById('addAdForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+
+            if (selectedAdImages.length === 0) {
+                alert('يرجى اختيار صورة واحدة على الأقل للمنتج.');
+                return;
+            }
+
+            if (!receiptImageBase64) {
+                alert('يرجى رفع صورة إيصال التحويل.');
+                return;
+            }
             
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
-            submitBtn.textContent = 'جاري ضغط ورفع الصور وإرسال الإعلان...';
+            submitBtn.textContent = 'جاري ضغط الصور بصيغة WEBP وإرسال الإعلان...';
 
             try {
                 const title = document.getElementById('adTitle').value;
@@ -194,13 +259,14 @@ const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxq0VLjubtAXCUg_K5qf1rSB';
                 const sender_phone = document.getElementById('senderPhone').value;
                 const payment_method = document.getElementById('paymentMethod').value;
 
-                const adImageFile = document.getElementById('adImageFile').files[0];
-                const receiptImageFile = document.getElementById('receiptImageFile').files[0];
+                // تحويل كل صور المنتج إلى WEBP Base64
+                const webpImagesPromises = selectedAdImages.map(file => convertImageToWebp(file));
+                const allWebpImages = await Promise.all(webpImagesPromises);
 
-                const image_url = await convertFileToBase64(adImageFile);
-                const receipt_url = await convertFileToBase64(receiptImageFile);
+                // دمج الصور في نص واحد مفصول بفاصلة لسهولة الحفظ في عمود image_url
+                const image_url = allWebpImages.join('||');
+                const receipt_url = receiptImageBase64;
 
-                // إرسال البيانات مباشرة عبر سوبابيس ريست API بال مفتاح الجديد
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/ads`, {
                     method: 'POST',
                     headers: {
@@ -218,7 +284,8 @@ const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxq0VLjubtAXCUg_K5qf1rSB';
                         image_url,
                         receipt_url,
                         sender_phone,
-                        payment_method
+                        payment_method,
+                        status: 'pending'
                     })
                 });
 
@@ -227,7 +294,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxq0VLjubtAXCUg_K5qf1rSB';
                     throw new Error(errData.message || 'حدث خطأ أثناء الاتصال بقاعدة البيانات');
                 }
 
-                alert('تم إرسال إعلانك وصورة الإيصال بنجاح للمراجعة في متجر البيت!');
+                alert('تم ضغط الصور وإرسال إعلانك وإيصال التحويل بنجاح للمراجعة في متجر البيت!');
                 window.location.href = 'index.html';
             } catch (err) {
                 alert('حدث خطأ أثناء حفظ الإعلان: ' + err.message);
