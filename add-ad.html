@@ -34,16 +34,16 @@
         </div>
     </header>
 
-    <!-- نافذة منبه مخصصة (Custom Modal) بشعار متجر البيت وتصميم فخم -->
+    <!-- نافذة منبه مخصصة (Custom Modal) باللوجو الحقيقي لمتجر البيت وتصميم فخم -->
     <div id="customModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden transition-opacity duration-300">
         <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center transform scale-95 transition-transform duration-300 border border-orange-100">
-            <!-- أيقونة أو شعار متجر البيت المصغر داخل التنبيه -->
-            <div class="w-14 h-14 bg-orange-100 text-orange-600 rounded-2xl mx-auto flex items-center justify-center mb-4 shadow-inner">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+            <!-- لوجو متجر البيت الحقيقي داخل التنبيه -->
+            <div class="w-16 h-16 bg-orange-50 border-2 border-orange-200 text-orange-600 rounded-2xl mx-auto flex items-center justify-center mb-4 shadow-inner overflow-hidden p-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-orange-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                 </svg>
             </div>
-            <h3 class="text-base font-black text-gray-900 mb-1">تنبيه من متجر البيت</h3>
+            <h3 class="text-base font-black text-gray-900 mb-1">متجر البيت - HOME STORE</h3>
             <p id="modalMessage" class="text-xs text-gray-600 leading-relaxed mb-6">محتوى الرسالة هنا...</p>
             <button onclick="closeCustomModal()" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 rounded-xl text-xs transition-all shadow-md cursor-pointer">
                 حسناً، فهمت
@@ -169,7 +169,7 @@
         </div>
     </main>
 
-    <!-- السكريبت البرمجي المنقح -->
+    <!-- السكريبت البرمجي المنقح للتعامل مع Supabase وتجاوز مشكلة مفتاح الربط -->
     <script>
         const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxq0VLjubtAXCUg_K5qf1rSB';
@@ -338,8 +338,8 @@
                 });
 
                 if (!response.ok) {
-                    const errData = await response.json();
-                    throw new Error(errData.message || 'حدث خطأ أثناء الاتصال بقاعدة البيانات');
+                    const errText = await response.text();
+                    throw new Error(errText || 'خطأ في المصادقة أو حفظ البيانات');
                 }
 
                 showCustomModal('تم حفظ إعلانك وإيصال التحويل بنجاح في متجر البيت!');
@@ -347,7 +347,8 @@
                     window.location.href = 'index.html';
                 }, 2000);
             } catch (err) {
-                showCustomModal('حدث خطأ أثناء حفظ الإعلان: ' + err.message);
+                // إذا واجهتك مشكلة API Key في الـ REST، تأكد من ضبط الـ RLS Policies في Supabase لجدول ads لتسمح بإدخال الـ anon
+                showCustomModal('عذراً، يرجى التحقق من إعدادات الـ RLS في سوبابيس (أو مفتاح الـ API). تفاصيل الخطأ: ' + err.message);
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'إرسال الإعلان للدفع والمراجعة';
             }
