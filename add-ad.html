@@ -74,7 +74,7 @@
                 <!-- رقم الواتساب للتواصل -->
                 <div>
                     <label class="block text-xs font-bold text-gray-700 mb-1.5">رقم الواتساب للتواصل *</label>
-                    <input type="text" id="adPhone" required placeholder="مثال: 01000000000" class="w-full p-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 outline-none">
+                    <input type="text" id="adPhone" required placeholder="مثال: 01227802300" class="w-full p-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 outline-none">
                 </div>
 
                 <!-- تفاصيل الدفع والمحفظة -->
@@ -103,7 +103,7 @@
                     </div>
                 </div>
 
-                <!-- رفع صور المنتج وإيصال التحويل (أزرار من الجهاز + معاينة مصغرة) -->
+                <!-- رفع صور المنتج وإيصال التحويل -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <!-- رفع صورة المنتج -->
                     <div class="space-y-2">
@@ -154,10 +154,14 @@
 
     <!-- سكريبت البرمجة ومعالجة الملفات -->
     <script>
+        // مفاتيح الاتصال المحدثة والخاصة بقاعدة بيانات Supabase
         const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxq0VLjubtAXCUg_K5qf1rSb';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVzYXFpeWx2Y25tY2NncG54d2FxIiwicm9sZSI6ImFub24iLCJpYX.K5qf1rSb...'; // تأكد من مفتاح الـ Anon الصحيح من مشروعك لو حدث خطأ، أو استبدله بمفتاحك المنسوخ من لوحة التحكم
         
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // جلب المفتاح الصحيح المباشر من لوحة تحكم سوبابيس (Project Settings -> API -> anon public)
+        const activeSupabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVzYXFpeWx2Y25tY2NncG54d2FxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjU5NDY3MDAsImV4cCI6MjA0MTUyMjcwMH0...'; // حط مفتاحك هنا لو مشتغلش اللي فوق، أو تأكد منه
+
+        const supabaseClient = supabase.createClient(SUPABASE_URL, 'sb_publishable_he-h5ysxq0VLjubtAXCUg_K5qf1rSb'); // أو حط الـ Anon Key هنا مباشرة بين العلامتين
 
         // دالة لعرض الصورة المصغرة فور اختيارها من الجهاز
         function previewImage(event, previewId) {
@@ -167,7 +171,6 @@
                 reader.onload = function(e) {
                     const imgElement = document.getElementById(previewId);
                     imgElement.src = e.target.result;
-                    // إظهار الحاوية الخاصة بالصورة المصغرة
                     const containerId = previewId + 'Container';
                     document.getElementById(containerId).classList.remove('hidden');
                 }
@@ -175,7 +178,6 @@
             }
         }
 
-        // دالة تحويل الملف المرفوع إلى Base64 للحفظ المباشر
         function convertFileToBase64(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -201,7 +203,6 @@
                 const sender_phone = document.getElementById('senderPhone').value;
                 const payment_method = document.getElementById('paymentMethod').value;
 
-                // قراءة ملفات الصور المرفوعة من الجهاز وتحويلها
                 const adImageFile = document.getElementById('adImageFile').files[0];
                 const receiptImageFile = document.getElementById('receiptImageFile').files[0];
 
