@@ -74,7 +74,7 @@
                 <!-- رقم الواتساب للتواصل -->
                 <div>
                     <label class="block text-xs font-bold text-gray-700 mb-1.5">رقم الواتساب للتواصل *</label>
-                    <input type="text" id="adPhone" required placeholder="مثال: 0100000000" class="w-full p-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 outline-none">
+                    <input type="text" id="adPhone" required placeholder="مثال: 01000000000" class="w-full p-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 outline-none">
                 </div>
 
                 <!-- تفاصيل الدفع والمحفظة -->
@@ -85,13 +85,13 @@
                     </div>
                     
                     <p class="text-gray-600 leading-relaxed">
-                        برجاء تحويل مبلغ (<span class="font-bold text-orange-600 text-sm line-through">170 ج.م</span> <span class="font-bold text-orange-600 text-sm bg-orange-100 px-1.5 py-0.5 rounded text-orange-700">50 ج.م</span>) إلى رقم المحفظة: <span class="font-bold text-black bg-white px-2.5 py-1 rounded select-all border text-sm inline-block my-1">0100000000</span> ثم إدخال رقم هاتفك المحول منه أدناه للمطابقة.
+                        برجاء تحويل مبلغ (<span class="font-bold text-orange-600 text-sm line-through">170 ج.م</span> <span class="font-bold text-orange-600 text-sm bg-orange-100 px-1.5 py-0.5 rounded text-orange-700">50 ج.م</span>) إلى رقم المحفظة: <span class="font-bold text-black bg-white px-2.5 py-1 rounded select-all border text-sm inline-block my-1">01227802300</span> ثم إدخال رقم هاتفك المحول منه أدناه للمطابقة.
                     </p>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 pt-1">
                         <div>
                             <label class="block text-[11px] font-bold text-gray-700 mb-1">رقم هاتف المحفظة المحول منها:</label>
-                            <input type="text" id="senderPhone" placeholder="مثال: 0100000000" class="w-full p-2.5 border rounded-lg bg-white text-xs outline-none">
+                            <input type="text" id="senderPhone" placeholder="مثال: 01227802300" class="w-full p-2.5 border rounded-lg bg-white text-xs outline-none">
                         </div>
                         <div>
                             <label class="block text-[11px] font-bold text-gray-700 mb-1">طريقة التحويل:</label>
@@ -103,11 +103,39 @@
                     </div>
                 </div>
 
-                <!-- صورة المنتج وإيصال الدفع -->
-                <div>
-                    <label class="block text-xs font-bold text-gray-700 mb-1.5">رابط صورة المنتج وإيصال التحويل *</label>
-                    <input type="text" id="adImage" required placeholder="ضع رابط صورة المنتج أو إيصال التحويل هنا..." class="w-full p-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 outline-none">
-                    <p class="text-[11px] text-gray-400 mt-1">يمكنك رفع الصورة على أي موقع رفع صور ووضع الرابط المباشر هنا.</p>
+                <!-- رفع صور المنتج وإيصال التحويل (أزرار من الجهاز + معاينة مصغرة) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- رفع صورة المنتج -->
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold text-gray-700">صورة المنتج *</label>
+                        <label class="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50 hover:bg-orange-50 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-orange-500 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            <span class="text-xs font-bold text-gray-600">اختر صورة المنتج من الجهاز</span>
+                            <input type="file" id="adImageFile" accept="image/*" required class="hidden" onchange="previewImage(event, 'adImagePreview')">
+                        </label>
+                        <!-- معاينة صورة المنتج -->
+                        <div id="adImagePreviewContainer" class="hidden relative w-20 h-20 mx-auto border rounded-lg overflow-hidden shadow-sm">
+                            <img id="adImagePreview" src="" alt="معاينة المنتج" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+
+                    <!-- رفع إيصال التحويل -->
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold text-gray-700">إيصال التحويل *</label>
+                        <label class="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50 hover:bg-orange-50 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-orange-500 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <span class="text-xs font-bold text-gray-600">اختر إيصال التحويل من الجهاز</span>
+                            <input type="file" id="receiptImageFile" accept="image/*" required class="hidden" onchange="previewImage(event, 'receiptImagePreview')">
+                        </label>
+                        <!-- معاينة إيصال التحويل -->
+                        <div id="receiptImagePreviewContainer" class="hidden relative w-20 h-20 mx-auto border rounded-lg overflow-hidden shadow-sm">
+                            <img id="receiptImagePreview" src="" alt="معاينة الإيصال" class="w-full h-full object-cover">
+                        </div>
+                    </div>
                 </div>
 
                 <!-- وصف الإعلان -->
@@ -124,36 +152,86 @@
         </div>
     </main>
 
-    <!-- سكريبت الاتصال بقاعدة البيانات وحفظ البيانات -->
+    <!-- سكريبت البرمجة ومعالجة الملفات -->
     <script>
         const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxq0VLjubtAXCUg_K5qf1rSb';
         
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+        // دالة لعرض الصورة المصغرة فور اختيارها من الجهاز
+        function previewImage(event, previewId) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imgElement = document.getElementById(previewId);
+                    imgElement.src = e.target.result;
+                    // إظهار الحاوية الخاصة بالصورة المصغرة
+                    const containerId = previewId + 'Container';
+                    document.getElementById(containerId).classList.remove('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // دالة تحويل الملف المرفوع إلى Base64 للحفظ المباشر
+        function convertFileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
         document.getElementById('addAdForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
-            submitBtn.textContent = 'جاري إرسال الإعلان...';
-
-            const title = document.getElementById('adTitle').value;
-            const category = document.getElementById('adCategory').value;
-            const price = parseFloat(document.getElementById('adPrice').value);
-            const phone = document.getElementById('adPhone').value;
-            const description = document.getElementById('adDescription').value;
-            const image_url = document.getElementById('adImage').value;
+            submitBtn.textContent = 'جاري ضغط ورفع الصور وإرسال الإعلان...';
 
             try {
+                const title = document.getElementById('adTitle').value;
+                const category = document.getElementById('adCategory').value;
+                const price = parseFloat(document.getElementById('adPrice').value);
+                const phone = document.getElementById('adPhone').value;
+                const description = document.getElementById('adDescription').value;
+                const sender_phone = document.getElementById('senderPhone').value;
+                const payment_method = document.getElementById('paymentMethod').value;
+
+                // قراءة ملفات الصور المرفوعة من الجهاز وتحويلها
+                const adImageFile = document.getElementById('adImageFile').files[0];
+                const receiptImageFile = document.getElementById('receiptImageFile').files[0];
+
+                const image_url = await convertFileToBase64(adImageFile);
+                const receipt_url = await convertFileToBase64(receiptImageFile);
+
                 const { data, error } = await supabaseClient
                     .from('ads')
-                    .insert([{ title, category, price, phone, description, image_url }]);
+                    .insert([{ 
+                        title, 
+                        category, 
+                        price, 
+                        phone, 
+                        description, 
+                        image_url,
+                        receipt_url,
+                        sender_phone,
+                        payment_method
+                    }]);
 
                 if (error) throw error;
 
-                alert('تم إرسال إعلانك بنجاح للمراجعة في متجر البيت!');
+                alert('تم إرسال إعلانك وصورة الإيصال بنجاح للمراجعة في متجر البيت!');
                 window.location.href = 'index.html';
-            } c</script>
+            } catch (err) {
+                alert('حدث خطأ أثناء حفظ الإعلان: ' + err.message);
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'إرسال الإعلان للدفع والمراجعة';
+            }
+        });
+    </script>
 </body>
 </html>
