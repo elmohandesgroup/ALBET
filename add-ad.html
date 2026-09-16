@@ -34,12 +34,29 @@
         </div>
     </header>
 
+    <!-- نافذة منبه مخصصة (Custom Modal) بشعار متجر البيت وتصميم فخم -->
+    <div id="customModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden transition-opacity duration-300">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center transform scale-95 transition-transform duration-300 border border-orange-100">
+            <!-- أيقونة أو شعار متجر البيت المصغر داخل التنبيه -->
+            <div class="w-14 h-14 bg-orange-100 text-orange-600 rounded-2xl mx-auto flex items-center justify-center mb-4 shadow-inner">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                </svg>
+            </div>
+            <h3 class="text-base font-black text-gray-900 mb-1">تنبيه من متجر البيت</h3>
+            <p id="modalMessage" class="text-xs text-gray-600 leading-relaxed mb-6">محتوى الرسالة هنا...</p>
+            <button onclick="closeCustomModal()" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 rounded-xl text-xs transition-all shadow-md cursor-pointer">
+                حسناً، فهمت
+            </button>
+        </div>
+    </div>
+
     <!-- محتوى صفحة إضافة الإعلان -->
     <main class="max-w-3xl mx-auto px-4 mt-6">
         <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
             <div class="border-b pb-4 mb-6">
                 <h2 class="text-lg font-bold text-gray-800">تفاصيل الإعلان والدفع</h2>
-                <p class="text-xs text-gray-500 mt-1">املأ البيانات بدقة، ارفع صور منتجك (حتى 5 صور)، وإيصال الدفع.</p>
+                <p class="text-xs text-gray-500 mt-1">املأ البيانات بدقة، ارفع صور منتجك (حتى 8 صور)، وإيصال الدفع.</p>
             </div>
 
             <form id="addAdForm" class="space-y-5">
@@ -100,12 +117,12 @@
                     </div>
                 </div>
 
-                <!-- قسم رفع الصور (تصميم شبكي مخصص) -->
+                <!-- قسم رفع الصور -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 pt-2">
-                    <!-- صور المنتج الدعائي (تأخذ المساحة الأكبر: عمودين) -->
+                    <!-- صور المنتج الدعائي (8 صور) -->
                     <div class="lg:col-span-2 space-y-2 bg-gray-50/70 p-4 rounded-2xl border border-gray-200">
                         <div class="flex items-center justify-between">
-                            <label class="block text-xs font-black text-gray-800">صور المنتج (حد أقصى 5 صور) *</label>
+                            <label class="block text-xs font-black text-gray-800">صور المنتج (حد أقصى 8 صور) *</label>
                             <span class="text-[10px] bg-orange-100 text-orange-800 font-bold px-2 py-0.5 rounded">تحويل تلقائي لـ WEBP</span>
                         </div>
                         
@@ -117,11 +134,10 @@
                             <input type="file" id="adImagesFiles" accept="image/*" multiple class="hidden" onchange="handleAdImages(event)">
                         </label>
 
-                        <!-- حاوية المعاينة المصغرة لصور المنتج مع زر الحذف -->
                         <div id="adImagesPreviewContainer" class="hidden flex flex-wrap gap-2.5 pt-2"></div>
                     </div>
 
-                    <!-- إيصال التحويل (يأخذ عمود واحد) -->
+                    <!-- إيصال التحويل -->
                     <div class="space-y-2 bg-gray-50/70 p-4 rounded-2xl border border-gray-200">
                         <label class="block text-xs font-black text-gray-800">إيصال التحويل *</label>
                         <label class="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-white hover:bg-orange-50/50 transition-colors">
@@ -132,7 +148,6 @@
                             <input type="file" id="receiptImageFile" accept="image/*" class="hidden" onchange="handleReceiptImage(event)">
                         </label>
                         
-                        <!-- معاينة إيصال التحويل -->
                         <div id="receiptImagePreviewContainer" class="hidden relative w-24 h-24 mx-auto border rounded-lg overflow-hidden shadow-sm bg-white">
                             <img id="receiptImagePreview" src="" alt="معاينة الإيصال" class="w-full h-full object-cover">
                             <button type="button" onclick="removeReceiptImage()" class="absolute top-1 left-1 bg-red-600 hover:bg-red-700 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shadow-md transition-transform hover:scale-110" title="حذف الإيصال">✕</button>
@@ -147,20 +162,30 @@
                 </div>
 
                 <!-- زر الإرسال -->
-                <button type="submit" id="submitBtn" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-lg">
+                <button type="submit" id="submitBtn" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-lg cursor-pointer">
                     إرسال الإعلان للدفع والمراجعة
                 </button>
             </form>
         </div>
     </main>
 
-    <!-- السكريبت البرمجي المعدل -->
+    <!-- السكريبت البرمجي المنقح -->
     <script>
         const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxq0VLjubtAXCUg_K5qf1rSB';
 
         let selectedAdImages = []; 
         let receiptImageWebp = ''; 
+
+        function showCustomModal(message) {
+            document.getElementById('modalMessage').textContent = message;
+            const modal = document.getElementById('customModal');
+            modal.classList.remove('hidden');
+        }
+
+        function closeCustomModal() {
+            document.getElementById('customModal').classList.add('hidden');
+        }
 
         function convertImageToWebp(file) {
             return new Promise((resolve, reject) => {
@@ -199,8 +224,8 @@
             const files = Array.from(event.target.files);
             if (files.length === 0) return;
 
-            if (selectedAdImages.length + files.length > 5) {
-                alert(`عذراً، الحد الأقصى المسموح به هو 5 صور فقط. لديك حالياً ${selectedAdImages.length} صور محددة.`);
+            if (selectedAdImages.length + files.length > 8) {
+                showCustomModal(`عذراً، الحد الأقصى المسموح به هو 8 صور فقط. لديك حالياً ${selectedAdImages.length} صور محددة.`);
                 event.target.value = '';
                 return;
             }
@@ -265,12 +290,12 @@
             e.preventDefault();
 
             if (selectedAdImages.length === 0) {
-                alert('يرجى اختيار صورة واحدة على الأقل للمنتج.');
+                showCustomModal('يرجى اختيار صورة واحدة على الأقل للمنتج.');
                 return;
             }
 
             if (!receiptImageWebp) {
-                alert('يرجى رفع صورة إيصال التحويل.');
+                showCustomModal('يرجى رفع صورة إيصال التحويل.');
                 return;
             }
             
@@ -317,10 +342,12 @@
                     throw new Error(errData.message || 'حدث خطأ أثناء الاتصال بقاعدة البيانات');
                 }
 
-                alert('تم حفظ إعلانك وإيصال التحويل بنجاح في متجر البيت!');
-                window.location.href = 'index.html';
+                showCustomModal('تم حفظ إعلانك وإيصال التحويل بنجاح في متجر البيت!');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
             } catch (err) {
-                alert('حدث خطأ أثناء حفظ الإعلان: ' + err.message);
+                showCustomModal('حدث خطأ أثناء حفظ الإعلان: ' + err.message);
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'إرسال الإعلان للدفع والمراجعة';
             }
