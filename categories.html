@@ -176,22 +176,16 @@
         closeMenuBtn.addEventListener('click', closeMenu);
         menuOverlay.addEventListener('click', closeMenu);
 
-        // التحقق من جلسة الدخول الحقيقية لـ Supabase مع منع إعادة التوجيه الوهمي
+        // التحقق من جلسة الدخول الحقيقية لـ Supabase
         async function checkAuthSession() {
-            try {
-                const { data: { session }, error } = await supabaseClient.auth.getSession();
-                const badge = document.getElementById('adminStatusBadge');
-                
-                if (error) throw error;
-
-                if (!session) {
-                    console.warn("لا يوجد جلسة نشطة، يتم التوجيه لتسجيل الدخول...");
-                    window.location.href = 'admin-login.html';
-                } else {
-                    badge.textContent = `مسجل كـ: ${session.user.email}`;
-                }
-            } catch (err) {
-                console.error("خطأ في التحقق من الجلسة:", err.message);
+            const { data: { session }, error } = await supabaseClient.auth.getSession();
+            const badge = document.getElementById('adminStatusBadge');
+            
+            if (!session) {
+                // لو مش مسجل دخول، حوله لصفحة تسجيل الدخول الحقيقية أو اطلب منه تسجيل الدخول
+                window.location.href = 'admin-login.html';
+            } else {
+                badge.textContent = `مسجل كـ: ${session.user.email}`;
             }
         }
 
@@ -323,7 +317,7 @@
                 document.getElementById('addCategoryForm').reset();
                 toggleParentDropdown();
                 fetchCategories();
-            } catch (err) {
+            } href="javascript:void(0);" catch (err) {
                 alertDiv.innerHTML = `<div class="p-2 bg-red-50 text-red-600 text-xs rounded-xl font-bold mt-2">خطأ أثناء الحفظ: ${err.message}</div>`;
             } finally {
                 submitBtn.disabled = false;
