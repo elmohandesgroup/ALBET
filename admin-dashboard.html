@@ -29,22 +29,20 @@
             padding: 20px;
         }
 
-        /* التصميم العام القائم على عمودين رئيسيين (يمين وشمال) */
+        /* التصميم العام القائم على عمودين رئيسيين في الشاشات الكبيرة */
         .page-grid-container {
             display: grid;
-            grid-template-columns: 270px 1fr; /* العمود اليمين للسايدبار، والعمود الشمال للمحتوى الكبير */
+            grid-template-columns: 270px 1fr;
             gap: 20px;
             align-items: start;
         }
 
-        /* العمود الأيمن (اللوجو وتحته السايدبار) */
         .right-column {
             display: flex;
             flex-direction: column;
             gap: 20px;
         }
 
-        /* العمود الأيسر (زر الخروج وتحته المحتوى الكبير) */
         .left-column {
             display: flex;
             flex-direction: column;
@@ -71,7 +69,7 @@
             border-radius: 8px;
         }
 
-        /* 2. الهيدر الأيسر (زر تسجيل الخروج) */
+        /* 2. الهيدر الأيسر (أزرار الهيدر العلوي والموبايل) */
         .admin-logout-box {
             background: #111827;
             color: white;
@@ -79,7 +77,7 @@
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
             align-items: center;
         }
         .btn-logout {
@@ -97,7 +95,7 @@
             background-color: #d9532b;
         }
 
-        /* السايدبار الجانبي (تحت اللوجو مباشرة في اليمين) */
+        /* السايدبار الجانبي */
         .sidebar-box {
             background: white;
             border: 2px solid #111827;
@@ -142,7 +140,6 @@
             color: #0f172a;
         }
         
-        /* الزرار النشط (البرتقالي المميز) */
         .side-pill-btn.active {
             background-color: #fff1ed;
             color: #e76f51;
@@ -166,7 +163,7 @@
             background-color: #e76f51;
         }
 
-        /* منطقة المحتوى الكبيرة (تحت زر الخروج مباشرة في الشمال) */
+        /* المحتوى الكبير */
         .content-frame-box {
             background: white;
             border: 2px solid #111827;
@@ -176,7 +173,7 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.02);
         }
 
-        /* تنسيق جدول الإعلانات */
+        /* جدول البيانات */
         .table th {
             background-color: #f8fafc;
             color: #475569;
@@ -198,33 +195,44 @@
         .proof-img {
             cursor: pointer;
         }
+
+        /* التجاوب مع الموبايل: إخفاء السايدبار الثابت في الشاشات الصغيرة وإظهار زر القائمة المنسدلة */
+        @media (max-width: 991.98px) {
+            .page-grid-container {
+                grid-template-columns: 1fr;
+            }
+            .right-column {
+                display: none; /* إخفاء العمود الجانبي العادي في الموبايل واستبداله بالقائمة الجانبية المنسدلة */
+            }
+            body {
+                padding: 10px;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <!-- التخطيط الشبكي العام (عن طريق Grid مقسوم لعمودين يمين وشمال) -->
-    <div class="page-grid-container">
-        
-        <!-- العمود الأيمن: (اللوجو فوق وتحته السايدبار) -->
-        <div class="right-column">
-            <!-- 1. اللوجو في اليمين -->
-            <div class="admin-brand-box">
-                <img src="logo192.png" alt="متجر البيت" class="admin-logo">
-                <div>
-                    <h3 class="m-0 fw-bold fs-6 text-start">متجر البيت</h3>
-                    <small class="text-light opacity-75" style="font-size: 0.72rem;">لوحة تحكم المدير العام - albet.store</small>
-                </div>
-            </div>
+    <!-- زر القائمة المنسدلة للموبايل (يظهر فقط في الشاشات الصغيرة) -->
+    <div class="d-lg-none mb-3">
+        <button class="btn btn-dark w-100 py-2 d-flex justify-content-between align-items-center fw-bold" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar" aria-controls="mobileSidebar">
+            <span><i class="bi bi-list fs-5 ms-2"></i> القائمة الرئيسية ولوحة التحكم</span>
+            <span class="badge bg-danger">متجر البيت</span>
+        </button>
+    </div>
 
-            <!-- 2. السايدبار تحت اللوجو مباشرة -->
-            <div class="sidebar-box">
+    <!-- قائمة الـ Offcanvas المنسدلة للموبايل -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileSidebar" aria-labelledby="mobileSidebarLabel">
+        <div class="offcanvas-header bg-dark text-white">
+            <h5 class="offcanvas-title fs-6 fw-bold" id="mobileSidebarLabel">لوحة تحكم متجر البيت</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body bg-light">
+            <div class="sidebar-box border-0 shadow-none p-0">
                 <div class="sidebar-title">
                     <span>أقسام الإدارة والتقارير الشاملة</span>
                     <i class="bi bi-grid-fill text-dark"></i>
                 </div>
-                
                 <div class="sidebar-menu-list">
-                    <!-- مراجعة الإعلانات (نشط) -->
                     <a href="admin-dashboard.html" class="side-pill-btn active">
                         <div class="side-pill-content">
                             <i class="bi bi-shield-check"></i>
@@ -232,8 +240,6 @@
                         </div>
                         <span class="side-dot-bullet"></span>
                     </a>
-                    
-                    <!-- إضافة موظف -->
                     <a href="staff.html" class="side-pill-btn">
                         <div class="side-pill-content">
                             <i class="bi bi-people"></i>
@@ -241,8 +247,6 @@
                         </div>
                         <span class="side-dot-bullet"></span>
                     </a>
-                    
-                    <!-- إضافة قسم -->
                     <a href="categories.html" class="side-pill-btn">
                         <div class="side-pill-content">
                             <i class="bi bi-folder-plus"></i>
@@ -250,8 +254,6 @@
                         </div>
                         <span class="side-dot-bullet"></span>
                     </a>
-                    
-                    <!-- تقرير اليوم -->
                     <a href="daily-report.html" class="side-pill-btn">
                         <div class="side-pill-content">
                             <i class="bi bi-file-earmark-text"></i>
@@ -259,8 +261,6 @@
                         </div>
                         <span class="side-dot-bullet"></span>
                     </a>
-                    
-                    <!-- الأرباح والخسائر -->
                     <a href="profits.html" class="side-pill-btn">
                         <div class="side-pill-content">
                             <i class="bi bi-cash-coin"></i>
@@ -268,8 +268,6 @@
                         </div>
                         <span class="side-dot-bullet"></span>
                     </a>
-                    
-                    <!-- المرتبات -->
                     <a href="salaries.html" class="side-pill-btn">
                         <div class="side-pill-content">
                             <i class="bi bi-wallet2"></i>
@@ -277,8 +275,81 @@
                         </div>
                         <span class="side-dot-bullet"></span>
                     </a>
-                    
-                    <!-- المصروفات -->
+                    <a href="expenses.html" class="side-pill-btn">
+                        <div class="side-pill-content">
+                            <i class="bi bi-receipt"></i>
+                            <span>المصروفات</span>
+                        </div>
+                        <span class="side-dot-bullet"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- التخطيط الشبكي العام (عن طريق Grid مقسوم لعمودين يمين وشمال في الشاشات الكبيرة) -->
+    <div class="page-grid-container">
+        
+        <!-- العمود الأيمن (يظهر في الكمبيوتر فقط): اللوجو فوق وتحته السايدبار -->
+        <div class="right-column">
+            <!-- 1. اللوجو في اليمين -->
+            <div class="admin-brand-box">
+                <img src="logo192.png" alt="متجر البيت" class="admin-logo">
+                <div>
+                    <h3 class="m-0 fw-bold fs-6 text-start">متجر البيت</h3>
+                    <small class="text-light opacity-75" style="font-size: 0.72rem;">لوحة تحكم متجر البيت</small>
+                </div>
+            </div>
+
+            <!-- 2. السايدبار الثابت -->
+            <div class="sidebar-box">
+                <div class="sidebar-title">
+                    <span>أقسام الإدارة والتقارير الشاملة</span>
+                    <i class="bi bi-grid-fill text-dark"></i>
+                </div>
+                <div class="sidebar-menu-list">
+                    <a href="admin-dashboard.html" class="side-pill-btn active">
+                        <div class="side-pill-content">
+                            <i class="bi bi-shield-check"></i>
+                            <span>مراجعة الإعلانات</span>
+                        </div>
+                        <span class="side-dot-bullet"></span>
+                    </a>
+                    <a href="staff.html" class="side-pill-btn">
+                        <div class="side-pill-content">
+                            <i class="bi bi-people"></i>
+                            <span>إضافة موظف</span>
+                        </div>
+                        <span class="side-dot-bullet"></span>
+                    </a>
+                    <a href="categories.html" class="side-pill-btn">
+                        <div class="side-pill-content">
+                            <i class="bi bi-folder-plus"></i>
+                            <span>إضافة قسم</span>
+                        </div>
+                        <span class="side-dot-bullet"></span>
+                    </a>
+                    <a href="daily-report.html" class="side-pill-btn">
+                        <div class="side-pill-content">
+                            <i class="bi bi-file-earmark-text"></i>
+                            <span>تقرير اليوم</span>
+                        </div>
+                        <span class="side-dot-bullet"></span>
+                    </a>
+                    <a href="profits.html" class="side-pill-btn">
+                        <div class="side-pill-content">
+                            <i class="bi bi-cash-coin"></i>
+                            <span>الأرباح والخسائر</span>
+                        </div>
+                        <span class="side-dot-bullet"></span>
+                    </a>
+                    <a href="salaries.html" class="side-pill-btn">
+                        <div class="side-pill-content">
+                            <i class="bi bi-wallet2"></i>
+                            <span>المرتبات</span>
+                        </div>
+                        <span class="side-dot-bullet"></span>
+                    </a>
                     <a href="expenses.html" class="side-pill-btn">
                         <div class="side-pill-content">
                             <i class="bi bi-receipt"></i>
@@ -290,16 +361,17 @@
             </div>
         </div>
 
-        <!-- العمود الأيسر: (زر الخروج فوق وتحته المحتوى الكبير) -->
+        <!-- العمود الأيسر: زر الخروج فوق وتحته المحتوى الكبير -->
         <div class="left-column">
-            <!-- 1. زر تسجيل الخروج في الشمال -->
+            <!-- 1. زر تسجيل الخروج وعنوان اللوحة العلوي -->
             <div class="admin-logout-box">
+                <span class="fw-bold d-none d-sm-inline" style="font-size: 0.9rem;">لوحة تحكم متجر البيت</span>
                 <button class="btn-logout" onclick="logoutAdmin()">
                     تسجيل الخروج <i class="bi bi-box-arrow-left ms-1"></i>
                 </button>
             </div>
 
-            <!-- 2. المحتوى الكبير تحت زر الخروج مباشرة -->
+            <!-- 2. المحتوى الكبير -->
             <div class="content-frame-box">
                 <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
                     <span class="fw-bold fs-6 text-secondary"><i class="bi bi-list-check ms-1"></i> الإعلانات المعلقة والإيصالات المالية</span>
@@ -337,8 +409,8 @@
     
     <script>
        const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
-      const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxq0VLujbtAXcUg_K5qf1rSB';
-     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+       const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxq0VLujbtAXcUg_K5qf1rSB';
+       const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         window.onload = () => { loadPendingAds(); };
 
