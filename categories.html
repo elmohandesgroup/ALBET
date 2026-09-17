@@ -151,7 +151,7 @@
                     <span class="w-2.5 h-2.5 rounded-full bg-orange-600 inline-block"></span>
                     إضافة قسم جديد (رئيسي أو فرعي)
                 </h2>
-                <p class="text-xs text-gray-500 mt-0.5">الأقسام المضافة ستظهر تلقائياً في الواجهة الرئيسية للموقع ولوحة التحكم.</p>
+                <p class="text-xs text-gray-500 mt-0.5">الأقسام المضافة مع أيقوناتها المحولة تظهر تلقائياً في الواجهة الرئيسية للموقع.</p>
             </div>
 
             <!-- نموذج إضافة القسم -->
@@ -176,13 +176,13 @@
                     </select>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">رابط أو اسم الأيقونة</label>
-                    <input type="text" id="catIcon" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-orange-500" placeholder="أدخل رابط الأيقونة أو اسم الـ SVG">
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-bold text-gray-600 mb-1">أيقونة القسم (رفع صورة وتتحول WebP أوتوماتيك)</label>
+                    <input type="file" id="catIconFile" accept="image/*" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-orange-500 file:mr-4 file:py-1 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100">
                 </div>
 
                 <div class="flex items-end md:col-span-2">
-                    <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white py-2.5 px-4 rounded-xl text-sm font-bold transition-all shadow-sm">
+                    <button type="submit" id="submitBtn" class="w-full bg-orange-600 hover:bg-orange-700 text-white py-2.5 px-4 rounded-xl text-sm font-bold transition-all shadow-sm">
                         حفظ ونشر القسم في الموقع
                     </button>
                 </div>
@@ -196,6 +196,7 @@
                     <table class="w-full text-right border-collapse">
                         <thead>
                             <tr class="border-b text-xs text-gray-500 bg-gray-50/50">
+                                <th class="p-3">الأيقونة</th>
                                 <th class="p-3">اسم القسم</th>
                                 <th class="p-3">النوع</th>
                                 <th class="p-3">يتبع لـ (القسم الرئيسي)</th>
@@ -203,7 +204,7 @@
                             </tr>
                         </thead>
                         <tbody id="categoriesTableBody" class="divide-y divide-gray-100 text-sm">
-                            <tr><td colspan="4" class="text-center text-gray-400 py-6">جاري جلب الأقسام...</td></tr>
+                            <tr><td colspan="5" class="text-center text-gray-400 py-6">جاري جلب الأقسام...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -239,7 +240,7 @@
         }
     </script>
 
-    <!-- سكريبتات Supabase والربط -->
+    <!-- سكريبتات Supabase وتحويل الصور لـ WebP -->
     <script>
         const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
@@ -275,25 +276,52 @@
             }
         }
 
+        // دالة تحويل الصورة المرفوعة أوتوماتيك لـ WebP
+        function convertImageToWebP(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0);
+                        // تحويل الصورة لصيغة webp بجودة 85%
+                        const webpDataUrl = canvas.toDataURL('image/webp', 0.85);
+                        resolve(webpDataUrl);
+                    };
+                    img.onerror = reject;
+                    img.src = event.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
         async function fetchCategories() {
             const tbody = document.getElementById('categoriesTableBody');
             const { data, error } = await supabaseClient.from('categories').select('*');
 
             if (error) {
-                tbody.innerHTML = `<tr><td colspan="4" class="text-center text-red-500 py-6">خطأ في جلب الأقسام (تأكد من إنشاء جدول categories في Supabase)</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center text-red-500 py-6">خطأ في جلب الأقسام (تأكد من إنشاء جدول categories)</td></tr>`;
                 return;
             }
 
             if (!data || data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="text-center text-gray-400 py-6">لا توجد أقسام مضافة حالياً.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center text-gray-400 py-6">لا توجد أقسام مضافة حالياً.</td></tr>`;
                 return;
             }
 
             tbody.innerHTML = '';
             data.forEach(cat => {
                 const parentItem = data.find(p => p.id === cat.parent_id);
+                const iconHtml = cat.icon ? `<img src="${cat.icon}" class="w-9 h-9 object-contain rounded-lg bg-gray-50 p-1 border border-gray-100">` : `<span class="text-gray-300 text-xs">بدون</span>`;
+                
                 tbody.innerHTML += `
                     <tr class="hover:bg-gray-50">
+                        <td class="p-3">${iconHtml}</td>
                         <td class="p-3 font-bold text-gray-800">${cat.name}</td>
                         <td class="p-3"><span class="px-2 py-0.5 rounded text-xs font-bold ${!cat.parent_id ? 'bg-orange-50 text-orange-600' : 'bg-blue-50 text-blue-600'}">${!cat.parent_id ? 'رئيسي' : 'فرعي'}</span></td>
                         <td class="p-3 text-gray-600">${parentItem ? parentItem.name : '-'}</td>
@@ -308,26 +336,44 @@
         async function handleSaveCategory(event) {
             event.preventDefault();
             const alertDiv = document.getElementById('formAlert');
+            const submitBtn = document.getElementById('submitBtn');
             const name = document.getElementById('catName').value;
             const type = document.getElementById('catType').value;
             const parent_id = type === 'sub' ? document.getElementById('parentCategorySelect').value : null;
-            const icon = document.getElementById('catIcon').value || null;
+            const fileInput = document.getElementById('catIconFile');
 
             if (type === 'sub' && !parent_id) {
                 alertDiv.innerHTML = `<div class="p-2 bg-red-50 text-red-600 text-xs rounded-xl font-bold mt-2">برجاء اختيار القسم الرئيسي التابع له القسم الفرعي!</div>`;
                 return;
             }
 
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'جاري معالجة الصورة وتحويلها لـ WebP والحفظ...';
+
             try {
-                const { error } = await supabaseClient.from('categories').insert([{ name, parent_id, icon }]);
+                let iconWebP = null;
+                if (fileInput.files && fileInput.files[0]) {
+                    // تحويل الصورة المرفوعة لـ WebP أوتوماتيك
+                    iconWebP = await convertImageToWebP(fileInput.files[0]);
+                }
+
+                const { error } = await supabaseClient.from('categories').insert([{ 
+                    name, 
+                    parent_id, 
+                    icon: iconWebP 
+                }]);
+
                 if (error) throw error;
 
-                alertDiv.innerHTML = `<div class="p-2 bg-emerald-50 text-emerald-600 text-xs rounded-xl font-bold mt-2">تم إضافة القسم بنجاح ونشره في الموقع!</div>`;
+                alertDiv.innerHTML = `<div class="p-2 bg-emerald-50 text-emerald-600 text-xs rounded-xl font-bold mt-2">تم إضافة القسم وصورة الـ WebP بنجاح ونشره في الموقع!</div>`;
                 document.getElementById('addCategoryForm').reset();
                 toggleParentDropdown();
                 fetchCategories();
             } catch (err) {
                 alertDiv.innerHTML = `<div class="p-2 bg-red-50 text-red-600 text-xs rounded-xl font-bold mt-2">خطأ: ${err.message}</div>`;
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'حفظ ونشر القسم في الموقع';
             }
         }
 
