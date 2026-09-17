@@ -3,112 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدارة وصلاحيات الموظفين - متجر البيت</title>
-    <script>
-        if (localStorage.getItem('isAdminLoggedIn') !== 'true') {
-            alert('عذراً، يجب تسجيل الدخول أولاً!');
-            window.location.href = 'admin-login.html';
-        }
-    </script>
+    <title>إدارة الموظفين - متجر البيت (albet.store)</title>
+    <!-- Bootstrap 5 RTL CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/rtl.min.css">
+    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <!-- Google Font Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #f4f6f9; font-family: 'Cairo', sans-serif; color: #1e293b; margin: 0; padding: 20px; }
-        .page-grid-container { display: grid; grid-template-columns: 270px 1fr; gap: 20px; align-items: start; }
-        .admin-brand-box { background: #111827; color: white; padding: 15px 20px; border-radius: 12px; display: flex; align-items: center; gap: 15px; }
-        .admin-logo { width: 45px; height: 45px; object-fit: contain; background: white; padding: 4px; border-radius: 8px; }
-        .sidebar-box { background: white; border: 2px solid #111827; border-radius: 14px; padding: 15px 12px; }
-        .sidebar-title { font-size: 0.8rem; font-weight: 700; color: #334155; padding: 8px 10px; border-bottom: 1px solid #e2e8f0; margin-bottom: 12px; display: flex; justify-content: space-between; }
-        .side-pill-btn { background: #ffffff; color: #334155; border: 1px solid #e2e8f0; padding: 9px 14px; border-radius: 10px; font-weight: 700; font-size: 0.83rem; display: flex; align-items: center; justify-content: space-between; text-decoration: none; margin-bottom: 8px; }
-        .side-pill-btn.active { background-color: #fff1ed; color: #e76f51; border-color: #fbd3c9; }
-        .content-frame-box { background: white; border: 2px solid #111827; border-radius: 14px; padding: 25px; min-height: 650px; }
-        .category-checkboxes { max-height: 140px; overflow-y: auto; border: 1px solid #ced4da; padding: 10px; border-radius: 8px; background: #fff; }
-        .staff-avatar { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid #ddd; }
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Cairo', sans-serif;
+            color: #1e293b;
+        }
+        .navbar-brand {
+            font-weight: 700;
+        }
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
     </style>
 </head>
 <body>
 
-    <div class="page-grid-container">
-        <!-- القائمة الجانبية -->
-        <div class="right-column">
-            <div class="admin-brand-box">
-                <img src="logo192.png" alt="متجر البيت" class="admin-logo">
-                <div>
-                    <h3 class="m-0 fw-bold fs-6">متجر البيت</h3>
-                    <small class="text-light opacity-75" style="font-size: 0.72rem;">لوحة التحكم - albet.store</small>
-                </div>
+    <!-- النافبار العلوي -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="admin-dashboard.html">
+                <i class="bi bi-house-gear-fill ms-2"></i> متجر البيت - لوحة الإدارة
+            </a>
+            <div class="d-flex align-items-center">
+                <a href="admin-dashboard.html" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-arrow-right"></i> عودة للوحة التحكم
+                </a>
             </div>
-            <div class="sidebar-box mt-3">
-                <div class="sidebar-title"><span>أقسام الإدارة</span><i class="bi bi-grid-fill"></i></div>
-                <a href="admin-dashboard.html" class="side-pill-btn"><div class="d-flex align-items: center; gap: 10px;"><i class="bi bi-shield-check"></i><span>مراجعة الإعلانات</span></div></a>
-                <a href="staff-management.html" class="side-pill-btn active"><div class="d-flex align-items: center; gap: 10px;"><i class="bi bi-people"></i><span>إدارة الموظفين</span></div></a>
-                <a href="categories.html" class="side-pill-btn"><div class="d-flex align-items: center; gap: 10px;"><i class="bi bi-folder-plus"></i><span>إضافة قسم</span></div></a>
-                <a href="daily-report.html" class="side-pill-btn"><div class="d-flex align-items: center; gap: 10px;"><i class="bi bi-file-earmark-text"></i><span>تقرير اليوم</span></div></a>
+        </div>
+    </nav>
+
+    <!-- المحتوى الرئيسي -->
+    <div class="container py-5">
+        <div class="row mb-4">
+            <div class="col-12">
+                <h2 class="fw-bold text-primary">إدارة الموظفين والصلاحيات</h2>
+                <p class="text-muted">إضافة موظفين جدد وتعديل حالاتهم وصلاحياتهم على أقسام المنصة.</p>
             </div>
         </div>
 
-        <!-- المحتوى الرئيسي -->
-        <div class="left-column">
-            <div class="content-frame-box">
-                <h5 class="fw-bold mb-4"><i class="bi bi-people-fill text-danger ms-2"></i> إدارة الموظفين والصلاحيات وحالة الحسابات</h5>
-
-                <!-- نموذج إضافة موظف جديد -->
-                <form id="staffForm" onsubmit="saveStaff(event)" class="card p-4 bg-light border-0 mb-5 shadow-sm">
-                    <h6 class="fw-bold text-dark mb-3">تسجيل موظف جديد</h6>
+        <!-- نموذج إضافة موظف جديد -->
+        <div class="card mb-5">
+            <div class="card-body p-4">
+                <h4 class="card-title mb-4 fw-bold text-secondary"><i class="bi bi-person-plus-fill ms-2"></i> إضافة موظف جديد</h4>
+                <form id="addStaffForm" onsubmit="handleAddNewStaff(event)">
                     <div class="row g-3">
-                        <div class="col-md-3">
-                            <label class="form-label fw-bold small">اسم الموظف</label>
-                            <input type="text" id="staffName" class="form-control form-control-sm" required>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label fw-bold small">البريد الإلكتروني</label>
-                            <input type="email" id="staffEmail" class="form-control form-control-sm" required>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label fw-bold small">رقم التلفون</label>
-                            <input type="text" id="staffPhone" class="form-control form-control-sm" required>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label fw-bold small">رابط الصورة الشخصية</label>
-                            <input type="text" id="staffImage" class="form-control form-control-sm" placeholder="https://... أو اسم الصورة">
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label fw-bold small">اسم المستخدم للدخول</label>
-                            <input type="text" id="staffUsername" class="form-control form-control-sm" required>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label fw-bold small">كلمة المرور</label>
-                            <input type="password" id="staffPassword" class="form-control form-control-sm" required>
+                        <div class="col-md-4">
+                            <label for="staffName" class="form-label">اسم الموظف</label>
+                            <input type="text" class="form-control" id="staffName" required placeholder="الاسم الكامل">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-bold small">الأقسام المسموح بمراجعتها</label>
-                            <div id="categoriesCheckboxesContainer" class="category-checkboxes">
-                                <span class="text-muted small">جاري التحميل...</span>
-                            </div>
+                            <label for="staffEmail" class="form-label">البريد الإلكتروني</label>
+                            <input type="email" class="form-control" id="staffEmail" required placeholder="name@albet.store">
                         </div>
-                        <div class="col-md-2 d-flex align-items-end">
-                            <button type="submit" class="btn btn-dark w-100 fw-bold btn-sm py-2">حفظ الموظف</button>
+                        <div class="col-md-4">
+                            <label for="staffPassword" class="form-label">كلمة المرور المؤقتة</label>
+                            <input type="password" class="form-control" id="staffPassword" required placeholder="********">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="staffPhone" class="form-label">رقم الهاتف</label>
+                            <input type="text" class="form-control" id="staffPhone" placeholder="010xxxxxxxx">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="assignedCategory" class="form-label">القسم المسؤول عنه</label>
+                            <select class="form-select" id="assignedCategory" required>
+                                <option value="">اختر القسم...</option>
+                                <option value="إلكترونيات">إلكترونيات</option>
+                                <option value="عقارات">عقارات</option>
+                                <option value="سيارات">سيارات</option>
+                                <option value="أزياء وملابس">أزياء وملابس</option>
+                                <option value="خدمات وصيانة">خدمات وصيانة</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">
+                                <i class="bi bi-check-lg ms-1"></i> حفظ وإضافة الموظف
+                            </button>
                         </div>
                     </div>
                 </form>
+                <div id="formAlert" class="mt-3"></div>
+            </div>
+        </div>
 
-                <!-- جدول عرض الموظفين والحالة -->
-                <h6 class="fw-bold text-dark mb-3">قائمة الموظفين والتحكم في حالة النشاط</h6>
+        <!-- جدول عرض الموظفين الحاليين -->
+        <div class="card">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-people-fill ms-2"></i> قائمة الموظفين المسجلين</h5>
+            </div>
+            <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-bordered align-middle bg-white text-center small">
-                        <thead class="table-dark">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
                             <tr>
-                                <th>الصورة</th>
-                                <th>اسم الموظف والبيانات</th>
-                                <th>اليوزر / الإيميل</th>
-                                <th>الأقسام المصرح بها</th>
-                                <th>نشط / شغال</th>
-                                <th>الإجراءات</th>
+                                <th class="py-3 ps-4">اسم الموظف</th>
+                                <th>البريد الإلكتروني</th>
+                                <th>القسم</th>
+                                <th>الهاتف</th>
+                                <th>الحالة</th>
+                                <th class="text-center">الإجراءات</th>
                             </tr>
                         </thead>
                         <tbody id="staffTableBody">
-                            <tr><td colspan="6" class="text-muted py-4">جاري تحميل الموظفين...</td></tr>
+                            <tr>
+                                <td colspan="6" class="text-center py-4 text-muted">جاري تحميل بيانات الموظفين...</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -116,110 +124,93 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.js"></script>
+    <!-- Supabase JS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
+        // إعدادات الاتصال بـ Supabase
+        const SUPABASE_URL = 'https://usaqiylvnmccgnpxwaq.supabase.co';
+        const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY'; // استبدل المفتاح الخاص بك لو لزم الأمر
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        window.onload = async () => {
-            await loadCategories();
-            await loadStaff();
-        };
+        // جلب الموظفين عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchStaffList();
+        });
 
-        async function loadCategories() {
-            const container = document.getElementById('categoriesCheckboxesContainer');
-            const { data, error } = await supabaseClient.from('categories').select('name');
-            if (error || !data || data.length === 0) {
-                container.innerHTML = '<span class="text-danger small">لا توجد أقسام مسجلة.</span>';
-                return;
-            }
-            container.innerHTML = data.map(cat => `
-                <div class="form-check text-start">
-                    <input class="form-check-input staff-cat-checkbox" type="checkbox" value="${cat.name}" id="cat_${cat.name}">
-                    <label class="form-check-label small" for="cat_${cat.name}">${cat.name}</label>
-                </div>
-            `).join('');
-        }
-
-        async function loadStaff() {
+        async function fetchStaffList() {
             const tbody = document.getElementById('staffTableBody');
-            const { data, error } = await supabaseClient.from('staff_members').select('*').order('id', { ascending: false });
-            
-            if (error) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-danger">خطأ في التحميل: ${error.message}</td></tr>`;
-                return;
-            }
-            if (!data || data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-muted py-4">لا يوجد موظفون مضافون حتى الآن.</td></tr>`;
-                return;
-            }
+            try {
+                const { data, error } = await supabaseClient.from('staff_members').select('*');
+                if (error) throw error;
 
-            tbody.innerHTML = data.map(st => `
-                <tr>
-                    <td>
-                        <img src="${st.image_url || 'https://via.placeholder.com/50'}" class="staff-avatar" alt="صورة الموظف">
-                    </td>
-                    <td class="text-start">
-                        <div class="fw-bold">${st.name}</div>
-                        <small class="text-muted"><i class="bi bi-telephone"></i> ${st.phone || 'بدون تلفون'}</small>
-                    </td>
-                    <td>
-                        <div><code>${st.username}</code></div>
-                        <small class="text-muted">${st.email || ''}</small>
-                    </td>
-                    <td>
-                        <span class="badge bg-secondary">${Array.isArray(st.allowed_categories) ? st.allowed_categories.join(', ') : (st.allowed_categories || 'الكل')}</span>
-                    </td>
-                    <td>
-                        <div class="form-check form-switch d-flex justify-content-center">
-                            <input class="form-check-input" type="checkbox" role="switch" ${st.is_active !== false ? 'checked' : ''} onchange="toggleStaffStatus('${st.id}', this.checked)">
-                        </div>
-                    </td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-danger py-0 px-2" onclick="deleteStaff('${st.id}')"><i class="bi bi-trash"></i> حذف</button>
-                    </td>
-                </tr>
-            `).join('');
+                if (!data || data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-muted">لا يوجد موظفين مسجلين حالياً.</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = '';
+                data.forEach(staff => {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td class="ps-4 fw-bold">${staff.name || 'بدون اسم'}</td>
+                            <td>${staff.email}</td>
+                            <td><span class="badge bg-info text-dark">${staff.assigned_category || 'عام'}</span></td>
+                            <td>${staff.phone || 'غير محدد'}</td>
+                            <td>
+                                <span class="badge ${staff.is_active ? 'bg-success' : 'bg-danger'}">
+                                    ${staff.is_active ? 'نشط' : 'معطل'}
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <button class="btn btn-sm ${staff.is_active ? 'btn-outline-danger' : 'btn-outline-success'}" onclick="toggleStaffStatus('${staff.id}', ${!staff.is_active})">
+                                    ${staff.is_active ? 'تعطيل' : 'تفعيل'}
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch (err) {
+                console.error('خطأ في جلب الموظفين:', err.message);
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-danger">حدث خطأ أثناء جلب البيانات.</td></tr>`;
+            }
         }
 
-        async function saveStaff(e) {
-            e.preventDefault();
+        async function handleAddNewStaff(event) {
+            event.preventDefault();
+            const alertDiv = document.getElementById('formAlert');
+            
             const name = document.getElementById('staffName').value;
             const email = document.getElementById('staffEmail').value;
-            const phone = document.getElementById('staffPhone').value;
-            const image_url = document.getElementById('staffImage').value;
-            const username = document.getElementById('staffUsername').value;
             const password = document.getElementById('staffPassword').value;
+            const phone = document.getElementById('staffPhone').value;
+            const assignedCategory = document.getElementById('assignedCategory').value;
 
-            const checkboxes = document.querySelectorAll('.staff-cat-checkbox:checked');
-            const allowed_categories = Array.from(checkboxes).map(cb => cb.value);
+            try {
+                const { data, error } = await supabaseClient.from('staff_members').insert([
+                    { name, email, phone, assigned_category: assignedCategory, is_active: true }
+                ]).select();
 
-            const { error } = await supabaseClient.from('staff_members').insert([{
-                name, email, phone, image_url, username, password, allowed_categories, is_active: true
-            }]);
+                if (error) throw error;
 
-            if (error) {
-                alert('خطأ أثناء الحفظ: ' + error.message);
-            } else {
-                alert('تم إضافة الموظف بنجاح!');
-                document.getElementById('staffForm').reset();
-                loadStaff();
+                alertDiv.innerHTML = `<div class="alert alert-success">تم إضافة الموظف بنجاح!</div>`;
+                document.getElementById('addStaffForm').reset();
+                fetchStaffList();
+            } catch (err) {
+                alertDiv.innerHTML = `<div class="alert alert-danger">خطأ: ${err.message}</div>`;
             }
         }
 
-        async function toggleStaffStatus(id, isActive) {
-            const { error } = await supabaseClient.from('staff_members').update({ is_active: isActive }).eq('id', id);
-            if (error) {
-                alert('خطأ في تحديث الحالة: ' + error.message);
-                loadStaff();
-            }
-        }
+        async function toggleStaffStatus(id, newStatus) {
+            try {
+                const { error } = await supabaseClient
+                    .from('staff_members')
+                    .update({ is_active: newStatus })
+                    .eq('id', id);
 
-        async function deleteStaff(id) {
-            if (confirm('هل أنت متأكد من حذف هذا الموظف نهائياً؟')) {
-                const { error } = await supabaseClient.from('staff_members').delete().eq('id', id);
-                if (!error) loadStaff();
+                if (error) throw error;
+                fetchStaffList();
+            } catch (err) {
+                alert('فشل تحديث حالة الموظف: ' + err.message);
             }
         }
     </script>
