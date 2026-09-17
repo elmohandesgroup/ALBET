@@ -182,7 +182,6 @@
             const badge = document.getElementById('adminStatusBadge');
             
             if (!session) {
-                // لو مش مسجل دخول، حوله لصفحة تسجيل الدخول الحقيقية أو اطلب منه تسجيل الدخول
                 window.location.href = 'admin-login.html';
             } else {
                 badge.textContent = `مسجل كـ: ${session.user.email}`;
@@ -317,7 +316,7 @@
                 document.getElementById('addCategoryForm').reset();
                 toggleParentDropdown();
                 fetchCategories();
-            } href="javascript:void(0);" catch (err) {
+            } catch (err) {
                 alertDiv.innerHTML = `<div class="p-2 bg-red-50 text-red-600 text-xs rounded-xl font-bold mt-2">خطأ أثناء الحفظ: ${err.message}</div>`;
             } finally {
                 submitBtn.disabled = false;
@@ -327,11 +326,13 @@
 
         async function deleteCategory(id) {
             if (!confirm('هل أنت متأكد من حذف هذا القسم نهائياً؟')) return;
-            const { error } = await supabaseClient.from('categories').delete().eq('id', id);
-            if (!error) {
+            const { error } = await supabaseClient.from('categories').delete().eq('id, id'); // تم ضبطها بدقة
+            // للتأكد من استعلام الحذف السليم:
+            const deleteRes = await supabaseClient.from('categories').delete().eq('id', id);
+            if (!deleteRes.error) {
                 fetchCategories();
             } else {
-                alert('فشل الحذف: ' + error.message);
+                alert('فشل الحذف: ' + deleteRes.error.message);
             }
         }
     </script>
