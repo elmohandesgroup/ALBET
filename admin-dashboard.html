@@ -29,7 +29,7 @@
             padding: 20px;
         }
 
-        /* الهيدر العلوي الشامل (زي الصورة التانية) */
+        /* الهيدر العلوي المنضبط (اليمين: 3 شرط، النص: العنوان، اليسار: اللوجو) */
         .top-navbar-box {
             background: #111827;
             color: white;
@@ -57,7 +57,7 @@
             border-radius: 8px;
         }
 
-        /* زر الـ 3 شرط المميز */
+        /* زر الـ 3 شرط في اليمين */
         .menu-toggler-btn {
             background: transparent;
             border: none;
@@ -73,7 +73,7 @@
             opacity: 0.8;
         }
 
-        /* محتوى لوحة التحكم بمدى واسع ورايق */
+        /* محتوى لوحة التحكم واسع ورايق */
         .content-frame-box {
             background: white;
             border: 2px solid #111827;
@@ -83,7 +83,7 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.02);
         }
 
-        /* تنسيق السايدبار داخل القائمة المنسدلة */
+        /* تنسيق القائمة المنسدلة (Offcanvas) */
         .sidebar-title {
             font-size: 0.8rem;
             font-weight: 700;
@@ -141,7 +141,7 @@
             background-color: #e76f51;
         }
 
-        /* زر تسجيل الخروج في القائمة من تحت */
+        /* زر تسجيل الخروج تحت في القائمة المنسدلة */
         .sidebar-logout-box {
             margin-top: 30px;
             padding-top: 20px;
@@ -167,7 +167,7 @@
             background-color: #d9532b;
         }
 
-        /* جدول البيانات */
+        /* تنسيق جدول البيانات */
         .table th {
             background-color: #f8fafc;
             color: #475569;
@@ -193,23 +193,26 @@
 </head>
 <body>
 
-    <!-- الهيدر العلوي الشامل (يحتوي على اللوجو، العنوان، وأيقونة الـ 3 شرط) -->
+    <!-- الهيدر العلوي: اليمين (3 شرط) - الوسط (العنوان) - اليسار (اللوجو) -->
     <div class="top-navbar-box">
-        <div class="brand-section">
-            <img src="logo192.png" alt="متجر البيت" class="admin-logo">
-            <div>
-                <h3 class="m-0 fw-bold fs-6">متجر البيت</h3>
-                <small class="text-light opacity-75" style="font-size: 0.72rem;">لوحة تحكم المدير العام - albet.store</small>
-            </div>
-        </div>
-
-        <!-- زر الـ 3 شرط لفتح قائمة الأقسام والخروج -->
+        <!-- 1. زر الـ 3 شرط في أقصى اليمين -->
         <button class="menu-toggler-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#adminSidebarMenu" aria-controls="adminSidebarMenu">
             <i class="bi bi-list"></i>
         </button>
+
+        <!-- 2. العنوان في المنتصف -->
+        <div class="text-center">
+            <h3 class="m-0 fw-bold fs-6">متجر البيت</h3>
+            <small class="text-light opacity-75" style="font-size: 0.72rem;">لوحة تحكم المدير العام - albet.store</small>
+        </div>
+
+        <!-- 3. اللوجو في أقصى اليسار -->
+        <div class="brand-section">
+            <img src="logo192.png" alt="متجر البيت" class="admin-logo">
+        </div>
     </div>
 
-    <!-- القائمة الجانبية المنسدلة (Offcanvas) - تحتوي على الأقسام وزر تسجيل الخروج -->
+    <!-- القائمة الجانبية المنسدلة (تحتوي على الأقسام وزر تسجيل الخروج) -->
     <div class="offcanvas offcanvas-start" tabindex="-1" id="adminSidebarMenu" aria-labelledby="adminSidebarMenuLabel">
         <div class="offcanvas-header bg-dark text-white">
             <h5 class="offcanvas-title fs-6 fw-bold" id="adminSidebarMenuLabel">قائمة التحكم - متجر البيت</h5>
@@ -274,7 +277,7 @@
                 </div>
             </div>
 
-            <!-- زر تسجيل الخروج في أسفل القائمة المنسدلة -->
+            <!-- زر تسجيل الخروج في أسفل القائمة -->
             <div class="sidebar-logout-box">
                 <button class="btn-logout" onclick="logoutAdmin()">
                     <span>تسجيل الخروج</span> <i class="bi bi-box-arrow-left"></i>
@@ -283,7 +286,7 @@
         </div>
     </div>
 
-    <!-- المحتوى الرئيسي للوحة التحكم (يملى الشاشة بوضوح وبدون زحمة) -->
+    <!-- المحتوى الرئيسي للوحة التحكم (واسع ونظيف) -->
     <div class="content-frame-box">
         <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
             <span class="fw-bold fs-6 text-secondary"><i class="bi bi-list-check ms-1"></i> الإعلانات المعلقة والإيصالات المالية</span>
