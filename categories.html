@@ -150,7 +150,7 @@
         </section>
     </main>
 
-    <!-- السكريبتات والتحقق الأمني المستقر -->
+    <!-- السكريبتات والتحقق الأمني الحقيقي Supabase Auth -->
     <script>
         const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
@@ -176,27 +176,22 @@
         closeMenuBtn.addEventListener('click', closeMenu);
         menuOverlay.addEventListener('click', closeMenu);
 
-        // التحقق الآمن والمستقر من الجلسة بدون طرد متكرر
+        // التحقق من جلسة الدخول الحقيقية لـ Supabase
         async function checkAuthSession() {
+            const { data: { session }, error } = await supabaseClient.auth.getSession();
             const badge = document.getElementById('adminStatusBadge');
-            try {
-                const { data: { session }, error } = await supabaseClient.auth.getSession();
-                
-                if (error || !session) {
-                    console.warn("لا توجد جلسة نشطة، إعادة توجيه لتسجيل الدخول...");
-                    window.location.href = 'admin-login.html';
-                    return;
-                }
-                
-                badge.textContent = `مسجل كـ: ${session.user.email}`;
-            } catch (err) {
-                console.error("خطأ في الجلسة:", err);
+            
+            if (!session) {
+                // لو مش مسجل دخول، حوله لصفحة تسجيل الدخول الحقيقية أو اطلب منه تسجيل الدخول
                 window.location.href = 'admin-login.html';
+            } else {
+                badge.textContent = `مسجل كـ: ${session.user.email}`;
             }
         }
 
         async function logoutAdmin() {
             await supabaseClient.auth.signOut();
+            localStorage.removeItem('isAdminLoggedIn');
             window.location.href = 'admin-login.html';
         }
 
@@ -231,6 +226,7 @@
             }
         }
 
+        // تحويل الصورة لـ WebP
         function convertImageToWebP(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -321,7 +317,7 @@
                 document.getElementById('addCategoryForm').reset();
                 toggleParentDropdown();
                 fetchCategories();
-            } catch (err) {
+            } href="javascript:void(0);" catch (err) {
                 alertDiv.innerHTML = `<div class="p-2 bg-red-50 text-red-600 text-xs rounded-xl font-bold mt-2">خطأ أثناء الحفظ: ${err.message}</div>`;
             } finally {
                 submitBtn.disabled = false;
