@@ -29,7 +29,7 @@
             padding: 20px;
         }
 
-        /* الهيدر العلوي المنضبط: اليمين (3 شرط)، النص (العنوان)، اليسار (اللوجو) */
+        /* الهيدر العلوي المتناسق */
         .top-navbar-box {
             background: #111827;
             color: white;
@@ -45,7 +45,6 @@
         .brand-section {
             display: flex;
             align-items: center;
-            gap: 15px;
         }
 
         .admin-logo {
@@ -57,7 +56,7 @@
             border-radius: 8px;
         }
 
-        /* زر الـ 3 شرط في اليمين */
+        /* زر الـ 3 شرط في أقصى اليمين */
         .menu-toggler-btn {
             background: transparent;
             border: none;
@@ -73,7 +72,7 @@
             opacity: 0.8;
         }
 
-        /* المحتوى الرئيسي واسع ورايق يملى الشاشة */
+        /* المحتوى الرئيسي واسع ورايق */
         .content-frame-box {
             background: white;
             border: 2px solid #111827;
@@ -83,12 +82,12 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.02);
         }
 
-        /* تنسيق القائمة الجانبية المنسدلة (Offcanvas) لتشابه تصميم الموقع العام */
+        /* تنسيق القائمة المنسدلة (Offcanvas) والروابط النظيفة جواها */
         .offcanvas {
             width: 300px !important;
         }
         
-        .sidebar-title {
+        .offcanvas-menu-header {
             font-size: 0.82rem;
             font-weight: 700;
             color: #334155;
@@ -100,54 +99,62 @@
             align-items: center;
             justify-content: space-between;
         }
-        
-        .sidebar-menu-list {
+
+        /* قوائم الروابط بدون فوضى الأزرار */
+        .clean-nav-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
-        
-        .side-pill-btn {
-            background: #ffffff;
-            color: #334155;
-            border: 1px solid #e2e8f0;
-            padding: 11px 14px;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 0.85rem;
+
+        .clean-nav-link {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            padding: 10px 14px;
+            color: #334155;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
             text-decoration: none;
+            font-weight: 700;
+            font-size: 0.85rem;
             transition: all 0.2s ease;
         }
-        .side-pill-btn:hover {
+
+        .clean-nav-link:hover {
             background-color: #f8fafc;
             border-color: #cbd5e1;
             color: #0f172a;
         }
-        .side-pill-btn.active {
+
+        .clean-nav-link.active {
             background-color: #fff1ed;
             color: #e76f51;
             border-color: #fbd3c9;
             box-shadow: 0 2px 8px rgba(231, 111, 81, 0.15);
         }
-        .side-pill-content {
+
+        .link-content {
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        .side-dot-bullet {
+
+        .nav-dot {
             width: 5px;
             height: 5px;
             background-color: #94a3b8;
             border-radius: 50%;
         }
-        .side-pill-btn.active .side-dot-bullet {
+        .clean-nav-link.active .nav-dot {
             background-color: #e76f51;
         }
 
-        /* زر تسجيل الخروج في أسفل القائمة المنسدلة */
+        /* زر تسجيل الخروج في أسفل القائمة */
         .sidebar-logout-box {
             margin-top: 20px;
             padding-top: 15px;
@@ -173,7 +180,7 @@
             background-color: #d9532b;
         }
 
-        /* تنسيق جدول البيانات */
+        /* جدول البيانات */
         .table th {
             background-color: #f8fafc;
             color: #475569;
@@ -218,7 +225,7 @@
         </div>
     </div>
 
-    <!-- القائمة الجانبية المنزلقة (تفتح من اليمين بضغط زر الهامبرجر وتضم الأقسام وخروج) -->
+    <!-- القائمة الجانبية المنزلقة (تفتح بضغط زر الهامبرجر وتضم الأقسام كروابط نظيفة وتسجيل الخروج) -->
     <div class="offcanvas offcanvas-end" tabindex="-1" id="adminSidebarMenu" aria-labelledby="adminSidebarMenuLabel">
         <div class="offcanvas-header bg-dark text-white">
             <div class="d-flex align-items-center gap-2">
@@ -230,62 +237,56 @@
         
         <div class="offcanvas-body bg-light d-flex flex-column justify-content-between">
             <div>
-                <div class="sidebar-title">
+                <div class="offcanvas-menu-header">
                     <span>أقسام الإدارة والتقارير الشاملة</span>
                     <i class="bi bi-grid-fill text-dark"></i>
                 </div>
                 
-                <div class="sidebar-menu-list">
-                    <a href="admin-dashboard.html" class="side-pill-btn active">
-                        <div class="side-pill-content">
-                            <i class="bi bi-shield-check"></i>
-                            <span>مراجعة الإعلانات</span>
-                        </div>
-                        <span class="side-dot-bullet"></span>
-                    </a>
-                    <a href="staff.html" class="side-pill-btn">
-                        <div class="side-pill-content">
-                            <i class="bi bi-people"></i>
-                            <span>إضافة موظف</span>
-                        </div>
-                        <span class="side-dot-bullet"></span>
-                    </a>
-                    <a href="categories.html" class="side-pill-btn">
-                        <div class="side-pill-content">
-                            <i class="bi bi-folder-plus"></i>
-                            <span>إضافة قسم</span>
-                        </div>
-                        <span class="side-dot-bullet"></span>
-                    </a>
-                    <a href="daily-report.html" class="side-pill-btn">
-                        <div class="side-pill-content">
-                            <i class="bi bi-file-earmark-text"></i>
-                            <span>تقرير اليوم</span>
-                        </div>
-                        <span class="side-dot-bullet"></span>
-                    </a>
-                    <a href="profits.html" class="side-pill-btn">
-                        <div class="side-pill-content">
-                            <i class="bi bi-cash-coin"></i>
-                            <span>الأرباح والخسائر</span>
-                        </div>
-                        <span class="side-dot-bullet"></span>
-                    </a>
-                    <a href="salaries.html" class="side-pill-btn">
-                        <div class="side-pill-content">
-                            <i class="bi bi-wallet2"></i>
-                            <span>المرتبات</span>
-                        </div>
-                        <span class="side-dot-bullet"></span>
-                    </a>
-                    <a href="expenses.html" class="side-pill-btn">
-                        <div class="side-pill-content">
-                            <i class="bi bi-receipt"></i>
-                            <span>المصروفات</span>
-                        </div>
-                        <span class="side-dot-bullet"></span>
-                    </a>
-                </div>
+                <!-- روابط القائمة النظيفة -->
+                <ul class="clean-nav-list">
+                    <li>
+                        <a href="admin-dashboard.html" class="clean-nav-link active">
+                            <span class="link-content"><i class="bi bi-shield-check"></i><span>مراجعة الإعلانات</span></span>
+                            <span class="nav-dot"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="staff.html" class="clean-nav-link">
+                            <span class="link-content"><i class="bi bi-people"></i><span>إضافة موظف</span></span>
+                            <span class="nav-dot"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="categories.html" class="clean-nav-link">
+                            <span class="link-content"><i class="bi bi-folder-plus"></i><span>إضافة قسم</span></span>
+                            <span class="nav-dot"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="daily-report.html" class="clean-nav-link">
+                            <span class="link-content"><i class="bi bi-file-earmark-text"></i><span>تقرير اليوم</span></span>
+                            <span class="nav-dot"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="profits.html" class="clean-nav-link">
+                            <span class="link-content"><i class="bi bi-cash-coin"></i><span>الأرباح والخسائر</span></span>
+                            <span class="nav-dot"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="salaries.html" class="clean-nav-link">
+                            <span class="link-content"><i class="bi bi-wallet2"></i><span>المرتبات</span></span>
+                            <span class="nav-dot"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="expenses.html" class="clean-nav-link">
+                            <span class="link-content"><i class="bi bi-receipt"></i><span>المصروفات</span></span>
+                            <span class="nav-dot"></span>
+                        </a>
+                    </li>
+                </ul>
             </div>
 
             <!-- زر تسجيل الخروج في أسفل القائمة -->
@@ -297,7 +298,7 @@
         </div>
     </div>
 
-    <!-- المحتوى الرئيسي للوحة التحكم (واسع ونظيف بالكامل) -->
+    <!-- المحتوى الرئيسي للوحة التحكم (نظيف وواسع) -->
     <div class="content-frame-box">
         <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
             <span class="fw-bold fs-6 text-secondary"><i class="bi bi-list-check ms-1"></i> الإعلانات المعلقة والإيصالات المالية</span>
