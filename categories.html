@@ -50,7 +50,7 @@
         </div>
     </header>
 
-    <!-- القائمة الجانبية (Drawer Menu) -->
+    <!-- القائمة الجانبية (Drawer Menu) - مترتبة ومظبوطة تماماً -->
     <div id="side-menu" class="fixed inset-0 z-50 hidden">
         <div id="menu-overlay" class="absolute inset-0 bg-black/50 transition-opacity"></div>
         <div class="absolute right-0 top-0 bottom-0 w-80 bg-white shadow-2xl p-5 flex flex-col justify-between transform transition-transform duration-300 translate-x-full overflow-y-auto" id="menu-content">
@@ -150,7 +150,7 @@
         </section>
     </main>
 
-    <!-- السكريبتات والتحقق الأمني الحقيقي Supabase Auth -->
+    <!-- السكريبتات -->
     <script>
         const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
@@ -176,13 +176,11 @@
         closeMenuBtn.addEventListener('click', closeMenu);
         menuOverlay.addEventListener('click', closeMenu);
 
-        // التحقق من جلسة الدخول الحقيقية لـ Supabase
         async function checkAuthSession() {
             const { data: { session }, error } = await supabaseClient.auth.getSession();
             const badge = document.getElementById('adminStatusBadge');
             
             if (!session) {
-                // لو مش مسجل دخول، حوله لصفحة تسجيل الدخول الحقيقية أو اطلب منه تسجيل الدخول
                 window.location.href = 'admin-login.html';
             } else {
                 badge.textContent = `مسجل كـ: ${session.user.email}`;
@@ -226,7 +224,6 @@
             }
         }
 
-        // تحويل الصورة لـ WebP
         function convertImageToWebP(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -286,7 +283,7 @@
             event.preventDefault();
             const alertDiv = document.getElementById('formAlert');
             const submitBtn = document.getElementById('submitBtn');
-            const name = document.getElementById('catName').value;
+            const name = document.getElementById('catName',).value;
             const type = document.getElementById('catType').value;
             const parent_id = type === 'sub' ? document.getElementById('parentCategorySelect').value : null;
             const fileInput = document.getElementById('catIconFile');
@@ -317,7 +314,7 @@
                 document.getElementById('addCategoryForm').reset();
                 toggleParentDropdown();
                 fetchCategories();
-            } href="javascript:void(0);" catch (err) {
+            } catch (err) {
                 alertDiv.innerHTML = `<div class="p-2 bg-red-50 text-red-600 text-xs rounded-xl font-bold mt-2">خطأ أثناء الحفظ: ${err.message}</div>`;
             } finally {
                 submitBtn.disabled = false;
