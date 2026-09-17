@@ -3,16 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة التحكم الرئيسية - متجر البيت (albet.store)</title>
+    <title>لوحة التحكم - متجر البيت (albet.store)</title>
     
-    <!-- حماية الصفحة -->
-    <script>
-        if (localStorage.getItem('isAdminLoggedIn') !== 'true') {
-            alert('عذراً، يجب تسجيل الدخول أولاً!');
-            window.location.href = 'admin-login.html';
-        }
-    </script>
-
     <!-- Bootstrap 5 RTL CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/rtl.min.css">
     <!-- Bootstrap Icons -->
@@ -22,14 +14,14 @@
     
     <style>
         body {
-            background-color: #f4f6f9;
+            background-color: #f8fafc;
             font-family: 'Cairo', sans-serif;
             color: #1e293b;
             margin: 0;
             padding: 20px;
         }
 
-        /* الهيدر العلوي المنضبط */
+        /* الهيدر العلوي الأساسي */
         .top-navbar-box {
             background: #111827;
             color: white;
@@ -39,7 +31,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
         
         .brand-section {
@@ -56,7 +48,7 @@
             border-radius: 8px;
         }
 
-        /* زر الـ 3 شرط في أقصى اليمين */
+        /* زر القائمة الجانبية (الهامبرغر) */
         .menu-toggler-btn {
             background: transparent;
             border: none;
@@ -72,160 +64,51 @@
             opacity: 0.8;
         }
 
-        /* المحتوى الرئيسي واسع ورايق يملى الشاشة من غير أي زحمة برة */
-        .content-frame-box {
+        /* حاوية التصميم المبدئي الفاضية والنظيفة */
+        .welcome-container {
             background: white;
-            border: 2px solid #111827;
-            border-radius: 14px;
-            padding: 20px;
-            min-height: 650px;
+            border: 2px dashed #cbd5e1;
+            border-radius: 16px;
+            padding: 60px 20px;
+            text-align: center;
             box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+            margin-top: 20px;
         }
 
-        /* تنسيق القائمة الجانبية المنزلقة (Offcanvas) */
+        .welcome-icon {
+            font-size: 3.5rem;
+            color: #e76f51;
+            margin-bottom: 15px;
+        }
+
+        /* تنسيق القائمة الجانبية (تفتح فاضية أو تحب نضيف فيها زر الخروج فقط مؤقتاً؟) */
         .offcanvas {
             width: 300px !important;
-        }
-        
-        .offcanvas-menu-header {
-            font-size: 0.82rem;
-            font-weight: 700;
-            color: #334155;
-            padding: 10px 12px;
-            background: #f1f5f9;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        /* روابط الأقسام داخل القائمة المنسدلة */
-        .clean-nav-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .clean-nav-link {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 11px 14px;
-            color: #334155;
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 0.85rem;
-            transition: all 0.2s ease;
-        }
-
-        .clean-nav-link:hover {
-            background-color: #f8fafc;
-            border-color: #cbd5e1;
-            color: #0f172a;
-        }
-
-        .clean-nav-link.active {
-            background-color: #fff1ed;
-            color: #e76f51;
-            border-color: #fbd3c9;
-            box-shadow: 0 2px 8px rgba(231, 111, 81, 0.15);
-        }
-
-        .link-content {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .nav-dot {
-            width: 5px;
-            height: 5px;
-            background-color: #94a3b8;
-            border-radius: 50%;
-        }
-        .clean-nav-link.active .nav-dot {
-            background-color: #e76f51;
-        }
-
-        /* زر تسجيل الخروج في أسفل القائمة */
-        .sidebar-logout-box {
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 1px solid #e2e8f0;
-        }
-        .btn-logout {
-            background-color: #e76f51;
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 11px;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .btn-logout:hover {
-            background-color: #d9532b;
-        }
-
-        /* تنسيق جدول البيانات */
-        .table th {
-            background-color: #f8fafc;
-            color: #475569;
-            font-weight: 700;
-            font-size: 0.82rem;
-            border-bottom: 2px solid #e2e8f0;
-        }
-        .table td {
-            font-size: 0.82rem;
-            vertical-align: middle;
-        }
-        .ad-img, .proof-img {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-            border-radius: 8px;
-            border: 1px solid #cbd5e1;
-        }
-        .proof-img {
-            cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-    <!-- الهيدر العلوي: اليمين (3 شرط) - الوسط (العنوان) - اليسار (اللوجو) -->
+    <!-- الهيدر العلوي -->
     <div class="top-navbar-box">
-        <!-- 1. زر الـ 3 شرط في أقصى اليمين -->
+        <!-- زر الـ 3 شرط في أقصى اليمين -->
         <button class="menu-toggler-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#adminSidebarMenu" aria-controls="adminSidebarMenu">
             <i class="bi bi-list"></i>
         </button>
 
-        <!-- 2. العنوان في المنتصف -->
+        <!-- العنوان في المنتصف -->
         <div class="text-center">
             <h3 class="m-0 fw-bold fs-6">متجر البيت</h3>
             <small class="text-light opacity-75" style="font-size: 0.72rem;">لوحة تحكم المدير العام - albet.store</small>
         </div>
 
-        <!-- 3. اللوجو في أقصى اليسار -->
+        <!-- اللوجو في أقصى اليسار -->
         <div class="brand-section">
             <img src="logo192.png" alt="متجر البيت" class="admin-logo">
         </div>
     </div>
 
-    <!-- القائمة الجانبية المنزلقة (تفتح من اليمين بضغط زر الهامبرجر وتحتوي على الأقسام والخروج) -->
+    <!-- القائمة الجانبية المنزلقة (حاليًا نظيفة وفاضية تمهيداً لإضافة الأقسام براحتنا) -->
     <div class="offcanvas offcanvas-end" tabindex="-1" id="adminSidebarMenu" aria-labelledby="adminSidebarMenuLabel">
         <div class="offcanvas-header bg-dark text-white">
             <div class="d-flex align-items-center gap-2">
@@ -236,141 +119,32 @@
         </div>
         
         <div class="offcanvas-body bg-light d-flex flex-column justify-content-between">
-            <div>
-                <div class="offcanvas-menu-header">
-                    <span>أقسام الإدارة والتقارير الشاملة</span>
-                    <i class="bi bi-grid-fill text-dark"></i>
-                </div>
-                
-                <!-- روابط الأقسام مرتبة ومنظفة -->
-                <ul class="clean-nav-list">
-                    <li>
-                        <a href="admin-dashboard.html" class="clean-nav-link active">
-                            <span class="link-content"><i class="bi bi-shield-check"></i><span>مراجعة الإعلانات</span></span>
-                            <span class="nav-dot"></span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="staff.html" class="clean-nav-link">
-                            <span class="link-content"><i class="bi bi-people"></i><span>إضافة موظف</span></span>
-                            <span class="nav-dot"></span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="categories.html" class="clean-nav-link">
-                            <span class="link-content"><i class="bi bi-folder-plus"></i><span>إضافة قسم</span></span>
-                            <span class="nav-dot"></span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="daily-report.html" class="clean-nav-link">
-                            <span class="link-content"><i class="bi bi-file-earmark-text"></i><span>تقرير اليوم</span></span>
-                            <span class="nav-dot"></span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="profits.html" class="clean-nav-link">
-                            <span class="link-content"><i class="bi bi-cash-coin"></i><span>الأرباح والخسائر</span></span>
-                            <span class="nav-dot"></span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="salaries.html" class="clean-nav-link">
-                            <span class="link-content"><i class="bi bi-wallet2"></i><span>المرتبات</span></span>
-                            <span class="nav-dot"></span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="expenses.html" class="clean-nav-link">
-                            <span class="link-content"><i class="bi bi-receipt"></i><span>المصروفات</span></span>
-                            <span class="nav-dot"></span>
-                        </a>
-                    </li>
-                </ul>
+            <div class="text-center py-5 text-muted">
+                <i class="bi bi-hourglass-split fs-3 d-block mb-2"></i>
+                <p class="small m-0">القائمة فارغة حالياً..<br>سنضيف الأقسام هنا براحتنا لاحقاً.</p>
             </div>
-
-            <!-- زر تسجيل الخروج في أسفل القائمة -->
-            <div class="sidebar-logout-box">
-                <button class="btn-logout" onclick="logoutAdmin()">
+            
+            <div>
+                <button class="btn btn-danger w-100 py-2 fw-bold" onclick="alert('تم تسجيل الخروج')">
                     <span>تسجيل الخروج</span> <i class="bi bi-box-arrow-left"></i>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- المحتوى الرئيسي للوحة التحكم (واسع، نظيف، وخالي من أي أقسام خارجية) -->
-    <div class="content-frame-box">
-        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
-            <span class="fw-bold fs-6 text-secondary"><i class="bi bi-list-check ms-1"></i> الإعلانات المعلقة والإيصالات المالية</span>
-            <button class="btn btn-sm btn-outline-dark fw-bold px-3" onclick="loadPendingAds()" style="font-size: 0.78rem;">
-                <i class="bi bi-arrow-clockwise ms-1"></i> تحديث
-            </button>
-        </div>
-
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead>
-                    <tr>
-                        <th class="text-center">صورة الإعلان</th>
-                        <th class="text-center">إيصال الدفع</th>
-                        <th>عنوان الإعلان</th>
-                        <th>القسم</th>
-                        <th>السعر</th>
-                        <th>تاريخ الرفع</th>
-                        <th class="text-center">الإجراءات</th>
-                    </tr>
-                </thead>
-                <tbody id="pendingAdsTableBody">
-                    <tr><td colspan="7" class="text-center text-muted py-5">جاري التحميل...</td></tr>
-                </tbody>
-            </table>
+    <!-- التصميم المبدئي للصفحة (بدون أي أقسام أو جداول زحمة) -->
+    <div class="container">
+        <div class="welcome-container">
+            <div class="welcome-icon">
+                <i class="bi bi-window-desktop"></i>
+            </div>
+            <h2 class="fw-bold fs-4 mb-2 text-dark">تم تصميم الصفحة المبدئية بنجاح!</h2>
+            <p class="text-muted fs-6 mb-4">الشاشة نظيفة ومرتبة بالكامل وخالية من أي أقسام أو جداول زحمة. جاهزون الآن لإضافة الأقسام والصفحات بالتدريج وبالمقاس المضبوط.</p>
+            <span class="badge bg-dark px-3 py-2" style="font-size: 0.85rem;">albet.store - الهيكل الأساسي جاهز</span>
         </div>
     </div>
 
-    <!-- المكتبات والبرمجيات -->
+    <!-- المكتبات -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <script>
-       const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
-       const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxq0VLujbtAXcUg_K5qf1rSB';
-       const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        window.onload = () => { loadPendingAds(); };
-
-        async function loadPendingAds() {
-            const tbody = document.getElementById('pendingAdsTableBody');
-            const { data, error } = await supabaseClient.from('ads').select('*');
-            
-            if (error) {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center text-danger py-4">خطأ في الاتصال بقاعدة البيانات</td></tr>`;
-                return;
-            }
-            
-            if (data && data.length > 0) {
-                tbody.innerHTML = data.map(ad => `
-                    <tr>
-                        <td class="text-center"><img src="${ad.image_url || 'https://via.placeholder.com/50'}" class="ad-img"></td>
-                        <td class="text-center">${ad.payment_proof_url ? `<img src="${ad.payment_proof_url}" class="proof-img" onclick="window.open('${ad.payment_proof_url}', '_blank')">` : 'لا يوجد'}</td>
-                        <td class="fw-bold">${ad.title}</td>
-                        <td><span class="badge bg-secondary" style="font-size:0.75rem;">${ad.category}</span></td>
-                        <td class="fw-bold text-success">${ad.price} جنيه</td>
-                        <td>${new Date(ad.created_at).toLocaleDateString('ar-EG')}</td>
-                        <td class="text-center">
-                            <button class="btn btn-sm btn-success px-2 py-1 mb-1" style="font-size:0.72rem;" onclick="approveAd('${ad.id}')">اعتماد</button>
-                            <button class="btn btn-sm btn-danger px-2 py-1 mb-1" style="font-size:0.72rem;" onclick="rejectAd('${ad.id}')">رفض</button>
-                        </td>
-                    </tr>
-                `).join('');
-            } else {
-                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-5">لا توجد إعلانات معلقة حالياً. المنصة نظيفة تماماً!</td></tr>';
-            }
-        }
-
-        async function logoutAdmin() {
-            localStorage.removeItem('isAdminLoggedIn');
-            window.location.href = 'admin-login.html';
-        }
-    </script>
 </body>
 </html>
