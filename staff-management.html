@@ -12,12 +12,30 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
-            background-color: #f8f9fa;
+            background-color: #f4f6f9;
             font-family: 'Cairo', sans-serif;
             color: #1e293b;
+            margin: 0;
+            padding: 0;
         }
-        .navbar-brand {
+        /* مطابقة ستايل لوحة التحكم الرئيسية */
+        .admin-header {
+            background: #111827;
+            color: white;
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .admin-logo {
             font-weight: 700;
+            font-size: 1.25rem;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         .card {
             border: none;
@@ -28,26 +46,24 @@
 </head>
 <body>
 
-    <!-- النافبار العلوي -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
-        <div class="container">
-            <a class="navbar-brand" href="admin-dashboard.html">
-                <i class="bi bi-house-gear-fill ms-2"></i> متجر البيت - لوحة الإدارة
+    <!-- الهيدر العلوي المطابق للوحة التحكم -->
+    <header class="admin-header">
+        <a href="admin-dashboard.html" class="admin-logo">
+            <i class="bi bi-house-gear-fill text-primary"></i> متجر البيت - إدارة الموظفين
+        </a>
+        <div>
+            <a href="admin-dashboard.html" class="btn btn-outline-light btn-sm">
+                <i class="bi bi-arrow-right ms-1"></i> عودة لوحة التحكم
             </a>
-            <div class="d-flex align-items-center">
-                <a href="admin-dashboard.html" class="btn btn-outline-light btn-sm">
-                    <i class="bi bi-arrow-right"></i> عودة للوحة التحكم
-                </a>
-            </div>
         </div>
-    </nav>
+    </header>
 
     <!-- المحتوى الرئيسي -->
     <div class="container py-5">
         <div class="row mb-4">
             <div class="col-12">
-                <h2 class="fw-bold text-primary">إدارة الموظفين والصلاحيات</h2>
-                <p class="text-muted">إضافة موظفين جدد وتعديل حالاتهم وصلاحياتهم على أقسام المنصة.</p>
+                <h2 class="fw-bold text-dark">إدارة الموظفين والصلاحيات</h2>
+                <p class="text-muted">إضافة موظفين جدد وتحديد صلاحياتهم وتفعيل/تعطيل حساباتهم على الأقسام.</p>
             </div>
         </div>
 
@@ -58,23 +74,23 @@
                 <form id="addStaffForm" onsubmit="handleAddNewStaff(event)">
                     <div class="row g-3">
                         <div class="col-md-4">
-                            <label for="staffName" class="form-label">اسم الموظف</label>
+                            <label for="staffName" class="form-label fw-bold">اسم الموظف</label>
                             <input type="text" class="form-control" id="staffName" required placeholder="الاسم الكامل">
                         </div>
                         <div class="col-md-4">
-                            <label for="staffEmail" class="form-label">البريد الإلكتروني</label>
+                            <label for="staffEmail" class="form-label fw-bold">البريد الإلكتروني</label>
                             <input type="email" class="form-control" id="staffEmail" required placeholder="name@albet.store">
                         </div>
                         <div class="col-md-4">
-                            <label for="staffPassword" class="form-label">كلمة المرور المؤقتة</label>
+                            <label for="staffPassword" class="form-label fw-bold">كلمة المرور المؤقتة</label>
                             <input type="password" class="form-control" id="staffPassword" required placeholder="********">
                         </div>
                         <div class="col-md-4">
-                            <label for="staffPhone" class="form-label">رقم الهاتف</label>
+                            <label for="staffPhone" class="form-label fw-bold">رقم الهاتف</label>
                             <input type="text" class="form-control" id="staffPhone" placeholder="010xxxxxxxx">
                         </div>
                         <div class="col-md-4">
-                            <label for="assignedCategory" class="form-label">القسم المسؤول عنه</label>
+                            <label for="assignedCategory" class="form-label fw-bold">القسم المسؤول عنه</label>
                             <select class="form-select" id="assignedCategory" required>
                                 <option value="">اختر القسم...</option>
                                 <option value="إلكترونيات">إلكترونيات</option>
@@ -98,7 +114,7 @@
         <!-- جدول عرض الموظفين الحاليين -->
         <div class="card">
             <div class="card-header bg-white py-3">
-                <h5 class="mb-0 fw-bold"><i class="bi bi-people-fill ms-2"></i> قائمة الموظفين المسجلين</h5>
+                <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-people-fill ms-2"></i> قائمة الموظفين المسجلين</h5>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -127,12 +143,10 @@
     <!-- Supabase JS Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // إعدادات الاتصال بـ Supabase
         const SUPABASE_URL = 'https://usaqiylvnmccgnpxwaq.supabase.co';
-        const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY'; // استبدل المفتاح الخاص بك لو لزم الأمر
+        const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // جلب الموظفين عند تحميل الصفحة
         document.addEventListener('DOMContentLoaded', () => {
             fetchStaffList();
         });
@@ -171,7 +185,7 @@
                 });
             } catch (err) {
                 console.error('خطأ في جلب الموظفين:', err.message);
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-danger">حدث خطأ أثناء جلب البيانات.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-danger">حدث خطأ أثناء الاتصال بقاعدة البيانات.</td></tr>`;
             }
         }
 
