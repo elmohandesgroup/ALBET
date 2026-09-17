@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>إدارة الأقسام الرئيسية والفرعية - متجر البيت (albet.store)</title>
+    <link rel="manifest" href="admin-manifest.json">
+    <!-- حماية الصفحة -->
+    <script>
+        if (localStorage.getItem('isAdminLoggedIn') !== 'true') {
+            alert('عذراً، يجب تسجيل الدخول أولاً!');
+            window.location.href = 'admin-login.html';
+        }
+    </script>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+        body { font-family: 'Cairo', sans-serif; background-color: #f8f9fa; -webkit-tap-highlight-color: transparent; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 pb-20">
+
+    <!-- الهيدر الرئيسي -->
+    <header class="bg-white shadow-sm sticky top-0 z-40 px-4 py-3.5">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <button id="open-menu-btn" class="p-1.5 text-gray-700 hover:text-orange-600 transition-colors focus:outline-none" aria-label="فتح القائمة">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+                <a href="admin-dashboard.html" class="flex items-center">
+                    <img src="logo192.png" alt="متجر البيت" class="w-12 h-12 object-contain rounded-xl shadow-sm border border-gray-100 bg-white p-1">
+                </a>
+            </div>
+
+            <div class="text-center flex-1 mx-2">
+                <a href="admin-dashboard.html" class="block">
+                    <h1 class="text-lg md:text-2xl font-black text-orange-600 leading-tight">متجر البيت</h1>
+                    <p class="text-[11px] md:text-xs text-gray-500 font-medium">إدارة الأقسام الرئيسية والفرعية</p>
+                </a>
+            </div>
+
+            <div class="flex items-center">
+                <button onclick="fetchCategories()" class="bg-orange-600 hover:bg-orange-700 text-white px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition-all shadow-sm flex items-center gap-1.5 whitespace-nowrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                    <span>تحديث الأقسام</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- القائمة الجانبية (Drawer Menu الموحدة) -->
+    <div id="side-menu" class="fixed inset-0 z-50 hidden">
+        <div id="menu-overlay" class="absolute inset-0 bg-black/50 transition-opacity"></div>
+        <div class="absolute right-0 top-0 bottom-0 w-80 bg-white shadow-2xl p-5 flex flex-col justify-between transform transition-transform duration-300 translate-x-full overflow-y-auto" id="menu-content">
+            <div>
+                <div class="flex items-center justify-between pb-4 border-b mb-4">
+                    <div class="flex items-center gap-2">
+                        <img src="logo192.png" alt="متجر البيت" class="w-10 h-10 object-contain">
+                        <span class="font-black text-orange-600 text-lg">لوحة التحكم</span>
+                    </div>
+                    <button id="close-menu-btn" class="text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
+                </div>
+               <nav class="space-y-1.5">
+                    <div class="pt-1 pb-1 text-xs font-bold text-gray-400 px-3">أقسام الإدارة والتقارير الشاملة</div>
+                    
+                    <a href="admin-dashboard.html" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors border border-gray-100 shadow-xs">
+                        <span class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                            مراجعة الإعلانات
+                        </span>
+                    </a>
+
+                    <a href="admin-company-ads.html" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors border border-gray-100 shadow-xs">
+                        <span class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                            إضافة إعلانات الشركات
+                        </span>
+                    </a>
+
+                    <a href="staff-management.html" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors border border-gray-100 shadow-xs">
+                        <span class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                            إدارة الموظفين
+                        </span>
+                    </a>
+
+                    <a href="categories.html" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-orange-600 bg-orange-50 transition-colors">
+                        <span class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+                            إدارة الأقسام
+                        </span>
+                        <span class="w-2 h-2 rounded-full bg-orange-600"></span>
+                    </a>
+
+                    <a href="admin-daily-report.html" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors border border-gray-100 shadow-xs">
+                        <span class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+                            تقرير اليوم
+                        </span>
+                    </a>
+
+                    <a href="admin-profits.html" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors border border-gray-100 shadow-xs">
+                        <span class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            الأرباح والخسائر
+                        </span>
+                    </a>
+
+                    <a href="admin-salaries.html" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors border border-gray-100 shadow-xs">
+                        <span class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                            مرتبات الموظفين
+                        </span>
+                    </a>
+
+                    <a href="admin-expenses.html" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors border border-gray-100 shadow-xs">
+                        <span class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                            المصروفات
+                        </span>
+                    </a>
+                </nav>
+            </div>
+            
+            <div class="pt-4 border-t">
+                <button onclick="logoutAdmin()" class="w-full bg-red-500 hover:bg-red-600 text-white py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm">
+                    <span>تسجيل الخروج</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                </button>
+                <div class="text-center text-[11px] text-gray-400 pt-3">
+                    جميع الحقوق محفوظة &copy; متجر البيت 2026
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- المحتوى الرئيسي -->
+    <main class="max-w-5xl mx-auto px-4 py-6 space-y-6">
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-6 space-y-6">
+            <div class="border-b pb-4">
+                <h2 class="font-black text-gray-800 text-base md:text-lg flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-orange-600 inline-block"></span>
+                    إضافة قسم جديد (رئيسي أو فرعي)
+                </h2>
+                <p class="text-xs text-gray-500 mt-0.5">الأقسام المضافة ستظهر تلقائياً في الواجهة الرئيسية للموقع ولوحة التحكم.</p>
+            </div>
+
+            <!-- نموذج إضافة القسم -->
+            <form id="addCategoryForm" onsubmit="handleSaveCategory(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50/50 p-4 rounded-xl border border-gray-100">
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-1">اسم القسم</label>
+                    <input type="text" id="catName" required class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-orange-500" placeholder="مثال: إلكترونيات، عقارات...">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-1">نوع القسم</label>
+                    <select id="catType" onchange="toggleParentDropdown()" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-orange-500">
+                        <option value="main">قسم رئيسي (يظهر في القائمة الأولى)</option>
+                        <option value="sub">قسم فرعي (يتبع قسم رئيسي)</option>
+                    </select>
+                </div>
+
+                <div id="parentCategoryWrapper" class="hidden md:col-span-2">
+                    <label class="block text-xs font-bold text-gray-600 mb-1">تحديد القسم الرئيسي التابع له</label>
+                    <select id="parentCategorySelect" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-orange-500">
+                        <option value="">اختر القسم الرئيسي...</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-1">رابط أو اسم الأيقونة</label>
+                    <input type="text" id="catIcon" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-orange-500" placeholder="أدخل رابط الأيقونة أو اسم الـ SVG">
+                </div>
+
+                <div class="flex items-end md:col-span-2">
+                    <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white py-2.5 px-4 rounded-xl text-sm font-bold transition-all shadow-sm">
+                        حفظ ونشر القسم في الموقع
+                    </button>
+                </div>
+            </form>
+            <div id="formAlert"></div>
+
+            <!-- جدول استعراض الأقسام -->
+            <div class="space-y-3 pt-4 border-t">
+                <h3 class="font-bold text-gray-800 text-sm">الأقسام المسجلة حالياً</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right border-collapse">
+                        <thead>
+                            <tr class="border-b text-xs text-gray-500 bg-gray-50/50">
+                                <th class="p-3">اسم القسم</th>
+                                <th class="p-3">النوع</th>
+                                <th class="p-3">يتبع لـ (القسم الرئيسي)</th>
+                                <th class="p-3 text-center">الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="categoriesTableBody" class="divide-y divide-gray-100 text-sm">
+                            <tr><td colspan="4" class="text-center text-gray-400 py-6">جاري جلب الأقسام...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- سكريبتات القائمة الجانبية -->
+    <script>
+        const openMenuBtn = document.getElementById('open-menu-btn');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
+        const sideMenu = document.getElementById('side-menu');
+        const menuOverlay = document.getElementById('menu-overlay');
+        const menuContent = document.getElementById('menu-content');
+
+        function openMenu() {
+            sideMenu.classList.remove('hidden');
+            setTimeout(() => { menuContent.classList.remove('translate-x-full'); }, 10);
+        }
+
+        function closeMenu() {
+            menuContent.classList.add('translate-x-full');
+            setTimeout(() => { sideMenu.classList.add('hidden'); }, 300);
+        }
+
+        openMenuBtn.addEventListener('click', openMenu);
+        closeMenuBtn.addEventListener('click', closeMenu);
+        menuOverlay.addEventListener('click', closeMenu);
+
+        function logoutAdmin() {
+            localStorage.removeItem('isAdminLoggedIn');
+            window.location.href = 'admin-login.html';
+        }
+    </script>
+
+    <!-- سكريبتات Supabase والربط -->
+    <script>
+        const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        window.onload = () => {
+            fetchCategories();
+        };
+
+        function toggleParentDropdown() {
+            const catType = document.getElementById('catType').value;
+            const parentWrapper = document.getElementById('parentCategoryWrapper');
+            if (catType === 'sub') {
+                parentWrapper.classList.remove('hidden');
+                loadMainCategoriesDropdown();
+            } else {
+                parentWrapper.classList.add('hidden');
+            }
+        }
+
+        async function loadMainCategoriesDropdown() {
+            const parentSelect = document.getElementById('parentCategorySelect');
+            const { data, error } = await supabaseClient
+                .from('categories')
+                .select('*')
+                .is('parent_id', null);
+
+            if (!error && data) {
+                parentSelect.innerHTML = '<option value="">اختر القسم الرئيسي...</option>';
+                data.forEach(cat => {
+                    parentSelect.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
+                });
+            }
+        }
+
+        async function fetchCategories() {
+            const tbody = document.getElementById('categoriesTableBody');
+            const { data, error } = await supabaseClient.from('categories').select('*');
+
+            if (error) {
+                tbody.innerHTML = `<tr><td colspan="4" class="text-center text-red-500 py-6">خطأ في جلب الأقسام (تأكد من إنشاء جدول categories في Supabase)</td></tr>`;
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="text-center text-gray-400 py-6">لا توجد أقسام مضافة حالياً.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = '';
+            data.forEach(cat => {
+                const parentItem = data.find(p => p.id === cat.parent_id);
+                tbody.innerHTML += `
+                    <tr class="hover:bg-gray-50">
+                        <td class="p-3 font-bold text-gray-800">${cat.name}</td>
+                        <td class="p-3"><span class="px-2 py-0.5 rounded text-xs font-bold ${!cat.parent_id ? 'bg-orange-50 text-orange-600' : 'bg-blue-50 text-blue-600'}">${!cat.parent_id ? 'رئيسي' : 'فرعي'}</span></td>
+                        <td class="p-3 text-gray-600">${parentItem ? parentItem.name : '-'}</td>
+                        <td class="p-3 text-center">
+                            <button onclick="deleteCategory('${cat.id}')" class="bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1 rounded-xl text-xs font-bold transition-all">حذف</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        async function handleSaveCategory(event) {
+            event.preventDefault();
+            const alertDiv = document.getElementById('formAlert');
+            const name = document.getElementById('catName').value;
+            const type = document.getElementById('catType').value;
+            const parent_id = type === 'sub' ? document.getElementById('parentCategorySelect').value : null;
+            const icon = document.getElementById('catIcon').value || null;
+
+            if (type === 'sub' && !parent_id) {
+                alertDiv.innerHTML = `<div class="p-2 bg-red-50 text-red-600 text-xs rounded-xl font-bold mt-2">برجاء اختيار القسم الرئيسي التابع له القسم الفرعي!</div>`;
+                return;
+            }
+
+            try {
+                const { error } = await supabaseClient.from('categories').insert([{ name, parent_id, icon }]);
+                if (error) throw error;
+
+                alertDiv.innerHTML = `<div class="p-2 bg-emerald-50 text-emerald-600 text-xs rounded-xl font-bold mt-2">تم إضافة القسم بنجاح ونشره في الموقع!</div>`;
+                document.getElementById('addCategoryForm').reset();
+                toggleParentDropdown();
+                fetchCategories();
+            } catch (err) {
+                alertDiv.innerHTML = `<div class="p-2 bg-red-50 text-red-600 text-xs rounded-xl font-bold mt-2">خطأ: ${err.message}</div>`;
+            }
+        }
+
+        async function deleteCategory(id) {
+            if (!confirm('هل أنت متأكد من حذف هذا القسم؟')) return;
+            const { error } = await supabaseClient.from('categories').delete().eq('id', id);
+            if (!error) fetchCategories();
+            else alert('فشل الحذف: ' + error.message);
+        }
+    </script>
+</body>
+</html>
