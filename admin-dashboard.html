@@ -21,11 +21,11 @@
             padding: 20px;
         }
 
-        /* الهيدر العلوي الأساسي المضبوط */
+        /* الهيدر العلوي الأساسي */
         .top-navbar-box {
             background: #111827;
             color: white;
-            padding: 15px 25px;
+            padding: 18px 30px;
             border-radius: 14px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             display: flex;
@@ -39,13 +39,28 @@
             align-items: center;
         }
 
+        /* تكبير حجم اللوجو في الهيدر */
         .admin-logo {
-            width: 45px;
-            height: 45px;
+            width: 65px;
+            height: 65px;
             object-fit: contain;
             background: white;
-            padding: 4px;
-            border-radius: 8px;
+            padding: 5px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        /* تكبير خط عنوان المتجر والوصف في الهيدر */
+        .header-title {
+            font-size: 1.4rem !important;
+            font-weight: 900 !important;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px !important;
+        }
+
+        .header-subtitle {
+            font-size: 0.88rem !important;
+            opacity: 0.85;
         }
 
         /* زر القائمة الجانبية (الهامبرغر) في أقصى اليمين */
@@ -53,7 +68,7 @@
             background: transparent;
             border: none;
             color: white;
-            font-size: 1.8rem;
+            font-size: 2.1rem;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -72,20 +87,20 @@
 </head>
 <body>
 
-    <!-- الهيدر العلوي -->
+    <!-- الهيدر العلوي بعد تعديل أحجام الخطوط واللوجو -->
     <div class="top-navbar-box">
         <!-- 1. زر الـ 3 شرط في أقصى اليمين -->
         <button class="menu-toggler-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#adminSidebarMenu" aria-controls="adminSidebarMenu">
             <i class="bi bi-list"></i>
         </button>
 
-        <!-- 2. العنوان في المنتصف -->
+        <!-- 2. العنوان في المنتصف (بخطوط مكبرة وواضحة) -->
         <div class="text-center">
-            <h3 class="m-0 fw-bold fs-6">متجر البيت</h3>
-            <small class="text-light opacity-75" style="font-size: 0.72rem;">لوحة تحكم المدير العام - albet.store</small>
+            <h2 class="header-title text-white m-0">متجر البيت</h2>
+            <small class="header-subtitle text-light">لوحة تحكم المدير العام - albet.store</small>
         </div>
 
-        <!-- 3. اللوجو في أقصى اليسار -->
+        <!-- 3. اللوجو في أقصى اليسار (بحجم كبير ومميز) -->
         <div class="brand-section">
             <img src="logo192.png" alt="متجر البيت" class="admin-logo">
         </div>
@@ -95,7 +110,7 @@
     <div class="offcanvas offcanvas-end" tabindex="-1" id="adminSidebarMenu" aria-labelledby="adminSidebarMenuLabel">
         <div class="offcanvas-header bg-dark text-white">
             <div class="d-flex align-items-center gap-2">
-                <img src="logo192.png" alt="متجر البيت" style="width: 30px; height: 30px; background: white; padding: 2px; border-radius: 6px;">
+                <img src="logo192.png" alt="متجر البيت" style="width: 35px; height: 35px; background: white; padding: 2px; border-radius: 6px;">
                 <h5 class="offcanvas-title fs-6 fw-bold" id="adminSidebarMenuLabel">متجر البيت</h5>
             </div>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -115,9 +130,13 @@
         </div>
     </div>
 
-    <!-- المساحة تحت الهيدر نظيفة تماماً وخالية من أي مخلفات -->
+    <!-- المساحة تحت الهيدر نظيفة وفارغة تماماً حسب طلبك -->
     <div class="container text-center py-5">
-        <h5 class="text-muted fw-bold">هذه المساحة فارغة وجاهزة.. قول لي نحط فيها إيه الخطوة الجاية؟</h5>
+        <div class="p-5 border border-2 border-dashed rounded-4 bg-white shadow-sm">
+            <i class="bi bi-check2-circle text-success fs-1 mb-2 d-block"></i>
+            <h5 class="fw-bold text-dark">تم ضبط الهيدر وتكبير اللوجو والخطوط بنجاح!</h5>
+            <p class="text-muted small m-0">الصفحة نظيفة وخالية من الأقسام تماماً.. قولي الخطوة الجاية تحب نضيف إيه؟</p>
+        </div>
     </div>
 
     <!-- المكتبات -->
