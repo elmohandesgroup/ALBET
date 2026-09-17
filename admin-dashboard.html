@@ -21,7 +21,7 @@
             padding: 20px;
         }
 
-        /* الهيدر العلوي الأساسي */
+        /* الهيدر العلوي الأساسي المضبوط */
         .top-navbar-box {
             background: #111827;
             color: white;
@@ -48,7 +48,7 @@
             border-radius: 8px;
         }
 
-        /* زر القائمة الجانبية (الهامبرغر) */
+        /* زر القائمة الجانبية (الهامبرغر) في أقصى اليمين */
         .menu-toggler-btn {
             background: transparent;
             border: none;
@@ -64,24 +64,7 @@
             opacity: 0.8;
         }
 
-        /* حاوية التصميم المبدئي الفاضية والنظيفة */
-        .welcome-container {
-            background: white;
-            border: 2px dashed #cbd5e1;
-            border-radius: 16px;
-            padding: 60px 20px;
-            text-align: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
-            margin-top: 20px;
-        }
-
-        .welcome-icon {
-            font-size: 3.5rem;
-            color: #e76f51;
-            margin-bottom: 15px;
-        }
-
-        /* تنسيق القائمة الجانبية (تفتح فاضية أو تحب نضيف فيها زر الخروج فقط مؤقتاً؟) */
+        /* تنسيق القائمة الجانبية المنزلقة */
         .offcanvas {
             width: 300px !important;
         }
@@ -91,24 +74,24 @@
 
     <!-- الهيدر العلوي -->
     <div class="top-navbar-box">
-        <!-- زر الـ 3 شرط في أقصى اليمين -->
+        <!-- 1. زر الـ 3 شرط في أقصى اليمين -->
         <button class="menu-toggler-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#adminSidebarMenu" aria-controls="adminSidebarMenu">
             <i class="bi bi-list"></i>
         </button>
 
-        <!-- العنوان في المنتصف -->
+        <!-- 2. العنوان في المنتصف -->
         <div class="text-center">
             <h3 class="m-0 fw-bold fs-6">متجر البيت</h3>
             <small class="text-light opacity-75" style="font-size: 0.72rem;">لوحة تحكم المدير العام - albet.store</small>
         </div>
 
-        <!-- اللوجو في أقصى اليسار -->
+        <!-- 3. اللوجو في أقصى اليسار -->
         <div class="brand-section">
             <img src="logo192.png" alt="متجر البيت" class="admin-logo">
         </div>
     </div>
 
-    <!-- القائمة الجانبية المنزلقة (حاليًا نظيفة وفاضية تمهيداً لإضافة الأقسام براحتنا) -->
+    <!-- القائمة الجانبية المنزلقة -->
     <div class="offcanvas offcanvas-end" tabindex="-1" id="adminSidebarMenu" aria-labelledby="adminSidebarMenuLabel">
         <div class="offcanvas-header bg-dark text-white">
             <div class="d-flex align-items-center gap-2">
@@ -132,16 +115,9 @@
         </div>
     </div>
 
-    <!-- التصميم المبدئي للصفحة (بدون أي أقسام أو جداول زحمة) -->
-    <div class="container">
-        <div class="welcome-container">
-            <div class="welcome-icon">
-                <i class="bi bi-window-desktop"></i>
-            </div>
-            <h2 class="fw-bold fs-4 mb-2 text-dark">تم تصميم الصفحة المبدئية بنجاح!</h2>
-            <p class="text-muted fs-6 mb-4">الشاشة نظيفة ومرتبة بالكامل وخالية من أي أقسام أو جداول زحمة. جاهزون الآن لإضافة الأقسام والصفحات بالتدريج وبالمقاس المضبوط.</p>
-            <span class="badge bg-dark px-3 py-2" style="font-size: 0.85rem;">albet.store - الهيكل الأساسي جاهز</span>
-        </div>
+    <!-- المساحة تحت الهيدر نظيفة تماماً وخالية من أي مخلفات -->
+    <div class="container text-center py-5">
+        <h5 class="text-muted fw-bold">هذه المساحة فارغة وجاهزة.. قول لي نحط فيها إيه الخطوة الجاية؟</h5>
     </div>
 
     <!-- المكتبات -->
