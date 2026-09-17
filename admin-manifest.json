@@ -1,0 +1,20 @@
+{
+  "name": "لوحة تحكم متجر البيت",
+  "short_name": "إدارة متجر البيت",
+  "start_url": "admin-dashboard.html",
+  "display": "standalone",
+  "background_color": "#f8f9fa",
+  "theme_color": "#e17055",
+  "icons": [
+    {
+      "src": "logo192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "logo512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
