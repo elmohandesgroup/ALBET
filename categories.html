@@ -92,8 +92,8 @@
                 <div id="adminStatusBadge" class="text-xs bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full font-bold">جاري التحقق من الجلسة...</div>
             </div>
 
-            <!-- نموذج إضافة القسم -->
-            <form id="addCategoryForm" onsubmit="handleSaveCategory(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50/50 p-4 rounded-xl border border-gray-100">
+            <!-- نموذج إضافة القسم (تم إضافة return false لمنع الخروج أو الريفرش تماماً) -->
+            <form id="addCategoryForm" onsubmit="handleSaveCategory(event); return false;" class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50/50 p-4 rounded-xl border border-gray-100">
                 <div>
                     <label class="block text-xs font-bold text-gray-600 mb-1">اسم القسم</label>
                     <input type="text" id="catName" required class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-orange-500" placeholder="مثال: إلكترونيات، عقارات...">
@@ -182,7 +182,6 @@
             const badge = document.getElementById('adminStatusBadge');
             
             if (!session) {
-                // لو مش مسجل دخول، حوله لصفحة تسجيل الدخول الحقيقية أو اطلب منه تسجيل الدخول
                 window.location.href = 'admin-login.html';
             } else {
                 badge.textContent = `مسجل كـ: ${session.user.email}`;
@@ -282,51 +281,61 @@
             });
         }
 
-      async function handleSaveCategory(event) {
-    if (event) event.preventDefault(); // منع إعادة تحميل الصفحة تماماً
+        async function handleSaveCategory(event) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
 
-    const alertDiv = document.getElementById('formAlert');
-    const submitBtn = document.getElementById('submitBtn');
-    const name = document.getElementById('catName').value;
-    const type = document.getElementById('catType').value;
-    const parent_id = type === 'sub' ? document.getElementById('parentCategorySelect').value : null;
-    const fileInput = document.getElementById('catIconFile');
+            const alertDiv = document.getElementById('formAlert');
+            const submitBtn = document.getElementById('submitBtn');
+            const nameInput = document.getElementById('catName');
+            const typeInput = document.getElementById('catType');
+            
+            if (!nameInput || !typeInput) return;
 
-    if (type === 'sub' && !parent_id) {
-        alertDiv.innerHTML = `<div class="p-2 bg-red-50 text-red-600 text-xs rounded-xl font-bold mt-2">برجاء اختيار القسم الرئيسي التابع له القسم الفرعي!</div>`;
-        return;
-    }
+            const name = nameInput.value;
+            const type = typeInput.value;
+            const parent_id = type === 'sub' ? document.getElementById('parentCategorySelect').value : null;
+            const fileInput = document.getElementById('catIconFile');
 
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'جاري معالجة الصورة والحفظ الآمن...';
+            if (type === 'sub' && !parent_id) {
+                alertDiv.innerHTML = `<div class="p-2 bg-red-50 text-red-600 text-xs rounded-xl font-bold mt-2">برجاء اختيار القسم الرئيسي التابع له القسم الفرعي!</div>`;
+                return false;
+            }
 
-    try {
-        let imageWebP = null;
-        if (fileInput.files && fileInput.files[0]) {
-            imageWebP = await convertImageToWebP(fileInput.files[0]);
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'جاري معالجة الصورة والحفظ الآمن...';
+
+            try {
+                let imageWebP = null;
+                if (fileInput.files && fileInput.files[0]) {
+                    imageWebP = await convertImageToWebP(fileInput.files[0]);
+                }
+
+                const { error } = await supabaseClient.from('categories').insert([{ 
+                    name, 
+                    parent_id: parent_id ? parent_id : null, 
+                    image_url: imageWebP 
+                }]);
+
+                if (error) throw error;
+
+                alertDiv.innerHTML = `<div class="p-2 bg-emerald-50 text-emerald-600 text-xs rounded-xl font-bold mt-2">تم إضافة القسم بنجاح وأمان تام!</div>`;
+                document.getElementById('addCategoryForm').reset();
+                if (typeof toggleParentDropdown === 'function') toggleParentDropdown();
+                if (typeof fetchCategories === 'function') fetchCategories();
+
+            } catch (err) {
+                console.error("خطأ Supabase:", err);
+                alertDiv.innerHTML = `<div class="p-2 bg-red-50 text-red-600 text-xs rounded-xl font-bold mt-2">خطأ أثناء الحفظ: ${err.message || 'حدث خطأ غير متوقع'}</div>`;
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'حفظ ونشر القسم في الموقع';
+            }
+
+            return false;
         }
-
-        const { error } = await supabaseClient.from('categories').insert([{ 
-            name, 
-            parent_id: parent_id ? parent_id : null, 
-            image_url: imageWebP 
-        }]);
-
-        if (error) throw error;
-
-        alertDiv.innerHTML = `<div class="p-2 bg-emerald-50 text-emerald-600 text-xs rounded-xl font-bold mt-2">تم إضافة القسم بنجاح وأمان تام!</div>`;
-        document.getElementById('addCategoryForm').reset();
-        if (typeof toggleParentDropdown === 'function') toggleParentDropdown();
-        if (typeof fetchCategories === 'function') fetchCategories();
-
-    } catch (err) {
-        console.error("خطأ Supabase:", err);
-        alertDiv.innerHTML = `<div class="p-2 bg-red-50 text-red-600 text-xs rounded-xl font-bold mt-2">خطأ أثناء الحفظ: ${err.message}</div>`;
-    } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'حفظ ونشر القسم في الموقع';
-    }
-}
 
         async function deleteCategory(id) {
             if (!confirm('هل أنت متأكد من حذف هذا القسم نهائياً؟')) return;
