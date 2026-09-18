@@ -282,49 +282,51 @@
             });
         }
 
-        async function handleSaveCategory(event) {
-            event.preventDefault();
-            const alertDiv = document.getElementById('formAlert');
-            const submitBtn = document.getElementById('submitBtn');
-            const name = document.getElementById('catName').value;
-            const type = document.getElementById('catType').value;
-            const parent_id = type === 'sub' ? document.getElementById('parentCategorySelect').value : null;
-            const fileInput = document.getElementById('catIconFile');
+      async function handleSaveCategory(event) {
+    if (event) event.preventDefault(); // منع إعادة تحميل الصفحة تماماً
 
-            if (type === 'sub' && !parent_id) {
-                alertDiv.innerHTML = `<div class="p-2 bg-red-50 text-red-600 text-xs rounded-xl font-bold mt-2">برجاء اختيار القسم الرئيسي التابع له القسم الفرعي!</div>`;
-                return;
-            }
+    const alertDiv = document.getElementById('formAlert');
+    const submitBtn = document.getElementById('submitBtn');
+    const name = document.getElementById('catName').value;
+    const type = document.getElementById('catType').value;
+    const parent_id = type === 'sub' ? document.getElementById('parentCategorySelect').value : null;
+    const fileInput = document.getElementById('catIconFile');
 
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'جاري معالجة الصورة والحفظ الآمن...';
+    if (type === 'sub' && !parent_id) {
+        alertDiv.innerHTML = `<div class="p-2 bg-red-50 text-red-600 text-xs rounded-xl font-bold mt-2">برجاء اختيار القسم الرئيسي التابع له القسم الفرعي!</div>`;
+        return;
+    }
 
-            try {
-                let imageWebP = null;
-                if (fileInput.files && fileInput.files[0]) {
-                    imageWebP = await convertImageToWebP(fileInput.files[0]);
-                }
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'جاري معالجة الصورة والحفظ الآمن...';
 
-                const { error } = await supabaseClient.from('categories').insert([{ 
-                    name, 
-                    parent_id: parent_id ? parent_id : null, 
-                    image_url: imageWebP 
-                }]);
+    try {
+        let imageWebP = null;
+        if (fileInput.files && fileInput.files[0]) {
+            imageWebP = await convertImageToWebP(fileInput.files[0]);
+        }
 
-                if (error) throw error;
+        const { error } = await supabaseClient.from('categories').insert([{ 
+            name, 
+            parent_id: parent_id ? parent_id : null, 
+            image_url: imageWebP 
+        }]);
 
-                alertDiv.innerHTML = `<div class="p-2 bg-emerald-50 text-emerald-600 text-xs rounded-xl font-bold mt-2">تم إضافة القسم بنجاح وأمان تام!</div>`;
-                document.getElementById('addCategoryForm').reset();
-                toggleParentDropdown();
-                fetchCategories();
-            } href="javascript:void(0)
-               } catch (err) {
+        if (error) throw error;
+
+        alertDiv.innerHTML = `<div class="p-2 bg-emerald-50 text-emerald-600 text-xs rounded-xl font-bold mt-2">تم إضافة القسم بنجاح وأمان تام!</div>`;
+        document.getElementById('addCategoryForm').reset();
+        if (typeof toggleParentDropdown === 'function') toggleParentDropdown();
+        if (typeof fetchCategories === 'function') fetchCategories();
+
+    } catch (err) {
+        console.error("خطأ Supabase:", err);
         alertDiv.innerHTML = `<div class="p-2 bg-red-50 text-red-600 text-xs rounded-xl font-bold mt-2">خطأ أثناء الحفظ: ${err.message}</div>`;
     } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = 'حفظ ونشر القسم في الموقع';
     }
-        }
+}
 
         async function deleteCategory(id) {
             if (!confirm('هل أنت متأكد من حذف هذا القسم نهائياً؟')) return;
