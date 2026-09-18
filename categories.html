@@ -317,12 +317,13 @@
                 document.getElementById('addCategoryForm').reset();
                 toggleParentDropdown();
                 fetchCategories();
-            } href="javascript:void(0);" catch (err) {
-                alertDiv.innerHTML = `<div class="p-2 bg-red-50 text-red-600 text-xs rounded-xl font-bold mt-2">خطأ أثناء الحفظ: ${err.message}</div>`;
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'حفظ ونشر القسم في الموقع';
-            }
+            } href="javascript:void(0)
+               } catch (err) {
+        alertDiv.innerHTML = `<div class="p-2 bg-red-50 text-red-600 text-xs rounded-xl font-bold mt-2">خطأ أثناء الحفظ: ${err.message}</div>`;
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'حفظ ونشر القسم في الموقع';
+    }
         }
 
         async function deleteCategory(id) {
