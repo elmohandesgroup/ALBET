@@ -93,7 +93,7 @@
             </div>
 
             <!-- نموذج إضافة القسم -->
-            <form id="addCategoryForm" onsubmit="handleSaveCategory(event); return false;" class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50/50 p-4 rounded-xl border border-gray-100">
+            <form id="addCategoryForm" class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50/50 p-4 rounded-xl border border-gray-100">
                 <div>
                     <label class="block text-xs font-bold text-gray-600 mb-1">اسم القسم</label>
                     <input type="text" id="catName" required class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-orange-500" placeholder="مثال: إلكترونيات، عقارات...">
@@ -101,7 +101,7 @@
 
                 <div>
                     <label class="block text-xs font-bold text-gray-600 mb-1">نوع القسم</label>
-                    <select id="catType" onchange="toggleParentDropdown()" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-orange-500">
+                    <select id="catType" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-orange-500">
                         <option value="main">قسم رئيسي (يظهر في القائمة الأولى)</option>
                         <option value="sub">قسم فرعي (يتبع قسم رئيسي)</option>
                     </select>
@@ -125,9 +125,7 @@
                     </button>
                 </div>
             </form>
-            <div id="formAlert">
-                
-            </div>
+            <div id="formAlert"></div>
 
             <!-- جدول استعراض الأقسام -->
             <div class="space-y-3 pt-4 border-t">
@@ -180,7 +178,7 @@
 
         // التحقق من جلسة الدخول الحقيقية لـ Supabase
         async function checkAuthSession() {
-            const { data: { session }, error } = await supabaseClient.auth.getSession();
+            const { data: { session } } = await supabaseClient.auth.getSession();
             const badge = document.getElementById('adminStatusBadge');
             
             if (!session) {
@@ -196,17 +194,19 @@
             window.location.href = 'admin-login.html';
         }
 
-        window.onload = async () => {
+        window.addEventListener('DOMContentLoaded', async () => {
             await checkAuthSession();
-            fetchCategories();
-        };
+            await fetchCategories();
+            await loadMainCategoriesDropdown();
+        });
+
+        document.getElementById('catType').addEventListener('change', toggleParentDropdown);
 
         function toggleParentDropdown() {
             const catType = document.getElementById('catType').value;
             const parentWrapper = document.getElementById('parentCategoryWrapper');
             if (catType === 'sub') {
                 parentWrapper.classList.remove('hidden');
-                loadMainCategoriesDropdown();
             } else {
                 parentWrapper.classList.add('hidden');
             }
@@ -227,7 +227,7 @@
             }
         }
 
-        // تحويل الصورة لـ WebP
+        // تحويل الصورة لـ WebP بدقة ومساحة خفيفة
         function convertImageToWebP(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -235,12 +235,29 @@
                     const img = new Image();
                     img.onload = function() {
                         const canvas = document.createElement('canvas');
-                        canvas.width = img.width;
-                        canvas.height = img.height;
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        // تصغير المقاس لو الصورة كبيرة جداً لمنع تعليق المتصفح
+                        const MAX_WIDTH = 300;
+                        const MAX_HEIGHT = 300;
+                        if (width > height) {
+                            if (width > MAX_WIDTH) {
+                                height *= MAX_WIDTH / width;
+                                width = MAX_WIDTH;
+                            }
+                        } else {
+                            if (height > MAX_HEIGHT) {
+                                width *= MAX_HEIGHT / height;
+                                height = MAX_HEIGHT;
+                            }
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
                         const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0);
-                        const webpDataUrl = canvas.toDataURL('image/webp', 0.85);
-                        resolve(webpDataUrl);
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/webp', 0.8));
                     };
                     img.onerror = reject;
                     img.src = event.target.result;
@@ -283,31 +300,28 @@
             });
         }
 
-        async function handleSaveCategory(event) {
-            if (event) {
-                event.preventDefault();
-                event.stopPropagation();
-            }
+        // معالجة نموذج الحفظ بالاستماع المباشر (EventListener) بدلاً من التداخل في الـ HTML
+        document.getElementById('addCategoryForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
 
             const alertDiv = document.getElementById('formAlert');
             const submitBtn = document.getElementById('submitBtn');
             const nameInput = document.getElementById('catName');
             const typeInput = document.getElementById('catType');
             
-            if (!nameInput || !typeInput) return;
-
-            const name = nameInput.value;
+            const name = nameInput.value.trim();
             const type = typeInput.value;
             const parent_id = type === 'sub' ? document.getElementById('parentCategorySelect').value : null;
             const fileInput = document.getElementById('catIconFile');
 
             if (type === 'sub' && !parent_id) {
                 alertDiv.innerHTML = `<div class="p-2 bg-red-50 text-red-600 text-xs rounded-xl font-bold mt-2">برجاء اختيار القسم الرئيسي التابع له القسم الفرعي!</div>`;
-                return false;
+                return;
             }
 
             submitBtn.disabled = true;
             submitBtn.textContent = 'جاري معالجة الصورة والحفظ الآمن...';
+            alertDiv.innerHTML = '';
 
             try {
                 let imageWebP = null;
@@ -324,9 +338,10 @@
                 if (error) throw error;
 
                 alertDiv.innerHTML = `<div class="p-2 bg-emerald-50 text-emerald-600 text-xs rounded-xl font-bold mt-2">تم إضافة القسم بنجاح وأمان تام!</div>`;
-                document.getElementById('addCategoryForm').reset();
+                this.reset();
                 toggleParentDropdown();
-                fetchCategories();
+                await fetchCategories();
+                await loadMainCategoriesDropdown();
 
             } catch (err) {
                 console.error("خطأ Supabase:", err);
@@ -335,15 +350,14 @@
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'حفظ ونشر القسم في الموقع';
             }
-
-            return false;
-        }
+        });
 
         async function deleteCategory(id) {
             if (!confirm('هل أنت متأكد من حذف هذا القسم نهائياً؟')) return;
             const { error } = await supabaseClient.from('categories').delete().eq('id', id);
             if (!error) {
-                fetchCategories();
+                await fetchCategories();
+                await loadMainCategoriesDropdown();
             } else {
                 alert('فشل الحذف: ' + error.message);
             }
