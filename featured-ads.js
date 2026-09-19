@@ -1,4 +1,8 @@
-// جلب وعرض البانر المميز من قاعدة بيانات Supabase
+// تهيئة اتصال Supabase وجلب البنر المميز
+const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLUjbtAXCg_K5qf1rSB';
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 async function loadFeaturedCompaniesBanner() {
     try {
         const { data, error } = await supabaseClient
@@ -9,7 +13,7 @@ async function loadFeaturedCompaniesBanner() {
         if (error) throw error;
 
         if (data && data.length > 0) {
-            const activeAd = data[0]; // جلب أحدث بانر
+            const activeAd = data[0]; 
             if (activeAd && activeAd.images && activeAd.images.length > 0) {
                 const container = document.getElementById('featuredAdsContainer');
                 if (container) {
