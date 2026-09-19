@@ -175,6 +175,13 @@
                 <button onclick="closeCompaniesModal()" class="text-gray-400 hover:text-gray-600 font-bold text-2xl">&times;</button>
             </div>
             <div class="space-y-4">
+                <div class="relative w-full md:w-32 h-32 rounded-xl overflow-hidden shadow flex-shrink-0 group">
+    <!-- حاوية الصور المتحركة -->
+    <div class="flex transition-transform duration-500 ease-in-out h-full company-slider" id="companySlider">
+        <img src="logo512.png" class="w-full h-full object-cover flex-shrink-0" alt="صورة 1">
+        <img src="logo192.png" class="w-full h-full object-cover flex-shrink-0" alt="صورة 2">
+    </div>
+</div>
                 <div class="bg-orange-50 border border-orange-100 rounded-2xl p-4 flex flex-col md:flex-row gap-4 items-center">
                     <img src="logo512.png" alt="شركة" class="w-24 h-24 object-cover rounded-xl shadow">
                     <div class="space-y-1 text-center md:text-right flex-1">
@@ -335,16 +342,30 @@
                     `;
                     container.innerHTML += adCard;
                 });
-            } catch (err) {
-                console.error('خطأ في جلب الإعلانات:', err.message);
-                container.innerHTML = '<div class="text-xs text-red-400 p-4 col-span-full text-center">تعذر تحميل الإعلانات.</div>';
-            }
+        } catch (err) {
+            console.error('خطأ في جلب الإعلانات:', err.message);
+            container.innerHTML = '<div class="text-xs text-red-400 p-4 col-span-full text-center">تعذر تحميل الإعلانات.</div>';
         }
+    }
 
-        // تشغيل الدوال عند تحميل الصفحة
-        fetchCategories();
-        fetchAds();
-    </script>
+    // تشغيل الدوال عند تحميل الصفحة مرة واحدة فقط
+    fetchCategories();
+    fetchAds();
+
+    // كود سلايدر إعلانات الشركات المتحركة
+    let companySlideIndex = 0;
+    setInterval(() => {
+        const slider = document.getElementById('companySlider');
+        if (!slider) return;
+        const slides = slider.children;
+        const total = slides.length;
+        if (total <= 1) return;
+        
+        companySlideIndex = (companySlideIndex + 1) % total;
+        slider.style.transform = `translateX(-${companySlideIndex * 100}%)`;
+    }, 3000);
+
+</script>
 
 </body>
 </html>
