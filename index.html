@@ -97,12 +97,15 @@
                 <nav class="space-y-2">
                     <a href="/" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">الرئيسية</a>
                     <a href="add-ad.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-orange-600 bg-orange-50 transition-colors">أضف إعلانك الجديد</a>
+                    
+                    <!-- زر تثبيت التطبيق في القائمة الجانبية -->
                     <button id="menuInstallBtn" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition-colors text-right">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-        </svg>
-        <span>تثبيت التطبيق على جهازك</span>
-    </button>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                        <span>تثبيت التطبيق على جهازك</span>
+                    </button>
+
                     <div class="pt-2 pb-1 text-xs font-bold text-gray-400 px-3">سياسات المتجر</div>
                     <a href="privacy.html" class="block px-3 py-2 rounded-xl text-xs font-medium text-gray-600 hover:bg-gray-100">سياسة الاستخدام والخصوصية</a>
                     <a href="terms.html" class="block px-3 py-2 rounded-xl text-xs font-medium text-gray-600 hover:bg-gray-100">الشروط والأحكام</a>
@@ -139,19 +142,18 @@
             <span class="bg-white text-orange-600 px-4 py-1.5 rounded-xl text-xs font-bold shadow-sm">عرض عروض الشركات</span>
         </div>
 
-        <!-- الشريط المتحرك للأقسام (Categories Slider) -->
+        <!-- الأقسام (تُعرض ديناميكياً من Supabase) -->
         <section class="space-y-3">
             <div class="flex justify-between items-center">
                 <h3 class="font-bold text-gray-800 text-base">الأقسام</h3>
                 <a href="categories.html" class="text-xs text-orange-600 font-semibold hover:underline">عرض الكل</a>
             </div>
-            <!-- حاوية الشريط المتحرك أفقياً بدون سكرول مرئي وبشكل منسق -->
-            <div id="categories-container" class="flex gap-3 overflow-x-auto no-scrollbar pb-2 px-1">
-                <div class="text-xs text-gray-400 p-2">جاري تحميل الأقسام...</div>
+            <div id="categories-container" class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+                <div class="text-xs text-gray-400">جاري تحميل الأقسام...</div>
             </div>
         </section>
 
-        <!-- أحدث الإعلانات -->
+        <!-- أحدث الإعلانات (تُعرض ديناميكياً من Supabase) -->
         <section class="space-y-3">
             <div class="flex justify-between items-center">
                 <h3 class="font-bold text-gray-800 text-base">أحدث الإعلانات</h3>
@@ -159,14 +161,13 @@
             </div>
             
             <div id="ads-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <!-- يتم الجلب ديناميكياً من سكريبت Supabase -->
                 <div class="text-xs text-gray-400 p-4">جاري تحميل الإعلانات...</div>
             </div>
         </section>
 
     </main>
 
-    <!-- نافذة "إعلانات الشركات المميزة" -->
+    <!-- نافذة إعلانات الشركات -->
     <div id="companiesModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl relative transform transition-all max-h-[90vh] overflow-y-auto no-scrollbar">
             <div class="flex justify-between items-center mb-4 border-b pb-3">
@@ -189,7 +190,7 @@
 
     <!-- السكريبتات والربط -->
     <script>
-        // إعدادات القائمة الجانبية
+        // القائمة الجانبية
         const openMenuBtn = document.getElementById('open-menu-btn');
         const closeMenuBtn = document.getElementById('close-menu-btn');
         const sideMenu = document.getElementById('side-menu');
@@ -198,54 +199,55 @@
 
         function openMenu() {
             sideMenu.classList.remove('hidden');
-            setTimeout(() => {
-                menuContent.classList.remove('translate-x-full');
-            }, 10);
+            setTimeout(() => { menuContent.classList.remove('translate-x-full'); }, 10);
         }
 
         function closeMenu() {
             menuContent.classList.add('translate-x-full');
-            setTimeout(() => {
-                sideMenu.classList.add('hidden');
-            }, 300);
+            setTimeout(() => { sideMenu.classList.add('hidden'); }, 300);
         }
 
         openMenuBtn.addEventListener('click', openMenu);
         closeMenuBtn.addEventListener('click', closeMenu);
         menuOverlay.addEventListener('click', closeMenu);
 
-        // نافذة الشركات المميزة
-        function openCompaniesModal() {
-            document.getElementById('companiesModal').classList.remove('hidden');
-        }
-        function closeCompaniesModal() {
-            document.getElementById('companiesModal').classList.add('hidden');
-        }
-
+        // نافذة الشركات
+        function openCompaniesModal() { document.getElementById('companiesModal').classList.remove('hidden'); }
+        function closeCompaniesModal() { document.getElementById('companiesModal').classList.add('hidden'); }
         window.addEventListener('click', (e) => {
-            const compModal = document.getElementById('companiesModal');
-            if (e.target === compModal) closeCompaniesModal();
+            if (e.target === document.getElementById('companiesModal')) closeCompaniesModal();
         });
 
-        // PWA Install Prompt
+        // PWA Install Logic
         let deferredPrompt;
         const installBanner = document.getElementById('installBanner');
         const installBtn = document.getElementById('installBtn');
+        const menuInstallBtn = document.getElementById('menuInstallBtn');
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            installBanner.classList.remove('hidden');
+            if (installBanner) installBanner.classList.remove('hidden');
         });
 
-        installBtn.addEventListener('click', async () => {
+        async function triggerInstall() {
             if (deferredPrompt) {
                 deferredPrompt.prompt();
                 const { outcome } = await deferredPrompt.userChoice;
                 deferredPrompt = null;
-                installBanner.classList.add('hidden');
+                if (installBanner) installBanner.classList.add('hidden');
+            } else {
+                alert("لتثبيت التطبيق، افتح إعدادات المتصفح (النقاط الثلاث) ثم اختر 'إضافة إلى الشاشة الرئيسية'.");
             }
-        });
+        }
+
+        if (installBtn) installBtn.addEventListener('click', triggerInstall);
+        if (menuInstallBtn) {
+            menuInstallBtn.addEventListener('click', () => {
+                closeMenu();
+                triggerInstall();
+            });
+        }
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -254,22 +256,19 @@
         }
     </script>
 
-    <!-- ربط Supabase لجلب الأقسام والإعلانات ديناميكياً -->
+    <!-- Supabase Logic -->
     <script>
         const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
+        const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxq0VLujbtAXcUg_K5qf1rSB';
         const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // جلب الأقسام وعرضها في الشريط المتحرك الأفقي
-       async function fetchCategories() {
+        // جلب الأقسام
+        async function fetchCategories() {
             const container = document.getElementById('categories-container');
             if (!container) return;
 
             try {
-                const { data: categories, error } = await db
-                    .from('categories')
-                    .select('*');
-
+                const { data: categories, error } = await db.from('categories').select('*');
                 if (error) throw error;
 
                 if (!categories || categories.length === 0) {
@@ -280,10 +279,8 @@
                 container.innerHTML = '';
                 categories.forEach(cat => {
                     const iconSrc = cat.image_url ? cat.image_url : 'logo192.png';
-                    
                     const catCard = `
                         <a href="category.html?id=${cat.id}" class="flex flex-col items-center justify-center bg-white border border-gray-100 rounded-2xl p-4 min-w-[110px] shadow-sm hover:border-orange-500 hover:shadow-md transition-all flex-shrink-0 text-center">
-                            <!-- تم تكبير الدايرة وخلينا الصورة تملى المساحة بالكامل بدون مسافات فاضية -->
                             <div class="w-24 h-24 bg-orange-50/30 rounded-full flex items-center justify-center mb-2.5 overflow-hidden p-1">
                                 <img src="${iconSrc}" alt="${cat.name}" class="w-full h-full object-cover rounded-full">
                             </div>
@@ -298,7 +295,7 @@
             }
         }
 
-        // جلب الإعلانات وعرضها ديناميكياً
+        // جلب الإعلانات
         async function fetchAds() {
             const container = document.getElementById('ads-container');
             if (!container) return;
@@ -312,12 +309,11 @@
                 if (error) throw error;
 
                 if (!ads || ads.length === 0) {
-                    container.innerHTML = '<div class="text-xs text-gray-400 p-4">لا توجد إعلانات مضافة حالياً.</div>';
+                    container.innerHTML = '<div class="text-xs text-gray-400 p-4 col-span-full text-center">لا توجد إعلانات مضافة حالياً.</div>';
                     return;
                 }
 
                 container.innerHTML = ''; 
-
                 ads.forEach(ad => {
                     const adCard = `
                         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
@@ -328,9 +324,9 @@
                             <div class="space-y-2">
                                 <div class="flex justify-between items-start">
                                     <h4 class="font-bold text-gray-800 text-sm md:text-base">${ad.title}</h4>
-                                    <span class="text-orange-600 font-black text-sm md:text-base">${Number(ad.price).toLocaleString()} ج.م</span>
+                                    <span class="text-orange-600 font-black text-sm md:text-base">${ad.price ? ad.price.toLocaleString() : 0} ج.م</span>
                                 </div>
-                                <p class="text-xs text-gray-500 line-clamp-2">${ad.description}</p>
+                                <p class="text-xs text-gray-500 line-clamp-2">${ad.description || ''}</p>
                                 <a href="https://wa.me/${ad.phone}?text=${encodeURIComponent('مرحباً، أريد الاستفسار عن إعلانك: ' + ad.title)}" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm">
                                     <span>تواصل مع البائع عبر واتساب</span>
                                 </a>
@@ -339,14 +335,13 @@
                     `;
                     container.innerHTML += adCard;
                 });
-
             } catch (err) {
                 console.error('خطأ في جلب الإعلانات:', err.message);
-                container.innerHTML = '<div class="text-xs text-red-400 p-4">تعذر تحميل الإعلانات.</div>';
+                container.innerHTML = '<div class="text-xs text-red-400 p-4 col-span-full text-center">تعذر تحميل الإعلانات.</div>';
             }
         }
 
-        // تشغيل الوظائف عند تحميل الصفحة
+        // تشغيل الدوال عند تحميل الصفحة
         fetchCategories();
         fetchAds();
     </script>
