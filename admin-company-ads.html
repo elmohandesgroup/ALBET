@@ -9,67 +9,179 @@
 </head>
 <body class="bg-gray-50 font-sans">
 
-    <div class="max-w-3xl mx-auto p-6 my-8 bg-white rounded-2xl shadow-xl">
-        <div class="flex justify-between items-center mb-6 border-b pb-4">
-            <h2 class="text-xl font-bold text-orange-600">إضافة إعلان شركة مميزة جديد</h2>
-            <a href="admin-dashboard.html" class="text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1.5 rounded-xl font-bold transition-all">العودة للوحة التحكم</a>
+    <div class="max-w-4xl mx-auto p-6 my-8 space-y-6">
+        
+        <!-- رأس الصفحة والعدادات -->
+        <div class="bg-white rounded-2xl p-6 shadow-xl flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h2 class="text-xl font-bold text-orange-600">إدارة إعلانات الشركات (بانرات العرض)</h2>
+                <p class="text-xs text-gray-500 mt-1">التحكم في إعلانات الشاشات الصافية، العدادات، وأماكن الظهور.</p>
+            </div>
+            <div class="flex gap-3">
+                <div class="bg-orange-50 border border-orange-200 px-4 py-2 rounded-xl text-center">
+                    <span class="block text-xs text-orange-600 font-bold">نشط حالياً</span>
+                    <span id="activeCount" class="text-lg font-bold text-gray-800">0</span>
+                </div>
+                <div class="bg-red-50 border border-red-200 px-4 py-2 rounded-xl text-center">
+                    <span class="block text-xs text-red-600 font-bold">منتهي</span>
+                    <span id="expiredCount" class="text-lg font-bold text-gray-800">0</span>
+                </div>
+            </div>
+            <a href="admin-dashboard.html" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-xl font-bold text-xs transition-all">العودة للوحة التحكم</a>
         </div>
 
-        <form id="companyAdForm" class="space-y-4">
-            <div>
-                <label class="block text-xs font-bold text-gray-700 mb-1">اسم الشركة أو العنوان</label>
-                <input type="text" id="compTitle" class="w-full border rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-orange-500 outline-none" placeholder="مثال: عروض الأجهزة المنزلية الكبرى" required>
-            </div>
+        <!-- نموذج الإضافة -->
+        <div class="bg-white rounded-2xl p-6 shadow-xl">
+            <h3 class="text-base font-bold text-gray-800 mb-4 border-b pb-2">إضافة بانر جديد</h3>
+            <form id="companyAdForm" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">اسم تعريفي للإعلان (في اللوحة فقط)</label>
+                        <input type="text" id="compTitle" class="w-full border rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-orange-500" placeholder="مثال: بانر شركة الأجهزة الرئيسية" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">مدة الصلاحية بالأيام</label>
+                        <input type="number" id="compDuration" class="w-full border rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-orange-500" value="7" min="1" required>
+                    </div>
+                </div>
 
-            <div>
-                <label class="block text-xs font-bold text-gray-700 mb-1">وصف العرض أو الخدمات</label>
-                <textarea id="compDesc" class="w-full border rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-orange-500 outline-none" placeholder="تفاصيل الضمان والتوصيل..." rows="3" required></textarea>
-            </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">نوع العرض</label>
+                        <select id="compDisplayType" class="w-full border rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-orange-500">
+                            <option value="slider">متحرك (Slider)</option>
+                            <option value="static">ثابت (صورة واحدة)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">مكان الظهور</label>
+                        <select id="compPosition" class="w-full border rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-orange-500">
+                            <option value="above">فوق شريط الأقسام</option>
+                            <option value="below">تحت شريط الأقسام</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">الصفحة المستهدفة</label>
+                        <select id="compPage" class="w-full border rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-orange-500">
+                            <option value="index.html">الصفحة الرئيسية</option>
+                            <option value="categories.html">صفحة الأقسام</option>
+                        </select>
+                    </div>
+                </div>
 
-            <div>
-                <label class="block text-xs font-bold text-gray-700 mb-1">رقم الواتساب للتواصل</label>
-                <input type="text" id="compPhone" class="w-full border rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-orange-500 outline-none" placeholder="201227802300" required>
-            </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">روابط الصور (مفصولة بفواصل للسلايدر أو صورة واحدة للثابت)</label>
+                    <input type="text" id="compImages" class="w-full border rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-orange-500" placeholder="logo512.png, logo192.png" required>
+                </div>
 
-            <div>
-                <label class="block text-xs font-bold text-gray-700 mb-1">روابط الصور (مفصولة بفواصل للسلايدر المتحرك)</label>
-                <input type="text" id="compImages" class="w-full border rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-orange-500 outline-none" placeholder="logo512.png, logo192.png" required>
-            </div>
+                <button type="submit" class="w-full bg-orange-600 text-white py-3 rounded-xl font-bold text-sm hover:bg-orange-700 transition-all shadow-md">
+                    حفظ ونشر البنر في الموقع
+                </button>
+            </form>
+        </div>
 
-            <button type="submit" class="w-full bg-orange-600 text-white py-3 rounded-xl font-bold text-sm hover:bg-orange-700 transition-all shadow-md">
-                حفظ ونشر الإعلان في الصفحة الرئيسية
-            </button>
-        </form>
+        <!-- جدول المتابعة والعدادات -->
+        <div class="bg-white rounded-2xl p-6 shadow-xl">
+            <h3 class="text-base font-bold text-gray-800 mb-4 border-b pb-2">البنرات النشطة والمتابعة</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-right text-sm">
+                    <thead>
+                        <tr class="bg-gray-100 text-gray-700 text-xs">
+                            <th class="p-3">الإعلان</th>
+                            <th class="p-3">النوع والمكان</th>
+                            <th class="p-3">الصفحة</th>
+                            <th class="p-3">الوقت المتبقي</th>
+                            <th class="p-3">الإجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adsTableBody">
+                        <!-- يتم تعبئتها تلقائياً -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        // إعداد اتصال Supabase (تأكد من مطابقة المفاتيح المستخدمة في الموقع)
         const SUPABASE_URL = 'https://your-supabase-url.supabase.co';
         const SUPABASE_ANON_KEY = 'your-supabase-anon-key';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function fetchAds() {
+            const { data, error } = await supabaseClient.from('featured_companies').select('*');
+            if (error) return;
+
+            const tbody = document.getElementById('adsTableBody');
+            tbody.innerHTML = '';
+            let active = 0;
+            let expired = 0;
+
+            const now = new Date();
+
+            data.forEach(ad => {
+                const createdAt = new Date(ad.created_at || Date.now());
+                const durationDays = ad.duration || 7;
+                const expirationDate = new Date(createdAt.getTime() + (durationDays * 24 * 60 * 60 * 1000));
+                const diffTime = expirationDate - now;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                let timeText = '';
+                if (diffDays > 0) {
+                    active++;
+                    timeText = `<span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded-lg text-xs font-bold">باقي ${diffDays} يوم</span>`;
+                } else {
+                    expired++;
+                    timeText = `<span class="bg-red-100 text-red-700 px-2 py-1 rounded-lg text-xs font-bold">انتهى الإعلان</span>`;
+                }
+
+                tbody.innerHTML += `
+                    <tr class="border-b">
+                        <td class="p-3 font-bold text-gray-800">${ad.title}</td>
+                        <td class="p-3 text-xs text-gray-600">${ad.display_type === 'slider' ? 'متحرك' : 'ثابت'} (${ad.position === 'above' ? 'فوق الأقسام' : 'تحت الأقسام'})</td>
+                        <td class="p-3 text-xs text-gray-600">${ad.page_target}</td>
+                        <td class="p-3">${timeText}</td>
+                        <td class="p-3"><button onclick="deleteAd(${ad.id})" class="text-red-500 hover:text-red-700 font-bold text-xs">حذف</button></td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('activeCount').innerText = active;
+            document.getElementById('expiredCount').innerText = expired;
+        }
 
         document.getElementById('companyAdForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const title = document.getElementById('compTitle').value;
-            const description = document.getElementById('compDesc').value;
-            const phone = document.getElementById('compPhone').value;
+            const duration = parseInt(document.getElementById('compDuration').value);
+            const display_type = document.getElementById('compDisplayType').value;
+            const position = document.getElementById('compPosition').value;
+            const page_target = document.getElementById('compPage').value;
             const imagesInput = document.getElementById('compImages').value;
-            
-            // تحويل الروابط لمصفوفة عشان السلايدر يقرأها
             const images = imagesInput.split(',').map(img => img.trim());
 
-            const { data, error } = await supabaseClient
+            const { error } = await supabaseClient
                 .from('featured_companies')
-                .insert([{ title, description, phone, images }]);
+                .insert([{ title, duration, display_type, position, page_target, images, created_at: new Date() }]);
 
             if (error) {
-                alert('حدث خطأ أثناء الحفظ: ' + error.message);
+                alert('خطأ أثناء الحفظ: ' + error.message);
             } else {
-                alert('تم إضافة إعلان الشركة بنجاح!');
+                alert('تم نشر البنر بنجاح!');
                 document.getElementById('companyAdForm').reset();
+                fetchAds();
             }
         });
+
+        async function deleteAd(id) {
+            if (confirm('هل أنت متأكد من حذف هذا الإعلان؟')) {
+                await supabaseClient.from('featured_companies').delete().eq('id', id);
+                fetchAds();
+            }
+        }
+
+        fetchAds();
     </script>
 </body>
 </html>
