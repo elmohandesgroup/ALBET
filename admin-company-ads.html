@@ -15,7 +15,7 @@
         <div class="bg-white rounded-2xl p-6 shadow-xl flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
                 <h2 class="text-xl font-bold text-orange-600">إدارة إعلانات الشركات (بانرات العرض)</h2>
-                <p class="text-xs text-gray-500 mt-1">التحكم في إعلانات الشاشات الصافية، العدادات، وأماكن الظهور.</p>
+                <p class="text-xs text-gray-500 mt-1">رفع الصور، دعم WebP، المعاينة، التعديل، والحذف.</p>
             </div>
             <div class="flex gap-3">
                 <div class="bg-orange-50 border border-orange-200 px-4 py-2 rounded-xl text-center">
@@ -30,14 +30,15 @@
             <a href="admin-dashboard.html" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-xl font-bold text-xs transition-all">العودة للوحة التحكم</a>
         </div>
 
-        <!-- نموذج الإضافة -->
+        <!-- نموذج الإضافة / التعديل -->
         <div class="bg-white rounded-2xl p-6 shadow-xl">
-            <h3 class="text-base font-bold text-gray-800 mb-4 border-b pb-2">إضافة بانر جديد</h3>
+            <h3 id="formTitle" class="text-base font-bold text-gray-800 mb-4 border-b pb-2">إضافة بانر جديد</h3>
             <form id="companyAdForm" class="space-y-4">
+                <input type="hidden" id="editAdId">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">اسم تعريفي للإعلان (في اللوحة فقط)</label>
-                        <input type="text" id="compTitle" class="w-full border rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-orange-500" placeholder="مثال: بانر شركة الأجهزة الرئيسية" required>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">اسم تعريفي للإعلان</label>
+                        <input type="text" id="compTitle" class="w-full border rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-orange-500" placeholder="مثال: بانر شركة الأجهزة" required>
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-gray-700 mb-1">مدة الصلاحية بالأيام</label>
@@ -70,19 +71,26 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-gray-700 mb-1">روابط الصور (مفصولة بفواصل للسلايدر أو صورة واحدة للثابت)</label>
-                    <input type="text" id="compImages" class="w-full border rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-orange-500" placeholder="logo512.png, logo192.png" required>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">رفع الصور (يدعم WebP، PNG، JPG - متعدد)</label>
+                    <input type="file" id="compImagesFile" class="w-full border rounded-xl p-2 text-sm outline-none bg-gray-50" accept="image/webp, image/png, image/jpeg" multiple>
+                    <input type="hidden" id="compImagesExisting">
+                    <div id="imagePreviewContainer" class="flex gap-2 mt-3 flex-wrap"></div>
                 </div>
 
-                <button type="submit" class="w-full bg-orange-600 text-white py-3 rounded-xl font-bold text-sm hover:bg-orange-700 transition-all shadow-md">
-                    حفظ ونشر البنر في الموقع
-                </button>
+                <div class="flex gap-2">
+                    <button type="submit" id="submitBtn" class="flex-1 bg-orange-600 text-white py-3 rounded-xl font-bold text-sm hover:bg-orange-700 transition-all shadow-md">
+                        حفظ ونشر البنر
+                    </button>
+                    <button type="button" id="cancelEditBtn" onclick="resetForm()" class="hidden bg-gray-300 text-gray-700 px-6 py-3 rounded-xl font-bold text-sm hover:bg-gray-400 transition-all">
+                        إلغاء
+                    </button>
+                </div>
             </form>
         </div>
 
         <!-- جدول المتابعة والعدادات -->
         <div class="bg-white rounded-2xl p-6 shadow-xl">
-            <h3 class="text-base font-bold text-gray-800 mb-4 border-b pb-2">البنرات النشطة والمتابعة</h3>
+            <h3 class="text-base font-bold text-gray-800 mb-4 border-b pb-2">البنرات النشطة والمتابعة (الأحدث أولاً)</h3>
             <div class="overflow-x-auto">
                 <table class="w-full text-right text-sm">
                     <thead>
@@ -108,15 +116,39 @@
         const SUPABASE_ANON_KEY = 'your-supabase-anon-key';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+        let uploadedImageUrls = [];
+
+        // معاينة الصور عند رفعها
+        document.getElementById('compImagesFile').addEventListener('change', async (e) => {
+            const files = e.target.files;
+            uploadedImageUrls = [];
+            const previewContainer = document.getElementById('imagePreviewContainer');
+            previewContainer.innerHTML = '';
+
+            for (let file of files) {
+                // محاكاة رفع الصور أو تحويلها لرابط مؤقت/سحابي (يمكن ربطه بـ Supabase Storage لو متاح)
+                const reader = new FileReader();
+                reader.onload = (uploadEvent) => {
+                    const base64String = uploadEvent.target.result;
+                    uploadedImageUrls.push(base64String);
+                    previewContainer.innerHTML += `<img src="${base64String}" class="w-16 h-16 object-cover rounded-xl border shadow-sm">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
         async function fetchAds() {
-            const { data, error } = await supabaseClient.from('featured_companies').select('*');
+            const { data, error } = await supabaseClient
+                .from('featured_companies')
+                .select('*')
+                .order('created_at', { ascending: false }); // الأحدث أولاً
+
             if (error) return;
 
             const tbody = document.getElementById('adsTableBody');
             tbody.innerHTML = '';
             let active = 0;
             let expired = 0;
-
             const now = new Date();
 
             data.forEach(ad => {
@@ -141,7 +173,10 @@
                         <td class="p-3 text-xs text-gray-600">${ad.display_type === 'slider' ? 'متحرك' : 'ثابت'} (${ad.position === 'above' ? 'فوق الأقسام' : 'تحت الأقسام'})</td>
                         <td class="p-3 text-xs text-gray-600">${ad.page_target}</td>
                         <td class="p-3">${timeText}</td>
-                        <td class="p-3"><button onclick="deleteAd(${ad.id})" class="text-red-500 hover:text-red-700 font-bold text-xs">حذف</button></td>
+                        <td class="p-3 flex gap-2">
+                            <button onclick='editAd(${JSON.stringify(ad)})' class="text-blue-500 hover:text-blue-700 font-bold text-xs">تعديل</button>
+                            <button onclick="deleteAd(${ad.id})" class="text-red-500 hover:text-red-700 font-bold text-xs">حذف</button>
+                        </td>
                     </tr>
                 `;
             });
@@ -153,29 +188,74 @@
         document.getElementById('companyAdForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            const id = document.getElementById('editAdId').value;
             const title = document.getElementById('compTitle').value;
             const duration = parseInt(document.getElementById('compDuration').value);
             const display_type = document.getElementById('compDisplayType').value;
             const position = document.getElementById('compPosition').value;
             const page_target = document.getElementById('compPage').value;
-            const imagesInput = document.getElementById('compImages').value;
-            const images = imagesInput.split(',').map(img => img.trim());
+            
+            let images = uploadedImageUrls;
+            if (images.length === 0 && id) {
+                images = JSON.parse(document.getElementById('compImagesExisting').value || '[]');
+            }
 
-            const { error } = await supabaseClient
-                .from('featured_companies')
-                .insert([{ title, duration, display_type, position, page_target, images, created_at: new Date() }]);
+            const adData = { title, duration, display_type, position, page_target, images };
+
+            let error;
+            if (id) {
+                const res = await supabaseClient.from('featured_companies').update(adData).eq('id', id);
+                error = res.error;
+            } else {
+                adData.created_at = new Date();
+                const res = await supabaseClient.from('featured_companies').insert([adData]);
+                error = res.error;
+            }
 
             if (error) {
                 alert('خطأ أثناء الحفظ: ' + error.message);
             } else {
-                alert('تم نشر البنر بنجاح!');
-                document.getElementById('companyAdForm').reset();
+                alert('تم حفظ البنر بنجاح!');
+                resetForm();
                 fetchAds();
             }
         });
 
+        function editAd(ad) {
+            document.getElementById('editAdId').value = ad.id;
+            document.getElementById('compTitle').value = ad.title;
+            document.getElementById('compDuration').value = ad.duration;
+            document.getElementById('compDisplayType').value = ad.display_type;
+            document.getElementById('compPosition').value = ad.position;
+            document.getElementById('compPage').value = ad.page_target;
+            document.getElementById('compImagesExisting').value = JSON.stringify(ad.images);
+            
+            document.getElementById('formTitle').innerText = 'تعديل البنر';
+            document.getElementById('submitBtn').innerText = 'تحديث البنر';
+            document.getElementById('cancelEditBtn').classList.remove('hidden');
+
+            const previewContainer = document.getElementById('imagePreviewContainer');
+            previewContainer.innerHTML = '';
+            if (Array.isArray(ad.images)) {
+                ad.images.forEach(img => {
+                    previewContainer.innerHTML += `<img src="${img}" class="w-16 h-16 object-cover rounded-xl border shadow-sm">`;
+                });
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function resetForm() {
+            document.getElementById('companyAdForm').reset();
+            document.getElementById('editAdId').value = '';
+            document.getElementById('formTitle').innerText = 'إضافة بانر جديد';
+            document.getElementById('submitBtn').innerText = 'حفظ ونشر البنر';
+            document.getElementById('cancelEditBtn').classList.add('hidden');
+            document.getElementById('imagePreviewContainer').innerHTML = '';
+            uploadedImageUrls = [];
+        }
+
         async function deleteAd(id) {
-            if (confirm('هل أنت متأكد من حذف هذا الإعلان؟')) {
+            if (confirm('هل أنت متأكد من حذف هذا البنر نهائياً؟')) {
                 await supabaseClient.from('featured_companies').delete().eq('id', id);
                 fetchAds();
             }
