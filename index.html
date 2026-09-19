@@ -267,7 +267,7 @@
         const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // جلب الأقسام وعرضها في الشريط المتحرك الأفقي (أيقونة قاعدة البيانات بحجم كبير وواضح)
-        async function fetchCategories() {
+     async function fetchCategories() {
             const container = document.getElementById('categories-container');
             if (!container) return;
 
@@ -285,8 +285,8 @@
 
                 container.innerHTML = '';
                 categories.forEach(cat => {
-                    // الاعتماد كلياً على صورة القسم القادمة من قاعدة البيانات، مع وضع رابط افتراضي فقط إن وجد حقل فارغ تماماً
-                    const iconSrc = cat.icon_url ? cat.icon_url : 'logo192.png';
+                    // استخدام اسم الحقل الصحيح المطابق لقاعدة البيانات image_url
+                    const iconSrc = cat.image_url ? cat.image_url : 'logo192.png';
                     
                     const catCard = `
                         <a href="category.html?id=${cat.id}" class="flex flex-col items-center justify-center bg-white border border-gray-100 rounded-2xl p-4 min-w-[105px] shadow-sm hover:border-orange-500 hover:shadow-md transition-all flex-shrink-0 text-center">
