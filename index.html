@@ -280,10 +280,10 @@
                 categories.forEach(cat => {
                     const iconSrc = cat.image_url ? cat.image_url : 'logo192.png';
                     const catCard = `
-                        <a href="category.html?id=${cat.id}" class="flex flex-col items-center justify-center bg-white border border-gray-100 rounded-2xl p-4 min-w-[110px] shadow-sm hover:border-orange-500 hover:shadow-md transition-all flex-shrink-0 text-center">
-                            <div class="w-16 h-16 bg-orange-50/30 rounded-full flex items-center justify-center mb-2.5 overflow-hidden p-1">
-                                <img src="${iconSrc}" alt="${cat.name}" class="w-full h-full object-cover rounded-full">
-                            </div>
+                       <a href="category.html?id=${cat.id}" class="flex flex-col items-center justify-center bg-white border border-gray-100 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:border-orange-500 hover:shadow-md transition-all text-center">
+        <div class="w-16 h-16 bg-orange-50/30 rounded-full flex items-center justify-center mb-2 overflow-hidden shadow-inner">
+            <img src="${iconSrc}" alt="${cat.name}" class="w-full h-full object-cover rounded-full">
+        </div>
                             <span class="text-xs font-bold text-gray-700 truncate w-full">${cat.name}</span>
                         </a>
                     `;
