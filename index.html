@@ -276,10 +276,10 @@
 
         // دالة حركة تدوير الأقسام يمين ويسار بسلاسة تامة
         function startPerfectAutoScroll(container) {
-            let scrollSpeed = 0.8; // سرعة الحركة الناعمة والبطيئة
-            let scrollDirection = 1; // 1 لليمين، -1 لليسار
+            let scrollSpeed = 0.8; 
+            let scrollDirection = 1; 
             let isPaused = false;
-            let pauseTimer = null;
+            let pauseTimeout = null;
 
             function step() {
                 if (!isPaused) {
@@ -287,12 +287,9 @@
                     if (maxScroll > 0) {
                         container.scrollLeft += scrollSpeed * scrollDirection;
 
-                        // إذا وصل لنهاية الشريط، اعكس الاتجاه ليرجع للبداية
                         if (container.scrollLeft >= maxScroll - 2) {
                             scrollDirection = -1;
-                        } 
-                        // إذا رجع لأول الشريط، اعكس الاتجاه ليتحرك للأمام مجدداً
-                        else if (container.scrollLeft <= 2) {
+                        } else if (container.scrollLeft <= 2) {
                             scrollDirection = 1;
                         }
                     }
@@ -300,22 +297,24 @@
                 requestAnimationFrame(step);
             }
 
-            // بدء حلقة الحركة
             requestAnimationFrame(step);
 
-            // إيقاف الحركة مؤقتاً عند تلمس المستخدم للشاشة ليتمكن من التمرير اليدوي بحرية
-            ['touchstart', 'mousedown', 'wheel'].forEach(evt => {
-                container.addEventListener(evt, () => {
-                    isPaused = true;
-                    clearTimeout(pauseTimer);
-                    // استئناف الحركة التلقائية بعد 4 ثوانٍ من ترك الزائر للشاشة
-                    pauseTimer = setTimeout(() => {
-                        isPaused = false;
-                    }, 4000);
-                }, { passive: true });
+            // دالة موحدة لإيقاف الحركة مؤقتاً عند التفاعل واستئنافها تلقائياً بعدها
+            const handleUserInteraction = () => {
+                isPaused = true;
+                clearTimeout(pauseTimeout);
+                
+                // بعد 3 ثواني من رفع اليد أو توقف التفاعل، ترجع تتحرك لوحدها تاني
+                pauseTimeout = setTimeout(() => {
+                    isPaused = false;
+                }, 3000);
+            };
+
+            // ربط الأحداث لكل حالات اللمس والماوس
+            ['touchstart', 'mousedown', 'wheel', 'touchmove'].forEach(evt => {
+                container.addEventListener(evt, handleUserInteraction, { passive: true });
             });
         }
-
         // جلب الإعلانات
         async function fetchAds() {
             const container = document.getElementById('ads-container');
