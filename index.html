@@ -152,8 +152,10 @@
                 <div class="text-xs text-gray-400">جاري تحميل الأقسام...</div>
             </div>
         </section>
-<!-- مكان ظهور البنر المميز -->
-<div id="featuredAdsContainer"></div>
+
+        <!-- مكان ظهور البنر المميز -->
+        <div id="featuredAdsContainer"></div>
+
         <!-- أحدث الإعلانات (تُعرض ديناميكياً من Supabase) -->
         <section class="space-y-3">
             <div class="flex justify-between items-center">
@@ -177,12 +179,12 @@
             </div>
             <div class="space-y-4">
                 <div class="relative w-full md:w-32 h-32 rounded-xl overflow-hidden shadow flex-shrink-0 group">
-    <!-- حاوية الصور المتحركة -->
-    <div class="flex transition-transform duration-500 ease-in-out h-full company-slider" id="companySlider">
-        <img src="logo512.png" class="w-full h-full object-cover flex-shrink-0" alt="صورة 1">
-        <img src="logo192.png" class="w-full h-full object-cover flex-shrink-0" alt="صورة 2">
-    </div>
-</div>
+                    <!-- حاوية الصور المتحركة -->
+                    <div class="flex transition-transform duration-500 ease-in-out h-full company-slider" id="companySlider">
+                        <img src="logo512.png" class="w-full h-full object-cover flex-shrink-0" alt="صورة 1">
+                        <img src="logo192.png" class="w-full h-full object-cover flex-shrink-0" alt="صورة 2">
+                    </div>
+                </div>
                 <div class="bg-orange-50 border border-orange-100 rounded-2xl p-4 flex flex-col md:flex-row gap-4 items-center">
                     <img src="logo512.png" alt="شركة" class="w-24 h-24 object-cover rounded-xl shadow">
                     <div class="space-y-1 text-center md:text-right flex-1">
@@ -289,9 +291,9 @@
                     const iconSrc = cat.image_url ? cat.image_url : 'logo192.png';
                     const catCard = `
                        <a href="category.html?id=${cat.id}" class="flex flex-col items-center justify-center bg-white border border-gray-100 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:border-orange-500 hover:shadow-md transition-all text-center">
-        <div class="w-16 h-16 bg-orange-50/30 rounded-full flex items-center justify-center mb-2 overflow-hidden shadow-inner">
-            <img src="${iconSrc}" alt="${cat.name}" class="w-full h-full object-cover rounded-full">
-        </div>
+                            <div class="w-16 h-16 bg-orange-50/30 rounded-full flex items-center justify-center mb-2 overflow-hidden shadow-inner">
+                                <img src="${iconSrc}" alt="${cat.name}" class="w-full h-full object-cover rounded-full">
+                            </div>
                             <span class="text-xs font-bold text-gray-700 truncate w-full">${cat.name}</span>
                         </a>
                     `;
@@ -343,18 +345,19 @@
                     `;
                     container.innerHTML += adCard;
                 });
-        } catch (err) {
-            console.error('خطأ في جلب الإعلانات:', err.message);
-            container.innerHTML = '<div class="text-xs text-red-400 p-4 col-span-full text-center">تعذر تحميل الإعلانات.</div>';
+            } catch (err) {
+                console.error('خطأ في جلب الإعلانات:', err.message);
+                container.innerHTML = '<div class="text-xs text-red-400 p-4 col-span-full text-center">تعذر تحميل الإعلانات.</div>';
+            }
         }
-    }
 
-    // تشغيل الدوال عند تحميل الصفحة مرة واحدة فقط
-    fetchCategories();
-    fetchAds();
+        // تشغيل الدوال عند تحميل الصفحة مرة واحدة فقط
+        fetchCategories();
+        fetchAds();
+    </script>
 
-    
-      <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-      <script src="featured-ads.js"></script>
+    <!-- الملفات الخارجية الأساسية -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="featured-ads.js"></script>
 </body>
 </html>
