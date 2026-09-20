@@ -329,12 +329,11 @@
             }
         }
 
-      // جلب إعلانات البانرات المخصصة من لوحة التحكم
+    // جلب إعلانات البانرات من جدول featured_companies وتوزيعها
         async function fetchBannerAds() {
             try {
-                // جلب كل البانرات من الجدول (تأكد لو اسم الجدول عندك في supabase هو featured_banners أو banners)
                 const { data: banners, error } = await db
-                    .from('featured_banners')
+                    .from('featured_companies')
                     .select('*');
 
                 if (error || !banners || banners.length === 0) return;
@@ -342,22 +341,22 @@
                 const topContainer = document.getElementById('topBannerAds');
                 const bottomContainer = document.getElementById('bottomBannerAds');
 
-                // فلترة وعرض بانر "فوق الأقسام"
-                const topBanner = banners.find(b => b.position === 'فوق الأقسام' || b.location === 'فوق الأقسام' || (b.place && b.place.includes('فوق')));
-                if (topContainer && topBanner) {
+                // فلترة بانر "فوق الأقسام" (position == above)
+                const topBanner = banners.find(b => b.position === 'above');
+                if (topContainer && topBanner && topBanner.images && topBanner.images.length > 0) {
                     topContainer.innerHTML = `
-                        <a href="${topBanner.link_url || '#'}" target="_blank" class="block w-full rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all bg-gray-100 h-40 md:h-56">
-                            <img src="${topBanner.image_url}" alt="${topBanner.title || 'إعلان مميز'}" class="w-full h-full object-cover">
+                        <a href="#" class="block w-full rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all bg-gray-100 h-40 md:h-56">
+                            <img src="${topBanner.images[0]}" alt="${topBanner.title || 'إعلان مميز'}" class="w-full h-full object-cover">
                         </a>
                     `;
                 }
 
-                // فلترة وعرض بانر "تحت الأقسام"
-                const bottomBanner = banners.find(b => b.position === 'تحت الأقسام' || b.location === 'تحت الأقسام' || (b.place && b.place.includes('تحت')));
-                if (bottomContainer && bottomBanner) {
+                // فلترة بانر "تحت الأقسام" (position == below)
+                const bottomBanner = banners.find(b => b.position === 'below');
+                if (bottomContainer && bottomBanner && bottomBanner.images && bottomBanner.images.length > 0) {
                     bottomContainer.innerHTML = `
-                        <a href="${bottomBanner.link_url || '#'}" target="_blank" class="block w-full rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all bg-gray-100 h-40 md:h-56">
-                            <img src="${bottomBanner.image_url}" alt="${bottomBanner.title || 'إعلان مميز'}" class="w-full h-full object-cover">
+                        <a href="#" class="block w-full rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all bg-gray-100 h-40 md:h-56">
+                            <img src="${bottomBanner.images[0]}" alt="${bottomBanner.title || 'إعلان مميز'}" class="w-full h-full object-cover">
                         </a>
                     `;
                 }
