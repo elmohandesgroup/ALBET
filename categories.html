@@ -3,365 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>إدارة الأقسام الرئيسية والفرعية - متجر البيت (albet.store)</title>
-    <link rel="manifest" href="admin-manifest.json">
+    <title>جميع الأقسام - متجر البيت</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
+    <!-- Google Fonts (Cairo) -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
-        body { font-family: 'Cairo', sans-serif; background-color: #f8f9fa; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f8f9fa;
+            -webkit-tap-highlight-color: transparent;
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 pb-20">
 
     <!-- الهيدر الرئيسي -->
-    <header class="bg-white shadow-sm sticky top-0 z-40 px-4 py-3.5">
+    <header class="bg-white shadow-sm sticky top-0 z-50 px-4 py-3.5">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <button id="open-menu-btn" class="p-1.5 text-gray-700 hover:text-orange-600 transition-colors focus:outline-none" aria-label="فتح القائمة">
+                <a href="/" class="p-1.5 text-gray-700 hover:text-orange-600 transition-colors" aria-label="الرئيسية">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                     </svg>
-                </button>
-                <a href="admin-dashboard.html" class="flex items-center">
-                    <img src="logo192.png" alt="متجر البيت" class="w-12 h-12 object-contain rounded-xl shadow-sm border border-gray-100 bg-white p-1">
+                </a>
+                <a href="/" class="flex items-center">
+                    <img src="logo192.png" alt="متجر البيت" class="w-10 h-10 object-contain rounded-xl shadow-sm border border-gray-100 bg-white p-1">
                 </a>
             </div>
-
             <div class="text-center flex-1 mx-2">
-                <a href="admin-dashboard.html" class="block">
-                    <h1 class="text-lg md:text-2xl font-black text-orange-600 leading-tight">متجر البيت</h1>
-                    <p class="text-[11px] md:text-xs text-gray-500 font-medium">إدارة الأقسام الرئيسية والفرعية</p>
-                </a>
+                <h1 class="text-base md:text-xl font-black text-orange-600">جميع أقسام المتجر</h1>
             </div>
-
-            <div class="flex items-center">
-                <button onclick="fetchCategories()" class="bg-orange-600 hover:bg-orange-700 text-white px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition-all shadow-sm flex items-center gap-1.5 whitespace-nowrap">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                    </svg>
-                    <span>تحديث الأقسام</span>
-                </button>
-            </div>
+            <div class="w-10"></div>
         </div>
     </header>
 
-    <!-- القائمة الجانبية (Drawer Menu) -->
-    <div id="side-menu" class="fixed inset-0 z-50 hidden">
-        <div id="menu-overlay" class="absolute inset-0 bg-black/50 transition-opacity"></div>
-        <div class="absolute right-0 top-0 bottom-0 w-80 bg-white shadow-2xl p-5 flex flex-col justify-between transform transition-transform duration-300 translate-x-full overflow-y-auto" id="menu-content">
-            <div>
-                <div class="flex items-center justify-between pb-4 border-b mb-4">
-                    <div class="flex items-center gap-2">
-                        <img src="logo192.png" alt="متجر البيت" class="w-10 h-10 object-contain">
-                        <span class="font-black text-orange-600 text-lg">لوحة التحكم الآمنة</span>
-                    </div>
-                    <button id="close-menu-btn" class="text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
-                </div>
-               <nav class="space-y-1.5">
-                    <div class="pt-1 pb-1 text-xs font-bold text-gray-400 px-3">أقسام الإدارة والتقارير</div>
-                    <a href="admin-dashboard.html" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors border border-gray-100">مراجعة الإعلانات</a>
-                    <a href="admin-company-ads.html" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors border border-gray-100">إضافة إعلانات الشركات</a>
-                    <a href="staff-management.html" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors border border-gray-100">إدارة الموظفين</a>
-                    <a href="categories.html" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-orange-600 bg-orange-50 transition-colors">إدارة الأقسام</a>
-                    <a href="admin-daily-report.html" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors border border-gray-100">تقرير اليوم</a>
-                    <a href="admin-profits.html" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors border border-gray-100">الأرباح والخسائر</a>
-                </nav>
-            </div>
-            <div class="pt-4 border-t">
-                <button onclick="logoutAdmin()" class="w-full bg-red-500 hover:bg-red-600 text-white py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm">تسجيل الخروج الآمن</button>
-            </div>
+    <!-- محتوى الأقسام -->
+    <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
+        <div class="flex items-center justify-between">
+            <h2 class="font-bold text-gray-800 text-lg">اختر القسم المناسب لك</h2>
+            <span id="categories-count" class="text-xs text-gray-400 font-semibold">جاري التحميل...</span>
         </div>
-    </div>
 
-    <!-- المحتوى الرئيسي -->
-    <main class="max-w-5xl mx-auto px-4 py-6 space-y-6">
-        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-6 space-y-6">
-            <div class="border-b pb-4 flex justify-between items-center">
-                <div>
-                    <h2 class="font-black text-gray-800 text-base md:text-lg flex items-center gap-2">
-                        <span class="w-2.5 h-2.5 rounded-full bg-orange-600 inline-block"></span>
-                        إضافة قسم جديد (رئيسي أو فرعي)
-                    </h2>
-                    <p class="text-xs text-gray-500 mt-0.5">النظام محمي ومصرح لك بإضافة وتعديل الأقسام.</p>
-                </div>
-                <div id="adminStatusBadge" class="text-xs bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full font-bold">جاري التحقق من الجلسة...</div>
-            </div>
-
-            <!-- نموذج إضافة القسم -->
-            <form id="addCategoryForm" class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50/50 p-4 rounded-xl border border-gray-100">
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">اسم القسم</label>
-                    <input type="text" id="catName" required class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-orange-500" placeholder="مثال: إلكترونيات، عقارات...">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">نوع القسم</label>
-                    <select id="catType" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-orange-500">
-                        <option value="main">قسم رئيسي (يظهر في القائمة الأولى)</option>
-                        <option value="sub">قسم فرعي (يتبع قسم رئيسي)</option>
-                    </select>
-                </div>
-
-                <div id="parentCategoryWrapper" class="hidden md:col-span-2">
-                    <label class="block text-xs font-bold text-gray-600 mb-1">تحديد القسم الرئيسي التابع له</label>
-                    <select id="parentCategorySelect" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-orange-500">
-                        <option value="">اختر القسم الرئيسي...</option>
-                    </select>
-                </div>
-
-                <div class="md:col-span-2">
-                    <label class="block text-xs font-bold text-gray-600 mb-1">أيقونة القسم (رفع صورة وتتحول WebP أوتوماتيك)</label>
-                    <input type="file" id="catIconFile" accept="image/*" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-orange-500 file:mr-4 file:py-1 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100">
-                </div>
-
-                <div class="flex items-end md:col-span-2">
-                    <button type="submit" id="submitBtn" class="w-full bg-orange-600 hover:bg-orange-700 text-white py-2.5 px-4 rounded-xl text-sm font-bold transition-all shadow-sm">
-                        حفظ ونشر القسم في الموقع
-                    </button>
-                </div>
-            </form>
-            <div id="formAlert"></div>
-
-            <!-- جدول استعراض الأقسام -->
-            <div class="space-y-3 pt-4 border-t">
-                <h3 class="font-bold text-gray-800 text-sm">الأقسام المسجلة في القاعدة حالياً</h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-right border-collapse">
-                        <thead>
-                            <tr class="border-b text-xs text-gray-500 bg-gray-50/50">
-                                <th class="p-3">الأيقونة</th>
-                                <th class="p-3">اسم القسم</th>
-                                <th class="p-3">النوع</th>
-                                <th class="p-3">يتبع لـ (القسم الرئيسي)</th>
-                                <th class="p-3 text-center">الإجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="categoriesTableBody" class="divide-y divide-gray-100 text-sm">
-                            <tr><td colspan="5" class="text-center text-gray-400 py-6">جاري التحقق والجلب...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
+        <!-- شبكة عرض الأقسام بشكل شيك ومتجاوب -->
+        <div id="all-categories-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            <!-- كروت الأقسام هتتحمل هنا ديناميكياً -->
+            <div class="col-span-full text-center py-12 text-gray-400 text-sm">جاري تحميل الأقسام...</div>
+        </div>
     </main>
 
-    <!-- السكريبتات والتحقق الأمني الحقيقي Supabase Auth -->
+    <!-- السكريبت لجلب الأقسام من قاعدة البيانات -->
     <script>
         const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        const openMenuBtn = document.getElementById('open-menu-btn');
-        const closeMenuBtn = document.getElementById('close-menu-btn');
-        const sideMenu = document.getElementById('side-menu');
-        const menuOverlay = document.getElementById('menu-overlay');
-        const menuContent = document.getElementById('menu-content');
-
-        function openMenu() {
-            sideMenu.classList.remove('hidden');
-            setTimeout(() => { menuContent.classList.remove('translate-x-full'); }, 10);
-        }
-
-        function closeMenu() {
-            menuContent.classList.add('translate-x-full');
-            setTimeout(() => { sideMenu.classList.add('hidden'); }, 300);
-        }
-
-        openMenuBtn.addEventListener('click', openMenu);
-        closeMenuBtn.addEventListener('click', closeMenu);
-        menuOverlay.addEventListener('click', closeMenu);
-
-        // التحقق من جلسة الدخول الحقيقية لـ Supabase
-        async function checkAuthSession() {
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            const badge = document.getElementById('adminStatusBadge');
-            
-            if (!session) {
-                window.location.href = 'admin-login.html';
-            } else {
-                badge.textContent = `مسجل كـ: ${session.user.email}`;
-            }
-        }
-
-        async function logoutAdmin() {
-            await supabaseClient.auth.signOut();
-            localStorage.removeItem('isAdminLoggedIn');
-            window.location.href = 'admin-login.html';
-        }
-
-        window.addEventListener('DOMContentLoaded', async () => {
-            await checkAuthSession();
-            await fetchCategories();
-            await loadMainCategoriesDropdown();
-        });
-
-        document.getElementById('catType').addEventListener('change', toggleParentDropdown);
-
-        function toggleParentDropdown() {
-            const catType = document.getElementById('catType').value;
-            const parentWrapper = document.getElementById('parentCategoryWrapper');
-            if (catType === 'sub') {
-                parentWrapper.classList.remove('hidden');
-            } else {
-                parentWrapper.classList.add('hidden');
-            }
-        }
-
-        async function loadMainCategoriesDropdown() {
-            const parentSelect = document.getElementById('parentCategorySelect');
-            const { data, error } = await supabaseClient
-                .from('categories')
-                .select('*')
-                .is('parent_id', null);
-
-            if (!error && data) {
-                parentSelect.innerHTML = '<option value="">اختر القسم الرئيسي...</option>';
-                data.forEach(cat => {
-                    parentSelect.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
-                });
-            }
-        }
-
-        // تحويل الصورة لـ WebP بدقة ومساحة خفيفة
-        function convertImageToWebP(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    const img = new Image();
-                    img.onload = function() {
-                        const canvas = document.createElement('canvas');
-                        let width = img.width;
-                        let height = img.height;
-                        
-                        // تصغير المقاس لو الصورة كبيرة جداً لمنع تعليق المتصفح
-                        const MAX_WIDTH = 300;
-                        const MAX_HEIGHT = 300;
-                        if (width > height) {
-                            if (width > MAX_WIDTH) {
-                                height *= MAX_WIDTH / width;
-                                width = MAX_WIDTH;
-                            }
-                        } else {
-                            if (height > MAX_HEIGHT) {
-                                width *= MAX_HEIGHT / height;
-                                height = MAX_HEIGHT;
-                            }
-                        }
-
-                        canvas.width = width;
-                        canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-                        resolve(canvas.toDataURL('image/webp', 0.8));
-                    };
-                    img.onerror = reject;
-                    img.src = event.target.result;
-                };
-                reader.onerror = reject;
-                reader.readAsDataURL(file);
-            });
-        }
-
-        async function fetchCategories() {
-            const tbody = document.getElementById('categoriesTableBody');
-            const { data, error } = await supabaseClient.from('categories').select('*');
-
-            if (error) {
-                tbody.innerHTML = `<tr><td colspan="5" class="text-center text-red-500 py-6">خطأ في جلب الأقسام: ${error.message}</td></tr>`;
-                return;
-            }
-
-            if (!data || data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="text-center text-gray-400 py-6">لا توجد أقسام مسجلة حالياً في قاعدة البيانات.</td></tr>`;
-                return;
-            }
-
-            tbody.innerHTML = '';
-            data.forEach(cat => {
-                const parentItem = data.find(p => p.id === cat.parent_id);
-                const iconHtml = cat.image_url ? `<img src="${cat.image_url}" class="w-9 h-9 object-contain rounded-lg bg-gray-50 p-1 border border-gray-100">` : `<span class="text-gray-300 text-xs">بدون</span>`;
-                
-                tbody.innerHTML += `
-                    <tr class="hover:bg-gray-50">
-                        <td class="p-3">${iconHtml}</td>
-                        <td class="p-3 font-bold text-gray-800">${cat.name}</td>
-                        <td class="p-3"><span class="px-2 py-0.5 rounded text-xs font-bold ${!cat.parent_id ? 'bg-orange-50 text-orange-600' : 'bg-blue-50 text-blue-600'}">${!cat.parent_id ? 'رئيسي' : 'فرعي'}</span></td>
-                        <td class="p-3 text-gray-600">${parentItem ? parentItem.name : '-'}</td>
-                        <td class="p-3 text-center">
-                            <button onclick="deleteCategory('${cat.id}')" class="bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1 rounded-xl text-xs font-bold transition-all">حذف</button>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
-        // معالجة نموذج الحفظ بالاستماع المباشر (EventListener) بدلاً من التداخل في الـ HTML
-        document.getElementById('addCategoryForm').addEventListener('submit', async function(event) {
-            event.preventDefault();
-
-            const alertDiv = document.getElementById('formAlert');
-            const submitBtn = document.getElementById('submitBtn');
-            const nameInput = document.getElementById('catName');
-            const typeInput = document.getElementById('catType');
-            
-            const name = nameInput.value.trim();
-            const type = typeInput.value;
-            const parent_id = type === 'sub' ? document.getElementById('parentCategorySelect').value : null;
-            const fileInput = document.getElementById('catIconFile');
-
-            if (type === 'sub' && !parent_id) {
-                alertDiv.innerHTML = `<div class="p-2 bg-red-50 text-red-600 text-xs rounded-xl font-bold mt-2">برجاء اختيار القسم الرئيسي التابع له القسم الفرعي!</div>`;
-                return;
-            }
-
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'جاري معالجة الصورة والحفظ الآمن...';
-            alertDiv.innerHTML = '';
+        async function fetchAllCategories() {
+            const container = document.getElementById('all-categories-container');
+            const countLabel = document.getElementById('categories-count');
 
             try {
-                let imageWebP = null;
-                if (fileInput.files && fileInput.files[0]) {
-                    imageWebP = await convertImageToWebP(fileInput.files[0]);
-                }
-
-                const { error } = await supabaseClient.from('categories').insert([{ 
-                    name, 
-                    parent_id: parent_id ? parent_id : null, 
-                    image_url: imageWebP 
-                }]);
-
+                const { data: categories, error } = await db.from('categories').select('*');
                 if (error) throw error;
 
-                alertDiv.innerHTML = `<div class="p-2 bg-emerald-50 text-emerald-600 text-xs rounded-xl font-bold mt-2">تم إضافة القسم بنجاح وأمان تام!</div>`;
-                this.reset();
-                toggleParentDropdown();
-                await fetchCategories();
-                await loadMainCategoriesDropdown();
+                if (!categories || categories.length === 0) {
+                    container.innerHTML = '<div class="col-span-full text-center py-12 text-gray-400 text-sm">لا توجد أقسام مضافة حالياً.</div>';
+                    countLabel.innerText = '0 قسم';
+                    return;
+                }
+
+                countLabel.innerText = `${categories.length} قسم متاحة`;
+                container.innerHTML = '';
+
+                categories.forEach(cat => {
+                    const iconSrc = cat.image_url ? cat.image_url : 'logo192.png';
+                    const card = `
+                        <a href="category.html?id=${cat.id}" class="bg-white border border-gray-100 rounded-2xl p-4 flex flex-col items-center justify-center text-center shadow-sm hover:border-orange-500 hover:shadow-md transition-all group">
+                            <div class="w-20 h-20 bg-orange-50/50 rounded-2xl flex items-center justify-center mb-3 overflow-hidden shadow-inner border border-orange-100/50 group-hover:scale-105 transition-transform">
+                                <img src="${iconSrc}" alt="${cat.name}" class="w-full h-full object-cover">
+                            </div>
+                            <h3 class="font-bold text-gray-800 text-sm group-hover:text-orange-600 transition-colors truncate w-full">${cat.name}</h3>
+                            <span class="text-[11px] text-gray-400 mt-1">تصفح الإعلانات</span>
+                        </a>
+                    `;
+                    container.innerHTML += card;
+                });
 
             } catch (err) {
-                console.error("خطأ Supabase:", err);
-                alertDiv.innerHTML = `<div class="p-2 bg-red-50 text-red-600 text-xs rounded-xl font-bold mt-2">خطأ أثناء الحفظ: ${err.message || 'حدث خطأ غير متوقع'}</div>`;
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'حفظ ونشر القسم في الموقع';
-            }
-        });
-
-        async function deleteCategory(id) {
-            if (!confirm('هل أنت متأكد من حذف هذا القسم نهائياً؟')) return;
-            const { error } = await supabaseClient.from('categories').delete().eq('id', id);
-            if (!error) {
-                await fetchCategories();
-                await loadMainCategoriesDropdown();
-            } else {
-                alert('فشل الحذف: ' + error.message);
+                console.error('خطأ في جلب الأقسام:', err.message);
+                container.innerHTML = '<div class="col-span-full text-center py-12 text-red-400 text-sm">تعذر تحميل الأقسام، حاول مرة أخرى.</div>';
+                countLabel.innerText = 'خطأ';
             }
         }
+
+        fetchAllCategories();
     </script>
 </body>
 </html>
