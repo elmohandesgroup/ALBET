@@ -134,12 +134,9 @@
             </button>
         </div>
 
-        <!-- بانر الإعلانات المميزة للشركات -->
-        <div onclick="openCompaniesModal()" class="bg-gradient-to-r from-orange-600 to-amber-600 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden flex flex-col items-center text-center cursor-pointer hover:scale-[1.01] transition-transform">
-            <span class="bg-black/20 text-xs px-3 py-1 rounded-full mb-2 font-medium">إعلانات مميزة للشركات</span>
-            <h2 class="text-xl md:text-2xl font-black mb-2">اكتشف عروض الشركات الكبرى</h2>
-            <p class="text-xs md:text-sm text-orange-100 max-w-xl mb-3">أفضل المنتجات والأجهزة المضمونة بضمان الشركات وبأسعار تنافسية. (اضغط للعرض)</p>
-            <span class="bg-white text-orange-600 px-4 py-1.5 rounded-xl text-xs font-bold shadow-sm">عرض عروض الشركات</span>
+        <!-- منطقة إعلانات الصور الصافية (فوق الأقسام) -->
+        <div id="topBannerAds" class="w-full space-y-4">
+            <!-- سيتم تحميل الصور هنا ديناميكياً بدون أي نصوص -->
         </div>
 
         <!-- الأقسام (تُعرض ديناميكياً من Supabase) -->
@@ -153,8 +150,10 @@
             </div>
         </section>
 
-        <!-- مكان ظهور البنر المميز -->
-        <div id="featuredAdsContainer"></div>
+        <!-- منطقة إعلانات الصور الصافية (تحت الأقسام) -->
+        <div id="bottomBannerAds" class="w-full space-y-4">
+            <!-- سيتم تحميل الصور هنا ديناميكياً بدون أي نصوص -->
+        </div>
 
         <!-- أحدث الإعلانات (تُعرض ديناميكياً من Supabase) -->
         <section class="space-y-3">
@@ -179,19 +178,9 @@
             </div>
             <div class="space-y-4">
                 <div class="relative w-full md:w-32 h-32 rounded-xl overflow-hidden shadow flex-shrink-0 group">
-                    <!-- حاوية الصور المتحركة -->
                     <div class="flex transition-transform duration-500 ease-in-out h-full company-slider" id="companySlider">
                         <img src="logo512.png" class="w-full h-full object-cover flex-shrink-0" alt="صورة 1">
                         <img src="logo192.png" class="w-full h-full object-cover flex-shrink-0" alt="صورة 2">
-                    </div>
-                </div>
-                <div class="bg-orange-50 border border-orange-100 rounded-2xl p-4 flex flex-col md:flex-row gap-4 items-center">
-                    <img src="logo512.png" alt="شركة" class="w-24 h-24 object-cover rounded-xl shadow">
-                    <div class="space-y-1 text-center md:text-right flex-1">
-                        <span class="bg-orange-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">ضمان معتمد</span>
-                        <h4 class="font-bold text-gray-800 text-base">عروض الأجهزة المنزلية من الشركات الكبرى</h4>
-                        <p class="text-xs text-gray-600">احصل على أحدث الأجهزة بضمان شامل لمدة 5 سنوات وتوصيل مجاني لجميع المحافظات.</p>
-                        <a href="https://wa.me/201227802300" target="_blank" class="inline-block bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-bold mt-2 shadow-sm">استفسار عبر واتساب</a>
                     </div>
                 </div>
             </div>
@@ -305,7 +294,7 @@
             }
         }
 
-        // جلب الإعلانات
+        // جلب الإعلانات العادية
         async function fetchAds() {
             const container = document.getElementById('ads-container');
             if (!container) return;
@@ -351,9 +340,41 @@
             }
         }
 
-        // تشغيل الدوال عند تحميل الصفحة مرة واحدة فقط
+        // جلب إعلانات الصور الصافية (فوق وتحت الأقسام)
+        async function fetchBannerAds() {
+            try {
+                const { data: banners, error } = await db
+                    .from('featured_banners') // أو اسم جدول البنرات عندك في قاعدة البيانات
+                    .select('*');
+
+                if (error) return; // لو الجدول مش موجود حالياً هيتخطاه بهدوء
+
+                const topContainer = document.getElementById('topBannerAds');
+                const bottomContainer = document.getElementById('bottomBannerAds');
+
+                if (banners && banners.length > 0) {
+                    if (topContainer) topContainer.innerHTML = '';
+                    if (bottomContainer) bottomContainer.innerHTML = '';
+
+                    banners.forEach(banner => {
+                        const bannerHTML = `
+                            <a href="${banner.link_url || '#'}" target="_blank" class="block w-full rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all bg-gray-100 h-40 md:h-56">
+                                <img src="${banner.image_url}" alt="إعلان" class="w-full h-full object-cover">
+                            </a>
+                        `;
+                        // يمكنك تقسيمهم حسب رغبتك أو وضعهم معاً
+                        if (topContainer) topContainer.innerHTML += bannerHTML;
+                    });
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
+        // تشغيل الدوال عند تحميل الصفحة
         fetchCategories();
         fetchAds();
+        fetchBannerAds();
     </script>
 
     <!-- الملفات الخارجية الأساسية -->
