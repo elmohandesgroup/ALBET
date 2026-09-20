@@ -424,21 +424,21 @@
    <script>
     let deferredPrompt;
 
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        
-        const banner = document.getElementById('installBanner');
-        if (banner) {
-            banner.classList.remove('hidden');
-        }
+ window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    
+    const banner = document.getElementById('installBanner');
+    if (banner) {
+        banner.classList.remove('hidden');
+    }
 
-        if (!sessionStorage.getItem('pwaPopupShown')) {
-            setTimeout(() => {
-                showLightPopup();
-            }, 1500);
-        }
-    });
+    if (!sessionStorage.getItem('pwaPopupShown')) {
+        setTimeout(() => {
+            showLightPopup();
+        }, 1500);
+    }
+});
 
 function showLightPopup() {
     if (document.getElementById('custom-pwa-popup')) return;
@@ -464,42 +464,43 @@ function showLightPopup() {
     });
     document.getElementById('popupCloseBtn').addEventListener('click', closePopup);
 }
-    function closePopup() {
-        const p = document.getElementById('custom-pwa-popup');
-        if (p) p.remove();
+
+function closePopup() {
+    const p = document.getElementById('custom-pwa-popup');
+    if (p) p.remove();
+}
+
+function triggerInstall() {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                console.log('تم التثبيت بنجاح');
+            }
+            deferredPrompt = null;
+        });
+    } else {
+        alert('التطبيق مثبت بالفعل أو أن متصفحك يمنع التثبيت التلقائي حالياً.');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const menuBtn = document.getElementById('menuInstallBtn');
+    if (menuBtn) {
+        menuBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            triggerInstall();
+        });
     }
 
-    function triggerInstall() {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    console.log('تم التثبيت بنجاح');
-                }
-                deferredPrompt = null;
-            });
-        } else {
-            alert('التطبيق مثبت بالفعل أو أن متصفحك يمنع التثبيت التلقائي حالياً.');
-        }
+    const bannerBtn = document.getElementById('installBtn');
+    if (bannerBtn) {
+        bannerBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            triggerInstall();
+        });
     }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const menuBtn = document.getElementById('menuInstallBtn');
-        if (menuBtn) {
-            menuBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                triggerInstall();
-            });
-        }
-
-        const bannerBtn = document.getElementById('installBtn');
-        if (bannerBtn) {
-            bannerBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                triggerInstall();
-            });
-        }
-    });
+});
 </script>
 </body>
 </html>
