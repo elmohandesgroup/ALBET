@@ -329,9 +329,10 @@
             }
         }
 
-       // جلب إعلانات البانرات المخصصة من لوحة التحكم وتوزيعها حسب المكان
+      // جلب إعلانات البانرات المخصصة من لوحة التحكم
         async function fetchBannerAds() {
             try {
+                // جلب كل البانرات من الجدول (تأكد لو اسم الجدول عندك في supabase هو featured_banners أو banners)
                 const { data: banners, error } = await db
                     .from('featured_banners')
                     .select('*');
@@ -365,7 +366,6 @@
                 console.log('خطأ في جلب البانرات:', e);
             }
         }
-
         // تشغيل الدوال عند تحميل الصفحة
         fetchCategories();
         fetchAds();
