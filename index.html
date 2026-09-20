@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>متجر البيت - الأفضل دائماً</title>
     
+    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-34S913WKK2"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -13,14 +14,18 @@
       gtag('config', 'G-34S913WKK2');
     </script>
 
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
+    <!-- PWA Settings -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#e17055">
     <link rel="apple-touch-icon" href="logo192.png">
 
+    <!-- Google Fonts (Cairo) -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
         body {
@@ -39,9 +44,11 @@
 </head>
 <body class="bg-gray-50 text-gray-800 pb-20">
 
+    <!-- الهيدر الرئيسي -->
     <header class="bg-white shadow-sm sticky top-0 z-50 px-4 py-3.5">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             
+            <!-- القسم الأيمن: زر القائمة + اللوجو -->
             <div class="flex items-center gap-3">
                 <button id="open-menu-btn" class="p-1.5 text-gray-700 hover:text-orange-600 transition-colors focus:outline-none" aria-label="فتح القائمة">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -53,6 +60,7 @@
                 </a>
             </div>
 
+            <!-- القسم الأوسط: اسم المتجر والسلوجان -->
             <div class="text-center flex-1 mx-2">
                 <a href="/" class="block">
                     <h1 class="text-lg md:text-2xl font-black text-orange-600 leading-tight">متجر البيت</h1>
@@ -60,6 +68,7 @@
                 </a>
             </div>
 
+            <!-- القسم الأيسر: زر أضف إعلانك -->
             <div class="flex items-center">
                 <a href="add-ad.html" class="bg-orange-600 hover:bg-orange-700 text-white px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition-all shadow-sm flex items-center gap-1.5 whitespace-nowrap">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -72,6 +81,7 @@
         </div>
     </header>
 
+    <!-- القائمة الجانبية (Drawer Menu) -->
     <div id="side-menu" class="fixed inset-0 z-50 hidden">
         <div id="menu-overlay" class="absolute inset-0 bg-black/50 transition-opacity"></div>
         <div class="absolute right-0 top-0 bottom-0 w-80 bg-white shadow-2xl p-5 flex flex-col justify-between transform transition-transform duration-300 translate-x-full overflow-y-auto" id="menu-content">
@@ -106,8 +116,10 @@
         </div>
     </div>
 
+    <!-- محتوى المتجر الرئيسي -->
     <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
         
+        <!-- زر تحميل التطبيق (البانر العلوي) -->
         <div id="installBanner" class="hidden bg-gradient-to-r from-emerald-600 to-teal-600 rounded-2xl p-4 text-white shadow-md flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <img src="logo192.png" alt="تطبيق متجر البيت" class="w-12 h-12 bg-white rounded-xl p-1.5 object-contain shadow-inner">
@@ -121,8 +133,10 @@
             </button>
         </div>
 
+        <!-- 1. منطقة إعلانات متحركة (فوق الأقسام) - سلايدر عالمي -->
         <div id="topBannerAds" class="w-full"></div>
 
+        <!-- الأقسام (تُعرض ديناميكياً من Supabase) -->
         <section class="space-y-3">
             <div class="flex justify-between items-center">
                 <h3 class="font-bold text-gray-800 text-base">الأقسام</h3>
@@ -133,8 +147,10 @@
             </div>
         </section>
 
+        <!-- 2. منطقة إعلانات (تحت الأقسام) -->
         <div id="bottomBannerAds" class="w-full space-y-4"></div>
 
+        <!-- أحدث الإعلانات (تُعرض ديناميكياً من Supabase) -->
         <section class="space-y-3">
             <div class="flex justify-between items-center">
                 <h3 class="font-bold text-gray-800 text-base">أحدث الإعلانات</h3>
@@ -148,6 +164,7 @@
 
     </main>
 
+    <!-- السكريبتات الأساسية ومنظومة الـ PWA و Supabase -->
     <script>
         // إعدادات القائمة الجانبية
         const openMenuBtn = document.getElementById('open-menu-btn');
@@ -175,7 +192,7 @@
         const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
         const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // منظومة الـ PWA (التثبيت والنافذة المنبثقة)
+        // منظومة الـ PWA وتثبيت التطبيق الاحترافية
         let deferredPrompt = null;
         const installBanner = document.getElementById('installBanner');
         const installBtn = document.getElementById('installBtn');
@@ -185,42 +202,41 @@
             e.preventDefault();
             deferredPrompt = e;
             if (installBanner) installBanner.classList.remove('hidden');
-
-            if (!sessionStorage.getItem('pwaPopupShown')) {
-                setTimeout(() => {
-                    showLightPopup();
-                }, 1500);
-            }
         });
 
-        function showLightPopup() {
-            if (document.getElementById('custom-pwa-popup')) return;
+        function showInstallGuideModal() {
+            if (document.getElementById('pwa-guide-modal')) return;
 
-            const popupHtml = `
-                <div id="custom-pwa-popup" style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 99999; animation: fadeIn 0.3s ease;">
-                    <div style="background: #1f2937; color: #fff; padding: 25px; border-radius: 16px; max-width: 340px; width: 90%; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);">
-                        <img src="logo192.png" style="width: 65px; height: 65px; border-radius: 12px; margin: 0 auto 12px auto; display: block; object-fit: contain; background: #fff; padding: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);" alt="متجر البيت">
-                        <h3 style="margin: 0 0 8px 0; font-size: 18px; font-weight: bold; color: #34d399;">حمل تطبيق "متجر البيت" الآن</h3>
-                        <p style="font-size: 13px; color: #9ca3af; margin: 0 0 20px 0; line-height: 1.5;">استمتع بتجربة تصفح أسرع، بدون متصفح، وبشكل مباشر من شاشة هاتفك!</p>
-                        
-                        <button id="popupInstallBtn" style="background: #059669; color: #fff; border: none; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; margin-bottom: 10px;">تثبيت التطبيق الآن</button>
-                        <button id="popupCloseBtn" style="background: transparent; color: #9ca3af; border: none; width: 100%; padding: 8px; font-size: 13px; cursor: pointer;">لاحقاً</button>
+            const modalHtml = `
+                <div id="pwa-guide-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[99999] p-4">
+                    <div class="bg-white rounded-2xl max-w-sm w-full p-6 text-center shadow-2xl space-y-4 animate-in fade-in zoom-in duration-200">
+                        <img src="logo192.png" alt="متجر البيت" class="w-16 h-16 object-contain mx-auto rounded-2xl shadow border p-1 bg-white">
+                        <h3 class="font-black text-gray-800 text-lg">تثبيت تطبيق متجر البيت</h3>
+                        <p class="text-xs text-gray-500 leading-relaxed">
+                            لتثبيت التطبيق على جهازك بكل سهولة والوصول إليه في أي وقت:
+                        </p>
+                        <div class="bg-gray-50 rounded-xl p-3 text-right text-xs text-gray-700 space-y-2 border border-gray-100">
+                            <div class="flex items-center gap-2">
+                                <span class="bg-orange-600 text-white w-5 h-5 rounded-full flex items-center justify-center font-bold text-[10px]">1</span>
+                                <span>اضغط على قائمة المتصفح (النقاط الثلاث <b>3</b> أعلى الشاشة).</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="bg-orange-600 text-white w-5 h-5 rounded-full flex items-center justify-center font-bold text-[10px]">2</span>
+                                <span>اختر <b class="text-orange-600">"إضافة إلى الشاشة الرئيسية"</b> أو <b class="text-orange-600">"تثبيت التطبيق"</b>.</span>
+                            </div>
+                        </div>
+                        <button onclick="closeInstallGuideModal()" class="w-full bg-orange-600 hover:bg-orange-700 text-white py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm">
+                            حسناً، فهمت
+                        </button>
                     </div>
                 </div>
             `;
-            document.body.insertAdjacentHTML('beforeend', popupHtml);
-            sessionStorage.setItem('pwaPopupShown', 'true');
-
-            document.getElementById('popupInstallBtn').addEventListener('click', () => {
-                triggerInstall();
-                closePopup();
-            });
-            document.getElementById('popupCloseBtn').addEventListener('click', closePopup);
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
         }
 
-        function closePopup() {
-            const p = document.getElementById('custom-pwa-popup');
-            if (p) p.remove();
+        function closeInstallGuideModal() {
+            const modal = document.getElementById('pwa-guide-modal');
+            if (modal) modal.remove();
         }
 
         async function triggerInstall() {
@@ -229,9 +245,8 @@
                 const { outcome } = await deferredPrompt.userChoice;
                 deferredPrompt = null;
                 if (installBanner) installBanner.classList.add('hidden');
-                closePopup();
             } else {
-                alert("لتثبيت التطبيق، افتح إعدادات المتصفح (النقاط الثلاث) ثم اختر 'إضافة إلى الشاشة الرئيسية'.");
+                showInstallGuideModal();
             }
         }
 
