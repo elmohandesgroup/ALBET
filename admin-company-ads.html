@@ -73,8 +73,8 @@
                 <div>
                     <label class="block text-xs font-bold text-gray-700 mb-1">رفع الصور (يدعم WebP، PNG، JPG - متعدد)</label>
                     <input type="file" id="compImagesFile" class="w-full border rounded-xl p-2 text-sm outline-none bg-gray-50" accept="image/webp, image/png, image/jpeg" multiple>
-                    <input type="hidden" id="compImagesExisting">
-                    <div id="imagePreviewContainer" class="flex gap-2 mt-3 flex-wrap"></div>
+                    <!-- منطقة المعاينة الموحدة والمرنة -->
+                    <div id="imagePreviewContainer" class="flex gap-3 mt-3 flex-wrap"></div>
                 </div>
 
                 <div class="flex gap-2">
@@ -116,32 +116,53 @@
         const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        let uploadedImageUrls = [];
+        // مصفوفة موحدة تحمل جميع الصور الحالية (سواء القديمة المحفوظة أو الجديدة المرفوعة)
+        let currentImagesList = [];
 
-        // معاينة الصور عند رفعها
+        // معاينة الصور عند اختيار ملفات جديدة وإضافتها للقائمة
         document.getElementById('compImagesFile').addEventListener('change', async (e) => {
             const files = e.target.files;
-            uploadedImageUrls = [];
-            const previewContainer = document.getElementById('imagePreviewContainer');
-            previewContainer.innerHTML = '';
+            if (!files || files.length === 0) return;
 
             for (let file of files) {
-                // محاكاة رفع الصور أو تحويلها لرابط مؤقت/سحابي (يمكن ربطه بـ Supabase Storage لو متاح)
                 const reader = new FileReader();
                 reader.onload = (uploadEvent) => {
                     const base64String = uploadEvent.target.result;
-                    uploadedImageUrls.push(base64String);
-                    previewContainer.innerHTML += `<img src="${base64String}" class="w-16 h-16 object-cover rounded-xl border shadow-sm">`;
+                    currentImagesList.push(base64String);
+                    renderPreviews();
                 };
                 reader.readAsDataURL(file);
             }
+            // مسح الـ input عشان يسمح باختيار نفس الصور لو حب يرفعها تاني
+            e.target.value = '';
         });
+
+        // دالة لعرض الصور في منطقة المعاينة مع زر حذف لكل صورة
+        function renderPreviews() {
+            const previewContainer = document.getElementById('imagePreviewContainer');
+            previewContainer.innerHTML = '';
+
+            currentImagesList.forEach((imgSrc, index) => {
+                previewContainer.innerHTML += `
+                    <div class="relative group w-20 h-20">
+                        <img src="${imgSrc}" class="w-full h-full object-cover rounded-xl border shadow-sm">
+                        <button type="button" onclick="removeImage(${index})" class="absolute -top-2 -left-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shadow-md hover:bg-red-700 transition-all">×</button>
+                    </div>
+                `;
+            });
+        }
+
+        // حذف صورة معينة من القائمة الحالية (سواء قديمة أو جديدة)
+        function removeImage(index) {
+            currentImagesList.splice(index, 1);
+            renderPreviews();
+        }
 
         async function fetchAds() {
             const { data, error } = await supabaseClient
                 .from('featured_companies')
                 .select('*')
-                .order('created_at', { ascending: false }); // الأحدث أولاً
+                .order('created_at', { ascending: false });
 
             if (error) return;
 
@@ -195,9 +216,11 @@
             const position = document.getElementById('compPosition').value;
             const page_target = document.getElementById('compPage').value;
             
-            let images = uploadedImageUrls;
-            if (images.length === 0 && id) {
-                images = JSON.parse(document.getElementById('compImagesExisting').value || '[]');
+            const images = currentImagesList;
+
+            if (images.length === 0) {
+                alert('يجب إرفاق صورة واحدة على الأقل للبنر!');
+                return;
             }
 
             const adData = { title, duration, display_type, position, page_target, images };
@@ -228,19 +251,15 @@
             document.getElementById('compDisplayType').value = ad.display_type;
             document.getElementById('compPosition').value = ad.position;
             document.getElementById('compPage').value = ad.page_target;
-            document.getElementById('compImagesExisting').value = JSON.stringify(ad.images);
+            
+            // تحميل الصور القديمة في المصفوفة الموحدة
+            currentImagesList = Array.isArray(ad.images) ? [...ad.images] : [];
+            renderPreviews();
             
             document.getElementById('formTitle').innerText = 'تعديل البنر';
             document.getElementById('submitBtn').innerText = 'تحديث البنر';
             document.getElementById('cancelEditBtn').classList.remove('hidden');
 
-            const previewContainer = document.getElementById('imagePreviewContainer');
-            previewContainer.innerHTML = '';
-            if (Array.isArray(ad.images)) {
-                ad.images.forEach(img => {
-                    previewContainer.innerHTML += `<img src="${img}" class="w-16 h-16 object-cover rounded-xl border shadow-sm">`;
-                });
-            }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -251,7 +270,7 @@
             document.getElementById('submitBtn').innerText = 'حفظ ونشر البنر';
             document.getElementById('cancelEditBtn').classList.add('hidden');
             document.getElementById('imagePreviewContainer').innerHTML = '';
-            uploadedImageUrls = [];
+            currentImagesList = [];
         }
 
         async function deleteAd(id) {
