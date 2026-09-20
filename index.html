@@ -44,16 +44,16 @@
 </head>
 <body class="bg-gray-50 text-gray-800 pb-20">
 
-    <!-- نافذة تثبيت التطبيق الشفافة (تظهر تلقائياً عند فتح الموقع) -->
-    <div id="pwa-guide-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[99999] p-4">
-        <div class="bg-white rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl space-y-4 animate-in fade-in zoom-in duration-200 border border-gray-100">
-            <!-- اللوجو في منتصف النافذة تماماً -->
-            <div class="w-20 h-20 bg-orange-50 rounded-2xl mx-auto flex items-center justify-center shadow-inner border border-orange-100 p-2">
+    <!-- نافذة تثبيت التطبيق بتصميم أسود في أبيض وزر برتقالي -->
+    <div id="pwa-guide-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[99999] p-4">
+        <div class="bg-gray-900 border border-gray-800 rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl space-y-4 animate-in fade-in zoom-in duration-200">
+            <!-- اللوجو في منتصف النافذة -->
+            <div class="w-20 h-20 bg-gray-800 rounded-2xl mx-auto flex items-center justify-center shadow-inner border border-gray-700 p-2">
                 <img src="logo192.png" alt="متجر البيت" class="w-full h-full object-contain">
             </div>
             <div>
-                <h3 class="font-black text-gray-800 text-xl">حمل تطبيق "متجر البيت" الآن</h3>
-                <p class="text-xs text-gray-500 mt-1 leading-relaxed">
+                <h3 class="font-black text-white text-xl">حمل تطبيق "متجر البيت" الآن</h3>
+                <p class="text-xs text-gray-300 mt-1 leading-relaxed">
                     استمتع بتجربة تصفح أسرع وأسهل بتثبيت التطبيق على شاشة هاتفك أو جهازك.
                 </p>
             </div>
@@ -61,7 +61,7 @@
                 <button id="modalInstallActionBtn" class="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 rounded-xl text-sm font-bold transition-all shadow-sm">
                     تثبيت التطبيق الآن
                 </button>
-                <button onclick="closeInstallGuideModal()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-600 py-2.5 rounded-xl text-xs font-bold transition-all">
+                <button onclick="closeInstallGuideModal()" class="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 py-2.5 rounded-xl text-xs font-bold transition-all">
                     تخطي
                 </button>
             </div>
@@ -229,7 +229,6 @@
                 deferredPrompt = null;
                 closeInstallGuideModal();
             } else {
-                alert('التطبيق جاهز للتثبيت! يمكنك أيضاً تثبيته مباشرة من إعدادات المتصفح أو قائمة الجهاز.');
                 closeInstallGuideModal();
             }
         }
