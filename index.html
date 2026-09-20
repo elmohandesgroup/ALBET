@@ -422,5 +422,90 @@
         fetchAds();
         fetchBannerAds();
     </script>
+    let deferredPrompt;
+
+// 1. التقاط حدث التثبيت من المتصفح
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    
+    // إظهار البانر القديم أو النافذة المنبثقة أول ما يفتح لو مظهرتش قبل كده
+    const banner = document.getElementById('installBanner');
+    if (banner) {
+        banner.classList.remove('hidden'); // إظهار البانر لو حابب تسيبه فوق الصفحة
+    }
+
+    // إظهار النافذة الخفيفة المنبثقة أول مرة فقط
+    if (!sessionStorage.getItem('pwaPopupShown')) {
+        setTimeout(() => {
+            showLightPopup();
+        }, 1500);
+    }
+});
+
+// 2. تصميم النافذة الخفيفة الشفافة اللي بتظهر أول ما يدخل
+function showLightPopup() {
+    if (document.getElementById('custom-pwa-popup')) return;
+
+    const popupHtml = `
+        <div id="custom-pwa-popup" style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 99999; animation: fadeIn 0.3s ease;">
+            <div style="background: #1f2937; color: #fff; padding: 25px; border-radius: 16px; max-width: 340px; width: 90%; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);">
+                <img src="logo192.png" style="width: 60px; height: 60px; border-radius: 12px; margin-bottom: 12px; object-fit: contain; background: #fff; padding: 4px;" alt="متجر البيت">
+                <h3 style="margin: 0 0 8px 0; font-size: 18px; font-weight: bold; color: #34d399;">حمل تطبيق "متجر البيت" الآن</h3>
+                <p style="font-size: 13px; color: #9ca3af; margin: 0 0 20px 0; line-height: 1.5;">استمتع بتجربة تصفح أسرع، بدون متصفح، وبشكل مباشر من شاشة هاتفك!</p>
+                
+                <button id="popupInstallBtn" style="background: #059669; color: #fff; border: none; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; margin-bottom: 10px;">تثبيت التطبيق الآن</button>
+                <button id="popupCloseBtn" style="background: transparent; color: #9ca3af; border: none; width: 100%; padding: 8px; font-size: 13px; cursor: pointer;">لاحقاً</button>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', popupHtml);
+    sessionStorage.setItem('pwaPopupShown', 'true');
+
+    document.getElementById('popupInstallBtn').addEventListener('click', () => {
+        triggerInstall();
+        closePopup();
+    });
+    document.getElementById('popupCloseBtn').addEventListener('click', closePopup);
+}
+
+function closePopup() {
+    const p = document.getElementById('custom-pwa-popup');
+    if (p) p.remove();
+}
+    
+// 3. دالة التشغيل الموحدة للأزرار
+function triggerInstall() {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                console.log('تم التثبيت بنجاح');
+            }
+            deferredPrompt = null;
+        });
+    } else {
+        alert('التطبيق مثبت بالفعل أو أن متصفحك يمنع التثبيت التلقائي حالياً.');
+    }
+}
+
+// ربط الأزرار الموجودة عندك في الكود (زر القائمة وزر البانر)
+document.addEventListener('DOMContentLoaded', () => {
+    const menuBtn = document.getElementById('menuInstallBtn');
+    if (menuBtn) {
+        menuBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            triggerInstall();
+        });
+    }
+
+    const bannerBtn = document.getElementById('installBtn');
+    if (bannerBtn) {
+        bannerBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            triggerInstall();
+        });
+    }
+});
 </body>
 </html>
