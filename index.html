@@ -353,19 +353,7 @@
     fetchCategories();
     fetchAds();
 
-    // كود سلايدر إعلانات الشركات المتحركة
-    let companySlideIndex = 0;
-    setInterval(() => {
-        const slider = document.getElementById('companySlider');
-        if (!slider) return;
-        const slides = slider.children;
-        const total = slides.length;
-        if (total <= 1) return;
-        
-        companySlideIndex = (companySlideIndex + 1) % total;
-        slider.style.transform = `translateX(-${companySlideIndex * 100}%)`;
-    }, 3000);
-
+    
       <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
       <script src="featured-ads.js"></script>
 </body>
