@@ -22,7 +22,7 @@
     
     <!-- PWA Settings -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#e17055">
+    <meta name="theme-color" content="#ea580c">
     <link rel="apple-touch-icon" href="logo192.png">
 
     <!-- Google Fonts (Cairo) -->
@@ -43,6 +43,39 @@
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 pb-20">
+
+    <!-- نافذة تثبيت التطبيق التلقائية (تظهر عند فتح الموقع أو من القائمة) -->
+    <div id="pwa-guide-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[99999] p-4">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl space-y-4 animate-in fade-in zoom-in duration-200 border border-gray-100">
+            <div class="w-20 h-20 bg-orange-50 rounded-2xl mx-auto flex items-center justify-center shadow-inner border border-orange-100 p-2">
+                <img src="logo192.png" alt="متجر البيت" class="w-full h-full object-contain">
+            </div>
+            <div>
+                <h3 class="font-black text-gray-800 text-xl">تثبيت تطبيق متجر البيت</h3>
+                <p class="text-xs text-gray-500 mt-1 leading-relaxed">
+                    لتثبيت التطبيق على جهازك بكل سهولة والوصول إليه في أي وقت:
+                </p>
+            </div>
+            <div class="bg-gray-50 rounded-2xl p-3.5 text-right text-xs text-gray-700 space-y-2.5 border border-gray-100">
+                <div class="flex items-center gap-2.5">
+                    <span class="bg-orange-600 text-white w-5 h-5 rounded-full flex items-center justify-center font-bold text-[10px] flex-shrink-0">1</span>
+                    <span>اضغط على قائمة المتصفح (النقاط الثلاث <b class="text-orange-600">3</b> أعلى الشاشة).</span>
+                </div>
+                <div class="flex items-center gap-2.5">
+                    <span class="bg-orange-600 text-white w-5 h-5 rounded-full flex items-center justify-center font-bold text-[10px] flex-shrink-0">2</span>
+                    <span>اختر <b class="text-orange-600">"إضافة إلى الشاشة الرئيسية"</b> أو <b class="text-orange-600">"تثبيت التطبيق"</b>.</span>
+                </div>
+            </div>
+            <div class="space-y-2 pt-1">
+                <button id="modalInstallActionBtn" class="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 rounded-xl text-sm font-bold transition-all shadow-sm">
+                    تثبيت التطبيق الآن
+                </button>
+                <button onclick="closeInstallGuideModal()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-600 py-2.5 rounded-xl text-xs font-bold transition-all">
+                    تخطي الآن
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- الهيدر الرئيسي -->
     <header class="bg-white shadow-sm sticky top-0 z-50 px-4 py-3.5">
@@ -119,20 +152,6 @@
     <!-- محتوى المتجر الرئيسي -->
     <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
         
-        <!-- زر تحميل التطبيق (البانر العلوي) -->
-        <div id="installBanner" class="hidden bg-gradient-to-r from-emerald-600 to-teal-600 rounded-2xl p-4 text-white shadow-md flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <img src="logo192.png" alt="تطبيق متجر البيت" class="w-12 h-12 bg-white rounded-xl p-1.5 object-contain shadow-inner">
-                <div>
-                    <h3 class="font-bold text-sm md:text-base">حمل تطبيق متجر البيت الآن!</h3>
-                    <p class="text-xs text-emerald-100">تصفح أسرع وأسهل بدون متصفح.</p>
-                </div>
-            </div>
-            <button id="installBtn" class="bg-white text-emerald-700 hover:bg-emerald-50 px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm whitespace-nowrap">
-                تثبيت التطبيق
-            </button>
-        </div>
-
         <!-- 1. منطقة إعلانات متحركة (فوق الأقسام) - سلايدر عالمي -->
         <div id="topBannerAds" class="w-full"></div>
 
@@ -194,49 +213,21 @@
 
         // منظومة الـ PWA وتثبيت التطبيق الاحترافية
         let deferredPrompt = null;
-        const installBanner = document.getElementById('installBanner');
-        const installBtn = document.getElementById('installBtn');
+        const installModal = document.getElementById('pwa-guide-modal');
+        const modalInstallActionBtn = document.getElementById('modalInstallActionBtn');
         const menuInstallBtn = document.getElementById('menuInstallBtn');
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            if (installBanner) installBanner.classList.remove('hidden');
         });
 
-        function showInstallGuideModal() {
-            if (document.getElementById('pwa-guide-modal')) return;
-
-            const modalHtml = `
-                <div id="pwa-guide-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[99999] p-4">
-                    <div class="bg-white rounded-2xl max-w-sm w-full p-6 text-center shadow-2xl space-y-4 animate-in fade-in zoom-in duration-200">
-                        <img src="logo192.png" alt="متجر البيت" class="w-16 h-16 object-contain mx-auto rounded-2xl shadow border p-1 bg-white">
-                        <h3 class="font-black text-gray-800 text-lg">تثبيت تطبيق متجر البيت</h3>
-                        <p class="text-xs text-gray-500 leading-relaxed">
-                            لتثبيت التطبيق على جهازك بكل سهولة والوصول إليه في أي وقت:
-                        </p>
-                        <div class="bg-gray-50 rounded-xl p-3 text-right text-xs text-gray-700 space-y-2 border border-gray-100">
-                            <div class="flex items-center gap-2">
-                                <span class="bg-orange-600 text-white w-5 h-5 rounded-full flex items-center justify-center font-bold text-[10px]">1</span>
-                                <span>اضغط على قائمة المتصفح (النقاط الثلاث <b>3</b> أعلى الشاشة).</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="bg-orange-600 text-white w-5 h-5 rounded-full flex items-center justify-center font-bold text-[10px]">2</span>
-                                <span>اختر <b class="text-orange-600">"إضافة إلى الشاشة الرئيسية"</b> أو <b class="text-orange-600">"تثبيت التطبيق"</b>.</span>
-                            </div>
-                        </div>
-                        <button onclick="closeInstallGuideModal()" class="w-full bg-orange-600 hover:bg-orange-700 text-white py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm">
-                            حسناً، فهمت
-                        </button>
-                    </div>
-                </div>
-            `;
-            document.body.insertAdjacentHTML('beforeend', modalHtml);
+        function closeInstallGuideModal() {
+            if (installModal) installModal.classList.add('hidden');
         }
 
-        function closeInstallGuideModal() {
-            const modal = document.getElementById('pwa-guide-modal');
-            if (modal) modal.remove();
+        function openInstallGuideModal() {
+            if (installModal) installModal.classList.remove('hidden');
         }
 
         async function triggerInstall() {
@@ -244,17 +235,18 @@
                 deferredPrompt.prompt();
                 const { outcome } = await deferredPrompt.userChoice;
                 deferredPrompt = null;
-                if (installBanner) installBanner.classList.add('hidden');
+                closeInstallGuideModal();
             } else {
-                showInstallGuideModal();
+                // تظل النافذة الشفافة ظاهرة بتعليمات التثبيت اليدوي للمتصفح إذا لم يتوفر الحدث التلقائي
+                openInstallGuideModal();
             }
         }
 
-        if (installBtn) installBtn.addEventListener('click', triggerInstall);
+        if (modalInstallActionBtn) modalInstallActionBtn.addEventListener('click', triggerInstall);
         if (menuInstallBtn) {
             menuInstallBtn.addEventListener('click', () => {
                 closeMenu();
-                triggerInstall();
+                openInstallGuideModal();
             });
         }
 
