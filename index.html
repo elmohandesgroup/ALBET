@@ -423,9 +423,12 @@
         fetchBannerAds();
    let deferredPrompt;
 
+ // كود تشغيل وتثبيت التطبيق (PWA)
+    window.deferredPrompt = window.deferredPrompt || null;
+
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
-        deferredPrompt = e;
+        window.deferredPrompt = e;
         
         const banner = document.getElementById('installBanner');
         if (banner) {
@@ -470,13 +473,13 @@
     }
 
     function triggerInstall() {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => {
+        if (window.deferredPrompt) {
+            window.deferredPrompt.prompt();
+            window.deferredPrompt.userChoice.then((choiceResult) => {
                 if (choiceResult.outcome === 'accepted') {
                     console.log('تم التثبيت بنجاح');
                 }
-                deferredPrompt = null;
+                window.deferredPrompt = null;
             });
         } else {
             alert('التطبيق مثبت بالفعل أو أن متصفحك يمنع التثبيت التلقائي حالياً.');
