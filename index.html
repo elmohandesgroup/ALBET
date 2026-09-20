@@ -329,7 +329,7 @@
             }
         }
 
-        // جلب إعلانات البانرات (فوق وتحت الأقسام) بصيغة كارد صور صافية بالكامل
+       // جلب إعلانات البانرات المخصصة من لوحة التحكم وتوزيعها حسب المكان
         async function fetchBannerAds() {
             try {
                 const { data: banners, error } = await db
@@ -341,27 +341,28 @@
                 const topContainer = document.getElementById('topBannerAds');
                 const bottomContainer = document.getElementById('bottomBannerAds');
 
-                if (banners.length > 0) {
-                    // توزيع البانرات المرفوعة (لو عندك أكتر من بانر)
-                    if (topContainer && banners[0]) {
-                        topContainer.innerHTML = `
-                            <a href="${banners[0].link_url || '#'}" target="_blank" class="block w-full rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all bg-gray-100 h-40 md:h-56">
-                                <img src="${banners[0].image_url}" alt="إعلان مميز" class="w-full h-full object-cover">
-                            </a>
-                        `;
-                    }
-                    if (bottomContainer && banners[1]) {
-                        bottomContainer.innerHTML = `
-                            <a href="${banners[1].link_url || '#'}" target="_blank" class="block w-full rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all bg-gray-100 h-40 md:h-56">
-                                <img src="${banners[1].image_url}" alt="إعلان مميز" class="w-full h-full object-cover">
-                            </a>
-                        `;
-                    } else if (bottomContainer && banners[0] && !banners[1]) {
-                        // لو فيه بانر واحد بس مرفوع، ممكن تخليه يتكرر أو تسيب التاني افتراضي
-                    }
+                // فلترة وعرض بانر "فوق الأقسام"
+                const topBanner = banners.find(b => b.position === 'فوق الأقسام' || b.location === 'فوق الأقسام' || (b.place && b.place.includes('فوق')));
+                if (topContainer && topBanner) {
+                    topContainer.innerHTML = `
+                        <a href="${topBanner.link_url || '#'}" target="_blank" class="block w-full rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all bg-gray-100 h-40 md:h-56">
+                            <img src="${topBanner.image_url}" alt="${topBanner.title || 'إعلان مميز'}" class="w-full h-full object-cover">
+                        </a>
+                    `;
                 }
+
+                // فلترة وعرض بانر "تحت الأقسام"
+                const bottomBanner = banners.find(b => b.position === 'تحت الأقسام' || b.location === 'تحت الأقسام' || (b.place && b.place.includes('تحت')));
+                if (bottomContainer && bottomBanner) {
+                    bottomContainer.innerHTML = `
+                        <a href="${bottomBanner.link_url || '#'}" target="_blank" class="block w-full rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all bg-gray-100 h-40 md:h-56">
+                            <img src="${bottomBanner.image_url}" alt="${bottomBanner.title || 'إعلان مميز'}" class="w-full h-full object-cover">
+                        </a>
+                    `;
+                }
+
             } catch (e) {
-                console.log('البانرات الافتراضية تعمل بشكل طبيعي');
+                console.log('خطأ في جلب البانرات:', e);
             }
         }
 
