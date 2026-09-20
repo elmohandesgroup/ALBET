@@ -25,7 +25,7 @@
     <meta name="theme-color" content="#ea580c">
     <link rel="apple-touch-icon" href="logo192.png">
 
-    <!-- Google Fonts (Cairo) -->
+    <!-- Google Fonts (Cairo) & Animations -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
         body {
@@ -39,6 +39,15 @@
         .no-scrollbar {
             -ms-overflow-style: none;
             scrollbar-width: none;
+        }
+        
+        /* حركة خفيفة لإيحاء التمرير في شريط الأقسام */
+        @keyframes hintScroll {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(-8px); }
+        }
+        .scroll-hint {
+            animation: hintScroll 2s infinite ease-in-out;
         }
     </style>
 </head>
@@ -248,7 +257,7 @@
             });
         }
 
-        // جلب الأقسام
+        // جلب الأقسام مع حركة التنبيه للتمرير
         async function fetchCategories() {
             const container = document.getElementById('categories-container');
             if (!container) return;
@@ -263,10 +272,12 @@
                 }
 
                 container.innerHTML = '';
-                categories.forEach(cat => {
+                categories.forEach((cat, index) => {
                     const iconSrc = cat.image_url ? cat.image_url : 'logo192.png';
+                    // إضافة حركة خفيفة لأول عنصر عشان يلفت انتباه الزائر للتمرير
+                    const hintClass = index === 0 ? 'scroll-hint' : '';
                     const catCard = `
-                       <a href="category.html?id=${cat.id}" class="flex flex-col items-center justify-center bg-white border border-gray-100 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:border-orange-500 hover:shadow-md transition-all text-center">
+                       <a href="category.html?id=${cat.id}" class="flex flex-col items-center justify-center bg-white border border-gray-100 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:border-orange-500 hover:shadow-md transition-all text-center ${hintClass}">
                             <div class="w-16 h-16 bg-orange-50/30 rounded-full flex items-center justify-center mb-2 overflow-hidden shadow-inner">
                                 <img src="${iconSrc}" alt="${cat.name}" class="w-full h-full object-cover rounded-full">
                             </div>
