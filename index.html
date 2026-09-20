@@ -275,44 +275,47 @@
         }
 
         // دالة حركة تدوير الأقسام يمين ويسار بسلاسة تامة
-        function startPerfectAutoScroll(container) {
-            let scrollSpeed = 0.8; 
-            let scrollDirection = 1; 
+     function startPerfectAutoScroll(container) {
+            let scrollDirection = 1; // 1 يمين، -1 يسار
             let isPaused = false;
             let pauseTimeout = null;
 
-            function step() {
+            // التأكد أن المحتوى أوسع من الحاوية ليظهر شريط التمرير
+            const checkAndScroll = () => {
                 if (!isPaused) {
                     const maxScroll = container.scrollWidth - container.clientWidth;
+                    
                     if (maxScroll > 0) {
-                        container.scrollLeft += scrollSpeed * scrollDirection;
+                        // الحركة بمقدار 1 بكسل في كل إطار
+                        container.scrollLeft += 1 * scrollDirection;
 
+                        // لو وصلنا للآخر، اعكس الاتجاه للشمال
                         if (container.scrollLeft >= maxScroll - 2) {
                             scrollDirection = -1;
-                        } else if (container.scrollLeft <= 2) {
+                        } 
+                        // لو رجعنا للبداية، اعكس الاتجاه لليمين
+                        else if (container.scrollLeft <= 2) {
                             scrollDirection = 1;
                         }
                     }
                 }
-                requestAnimationFrame(step);
-            }
+                requestAnimationFrame(checkAndScroll);
+            };
 
-            requestAnimationFrame(step);
+            // تشغيل الحلقة فوراً
+            requestAnimationFrame(checkAndScroll);
 
-            // دالة موحدة لإيقاف الحركة مؤقتاً عند التفاعل واستئنافها تلقائياً بعدها
-            const handleUserInteraction = () => {
+            // إيقاف مؤقت عند التفاعل واستئناف الحركة بعد 3 ثوانٍ
+            const pauseInteraction = () => {
                 isPaused = true;
                 clearTimeout(pauseTimeout);
-                
-                // بعد 3 ثواني من رفع اليد أو توقف التفاعل، ترجع تتحرك لوحدها تاني
                 pauseTimeout = setTimeout(() => {
                     isPaused = false;
                 }, 3000);
             };
 
-            // ربط الأحداث لكل حالات اللمس والماوس
             ['touchstart', 'mousedown', 'wheel', 'touchmove'].forEach(evt => {
-                container.addEventListener(evt, handleUserInteraction, { passive: true });
+                container.addEventListener(evt, pauseInteraction, { passive: true });
             });
         }
         // جلب الإعلانات
