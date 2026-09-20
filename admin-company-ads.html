@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدارة إعلانات الشركات - متجر البيت</title>
+    <title>إدارة إعلانات الشركات - متجر البيت (سريع)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -14,8 +14,8 @@
         <!-- رأس الصفحة والعدادات -->
         <div class="bg-white rounded-2xl p-6 shadow-xl flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
-                <h2 class="text-xl font-bold text-orange-600">إدارة إعلانات الشركات (بانرات العرض)</h2>
-                <p class="text-xs text-gray-500 mt-1">رفع الصور، دعم WebP، المعاينة، التعديل، والحذف.</p>
+                <h2 class="text-xl font-bold text-orange-600">إدارة إعلانات الشركات (سريع ومنظم)</h2>
+                <p class="text-xs text-gray-500 mt-1">رفع الصور لـ Storage، روابط خفيفة، وتحكم كامل بالصفحات.</p>
             </div>
             <div class="flex gap-3">
                 <div class="bg-orange-50 border border-orange-200 px-4 py-2 rounded-xl text-center">
@@ -62,18 +62,18 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">الصفحة المستهدفة</label>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">الصفحة المستهدفة (لتنظيم الصور)</label>
                         <select id="compPage" class="w-full border rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-orange-500">
-                            <option value="index.html">الصفحة الرئيسية</option>
-                            <option value="categories.html">صفحة الأقسام</option>
+                            <option value="index">الصفحة الرئيسية (index)</option>
+                            <option value="categories">صفحة الأقسام (categories)</option>
                         </select>
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-gray-700 mb-1">رفع الصور (يدعم WebP، PNG، JPG - متعدد)</label>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">رفع الصور (تترفع لـ Storage مباشرة - متعدد)</label>
                     <input type="file" id="compImagesFile" class="w-full border rounded-xl p-2 text-sm outline-none bg-gray-50" accept="image/webp, image/png, image/jpeg" multiple>
-                    <!-- منطقة المعاينة الموحدة والمرنة -->
+                    <!-- منطقة المعاينة -->
                     <div id="imagePreviewContainer" class="flex gap-3 mt-3 flex-wrap"></div>
                 </div>
 
@@ -90,20 +90,19 @@
 
         <!-- جدول المتابعة والعدادات -->
         <div class="bg-white rounded-2xl p-6 shadow-xl">
-            <h3 class="text-base font-bold text-gray-800 mb-4 border-b pb-2">البنرات النشطة والمتابعة (الأحدث أولاً)</h3>
+            <h3 class="text-base font-bold text-gray-800 mb-4 border-b pb-2">البنرات النشطة والمتابعة</h3>
             <div class="overflow-x-auto">
                 <table class="w-full text-right text-sm">
                     <thead>
                         <tr class="bg-gray-100 text-gray-700 text-xs">
                             <th class="p-3">الإعلان</th>
-                            <th class="p-3">النوع والمكان</th>
                             <th class="p-3">الصفحة</th>
                             <th class="p-3">الوقت المتبقي</th>
                             <th class="p-3">الإجراء</th>
                         </tr>
                     </thead>
                     <tbody id="adsTableBody">
-                        <!-- يتم تعبئتها تلقائياً -->
+                        <!-- بيانات جدولية -->
                     </tbody>
                 </table>
             </div>
@@ -116,33 +115,31 @@
         const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // مصفوفة موحدة تحمل جميع الصور الحالية (سواء القديمة المحفوظة أو الجديدة المرفوعة)
-        let currentImagesList = [];
+        // مصفوفة تحمل الروابط أو الملفات الجديدة
+        let currentImagesList = []; // ممكن تحتوي على روابط (URLs) قديمة أو ملفات جديدة للرفع
 
-        // معاينة الصور عند اختيار ملفات جديدة وإضافتها للقائمة
-        document.getElementById('compImagesFile').addEventListener('change', async (e) => {
+        document.getElementById('compImagesFile').addEventListener('change', (e) => {
             const files = e.target.files;
             if (!files || files.length === 0) return;
 
             for (let file of files) {
-                const reader = new FileReader();
-                reader.onload = (uploadEvent) => {
-                    const base64String = uploadEvent.target.result;
-                    currentImagesList.push(base64String);
-                    renderPreviews();
-                };
-                reader.readAsDataURL(file);
+                // نخزن الكائن نفسه عشان نرفعه وقت الحفظ، ومعاه رابط معاينة مؤقت
+                currentImagesList.push({
+                    file: file,
+                    url: URL.createObjectURL(file),
+                    isNew: true
+                });
             }
-            // مسح الـ input عشان يسمح باختيار نفس الصور لو حب يرفعها تاني
+            renderPreviews();
             e.target.value = '';
         });
 
-        // دالة لعرض الصور في منطقة المعاينة مع زر حذف لكل صورة
         function renderPreviews() {
             const previewContainer = document.getElementById('imagePreviewContainer');
             previewContainer.innerHTML = '';
 
-            currentImagesList.forEach((imgSrc, index) => {
+            currentImagesList.forEach((item, index) => {
+                const imgSrc = item.isNew ? item.url : item;
                 previewContainer.innerHTML += `
                     <div class="relative group w-20 h-20">
                         <img src="${imgSrc}" class="w-full h-full object-cover rounded-xl border shadow-sm">
@@ -152,7 +149,6 @@
             });
         }
 
-        // حذف صورة معينة من القائمة الحالية (سواء قديمة أو جديدة)
         function removeImage(index) {
             currentImagesList.splice(index, 1);
             renderPreviews();
@@ -168,8 +164,7 @@
 
             const tbody = document.getElementById('adsTableBody');
             tbody.innerHTML = '';
-            let active = 0;
-            let expired = 0;
+            let active = 0, expired = 0;
             const now = new Date();
 
             data.forEach(ad => {
@@ -179,19 +174,12 @@
                 const diffTime = expirationDate - now;
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-                let timeText = '';
-                if (diffDays > 0) {
-                    active++;
-                    timeText = `<span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded-lg text-xs font-bold">باقي ${diffDays} يوم</span>`;
-                } else {
-                    expired++;
-                    timeText = `<span class="bg-red-100 text-red-700 px-2 py-1 rounded-lg text-xs font-bold">انتهى الإعلان</span>`;
-                }
+                let timeText = diffDays > 0 ? `<span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded-lg text-xs font-bold">باقي ${diffDays} يوم</span>` : `<span class="bg-red-100 text-red-700 px-2 py-1 rounded-lg text-xs font-bold">منتهي</span>`;
+                if (diffDays > 0) active++; else expired++;
 
                 tbody.innerHTML += `
                     <tr class="border-b">
                         <td class="p-3 font-bold text-gray-800">${ad.title}</td>
-                        <td class="p-3 text-xs text-gray-600">${ad.display_type === 'slider' ? 'متحرك' : 'ثابت'} (${ad.position === 'above' ? 'فوق الأقسام' : 'تحت الأقسام'})</td>
                         <td class="p-3 text-xs text-gray-600">${ad.page_target}</td>
                         <td class="p-3">${timeText}</td>
                         <td class="p-3 flex gap-2">
@@ -215,15 +203,42 @@
             const display_type = document.getElementById('compDisplayType').value;
             const position = document.getElementById('compPosition').value;
             const page_target = document.getElementById('compPage').value;
-            
-            const images = currentImagesList;
 
-            if (images.length === 0) {
-                alert('يجب إرفاق صورة واحدة على الأقل للبنر!');
+            if (currentImagesList.length === 0) {
+                alert('يجب إرفاق صورة واحدة على الأقل!');
                 return;
             }
 
-            const adData = { title, duration, display_type, position, page_target, images };
+            // رفع الصور الجديدة لـ Supabase Storage وتجميع الروابط النهائية
+            let finalImageUrls = [];
+            for (let item of currentImagesList) {
+                if (item.isNew) {
+                    const fileExt = item.file.name.split('.').pop();
+                    const fileName = `${page_target}/${Date.now()}_${Math.random().toString(36.substring(2, 7))}.${fileExt}`;
+                    
+                    const { data: uploadData, error: uploadError } = await supabaseClient.storage
+                        .from('site-images')
+                        .upload(fileName, item.file);
+
+                    if (uploadError) {
+                        alert('خطأ في رفع الصورة: ' + uploadError.message);
+                        return;
+                    }
+
+                    // جلب الرابط العام للصورة من التخزين
+                    const { data: publicUrlData } = supabaseClient.storage
+                        .from('site-images')
+                        getPublicUrl(fileName); // سيتم استخدام الـ Public URL المباشر
+                    
+                    const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/site-images/${fileName}`;
+                    finalImageUrls.push(publicUrl);
+                } else {
+                    // لو صورة قديمة موجودة مسبقاً
+                    finalImageUrls.push(item);
+                }
+            }
+
+            const adData = { title, duration, display_type, position, page_target, images: finalImageUrls };
 
             let error;
             if (id) {
@@ -238,7 +253,7 @@
             if (error) {
                 alert('خطأ أثناء الحفظ: ' + error.message);
             } else {
-                alert('تم حفظ البنر بنجاح!');
+                alert('تم الحفظ بنجاح والسرعة بقت عالية جداً!');
                 resetForm();
                 fetchAds();
             }
@@ -252,7 +267,7 @@
             document.getElementById('compPosition').value = ad.position;
             document.getElementById('compPage').value = ad.page_target;
             
-            // تحميل الصور القديمة في المصفوفة الموحدة
+            // تحميل الروابط القديمة
             currentImagesList = Array.isArray(ad.images) ? [...ad.images] : [];
             renderPreviews();
             
@@ -274,7 +289,7 @@
         }
 
         async function deleteAd(id) {
-            if (confirm('هل أنت متأكد من حذف هذا البنر نهائياً؟')) {
+            if (confirm('هل أنت متأكد من حذف هذا البنر؟')) {
                 await supabaseClient.from('featured_companies').delete().eq('id', id);
                 fetchAds();
             }
