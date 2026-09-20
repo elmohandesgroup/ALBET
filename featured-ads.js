@@ -5,7 +5,7 @@ async function loadFeaturedCompaniesBanner() {
         if (!container) return;
 
         const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLUjbtAXCg_K5qf1rSB';
+        const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         const { data, error } = await client
