@@ -248,24 +248,24 @@
         }
 
         // جلب الأقسام وتفعيل الحركة التلقائية المضمونة
-    async function fetchCategories() {
+   async function fetchCategories() {
             const container = document.getElementById('categories-container');
             if (!container) return;
 
             try {
-                The { data: categories, error } = await db.from('categories').select('*');
-                If (error) throw error;
+                const { data: categories, error } = await db.from('categories').select('*');
+                if (error) throw error;
 
-                If (!categories || categories.length === 0) {
-                    Container.innerHTML = '<div class="text-xs text-gray-400 p-2">لا توجد أقسام مضافة حالياً.</div>';
-                    Return;
+                if (!categories || categories.length === 0) {
+                    container.innerHTML = '<div class="text-xs text-gray-400 p-2">لا توجد أقسام مضافة حالياً.</div>';
+                    return;
                 }
 
-                Let itemsHtml = '';
-                Const renderItems = () => {
-                    Categories.forEach((cat) => {
-                        Const iconSrc = cat.image_url ? Cat.image_url : 'logo192.png';
-                        ItemsHtml += `
+                let itemsHtml = '';
+                const renderItems = () => {
+                    categories.forEach((cat) => {
+                        const iconSrc = cat.image_url ? cat.image_url : 'logo192.png';
+                        itemsHtml += `
                            <a href="category.html?id=${cat.id}" class="flex flex-col items-center justify-center bg-white border border-gray-100 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:border-orange-500 hover:shadow-md transition-all text-center">
                                 <div class="w-16 h-16 bg-orange-50/30 rounded-full flex items-center justify-center mb-2 overflow-hidden shadow-inner">
                                     <img src="${iconSrc}" alt="${cat.name}" class="w-full h-full object-cover rounded-full">
@@ -276,21 +276,21 @@
                     });
                 };
 
-                // نكرر الأقسام 3 مرات بالضبط عشان تعمل حلقة دائرية مقفولة بدون فراغ
-                RenderItems();
-                RenderItems();
-                RenderItems();
+                // تكرار الأقسام 3 مرات لعمل شريط متصل
+                renderItems();
+                renderItems();
+                renderItems();
 
-                Container.className = "w-full overflow-hidden pb-2";
-                Container.innerHTML = `
+                container.className = "w-full overflow-hidden pb-2";
+                container.innerHTML = `
                     <div class="flex gap-4 animate-marquee py-1 items-center" style="display: flex; width: max-content;">
                         ${itemsHtml}
                     </div>
                 `;
 
             } catch (err) {
-                Console.error('خطأ في جلب الأقسام:', err.message);
-                Container.innerHTML = '<div class="text-xs text-red-400 p-2">تعذر تحميل الأقسام.</div>';
+                console.error('خطأ في جلب الأقسام:', err.message);
+                container.innerHTML = '<div class="text-xs text-red-400 p-2">تعذر تحميل الأقسام.</div>';
             }
         }
         // دالة حركة تدوير الأقسام يمين ويسار بسلاسة تامة
