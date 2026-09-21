@@ -84,18 +84,17 @@
                     </svg>
                 </button>
                 <!-- توجيه مباشر وصريح لـ index.html -->
-               <a href="index.html" onclick="window.location.href='index.html'; return false;" class="flex items-center">
-                    <img src="logo192.png" alt="متجر البيت" class="w-12 h-12 object-contain rounded-xl shadow-sm border border-gray-100 bg-white p-1">
-                </a>
-            </div>
+               <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="flex items-center">
+        <img src="logo192.png" alt="متجر البيت" class="w-12 h-12 object-contain rounded-xl shadow-sm border border-gray-100 bg-white p-1">
+    </a>
+</div>
 
-            <div class="text-center flex-1 mx-2">
-                <a href="index.html" onclick="window.location.href='index.html'; return false;" class="block">
-                    <h1 class="text-lg md:text-2xl font-black text-orange-600 leading-tight">متجر البيت</h1>
-                    <p class="text-[11px] md:text-xs text-gray-500 font-medium">الأفضل دائماً</p>
-                </a>
-            </div>
-
+<div class="text-center flex-1 mx-2">
+    <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="block">
+        <h1 class="text-lg md:text-2xl font-black text-orange-600 leading-tight">متجر البيت</h1>
+        <p class="text-[11px] md:text-xs text-gray-500 font-medium">الأفضل دائماً</p>
+    </a>
+</div>
             <div class="flex items-center">
                 <a href="add-ad.html" class="bg-orange-600 hover:bg-orange-700 text-white px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition-all shadow-sm flex items-center gap-1.5 whitespace-nowrap">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
