@@ -23,11 +23,11 @@
 </head>
 <body class="bg-gray-50 text-gray-800 pb-20">
 
-    <!-- الهيدر الرئيسي الموحد والمطابق تماماً للصفحة الرئيسية -->
+    <!-- الهيدر الرئيسي المطابق تماماً للرئيسية (اللوجو والبرجر يمين، وأضف إعلانك شمال) -->
     <header class="bg-white shadow-sm sticky top-0 z-50 px-4 py-3">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             
-            <!-- زر أضف إعلانك على الشمال (مطابق للرئيسية) -->
+            <!-- زر أضف إعلانك على الشمال -->
             <div class="flex items-center">
                 <a href="add-ad.html" class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-bold shadow-sm transition-all flex items-center gap-1.5">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -37,24 +37,20 @@
                 </a>
             </div>
 
-            <!-- اسم المتجر واللوجو في المنتصف -->
-            <div class="text-center flex-1 mx-2">
-                <a href="/" class="inline-block">
-                    <h1 class="text-base sm:text-xl font-black text-orange-600 tracking-tight">متجر البيت</h1>
-                    <p class="text-[10px] text-gray-400 font-semibold -mt-1">الأفضل دائماً</p>
+            <!-- اللوجو، اسم المتجر، وزر القائمة على اليمين -->
+            <div class="flex items-center gap-3">
+                <a href="/" class="text-right">
+                    <h1 class="text-base sm:text-lg font-black text-orange-600 tracking-tight leading-none">متجر البيت</h1>
+                    <p class="text-[10px] text-gray-400 font-semibold mt-0.5">الأفضل دائماً</p>
                 </a>
-            </div>
-
-            <!-- زر اللوجو وقائمة البرجر على اليمين (مطابق للرئيسية) -->
-            <div class="flex items-center gap-2">
+                <a href="/" class="w-10 h-10 rounded-xl border border-gray-100 bg-white p-1 shadow-sm flex items-center justify-center">
+                    <img src="logo192.png" alt="متجر البيت" class="w-full h-full object-contain">
+                </a>
                 <button id="menu-btn" class="p-2 text-gray-700 hover:text-orange-600 transition-colors focus:outline-none" aria-label="القائمة">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
                 </button>
-                <a href="/" class="w-10 h-10 rounded-xl border border-gray-100 bg-white p-1 shadow-sm flex items-center justify-center">
-                    <img src="logo192.png" alt="متجر البيت" class="w-full h-full object-contain">
-                </a>
             </div>
 
         </div>
