@@ -23,7 +23,8 @@
     <!-- الهيدر الرئيسي -->
     <header class="bg-white shadow-sm sticky top-0 z-50 px-4 py-3.5">
         <div class="max-w-3xl mx-auto flex items-center justify-between">
-           <a href="./index.html" onclick="window.location.href='./index.html'; return false;" class="p-2 bg-gray-100 hover:bg-orange-50 text-gray-700 hover:text-orange-600 rounded-xl transition-colors flex items-center gap-1.5 text-xs font-bold">
+            <!-- زر الرئيسية مع الكود القاطع لمنع الرجوع للنسخة القديمة وتحديث الكاش -->
+            <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="p-2 bg-gray-100 hover:bg-orange-50 text-gray-700 hover:text-orange-600 rounded-xl transition-colors flex items-center gap-1.5 text-xs font-bold cursor-pointer">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                 </svg>
@@ -81,13 +82,9 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-gray-700 mb-1.5">القسم *</label>
-                        <select id="adCategory" class="w-full p-3 border border-gray-200 rounded-xl text-sm bg-white focus:ring-2 focus:ring-orange-500 outline-none">
-                            <option value="مطبخ وأجهزة">مطبخ وأجهزة</option>
-                            <option value="إلكترونيات">إلكترونيات</option>
-                            <option value="عقارات">عقارات</option>
-                            <option value="ملابس وأزياء">ملابس وأزياء</option>
-                            <option value="سيارات ومركبات">سيارات ومركبات</option>
-                            <option value="خدمات وصيانة">خدمات وصيانة</option>
+                        <!-- تم ربط القائمة لتجلب الأقسام تلقائياً من قاعدة البيانات -->
+                        <select id="adCategory" required class="w-full p-3 border border-gray-200 rounded-xl text-sm bg-white focus:ring-2 focus:ring-orange-500 outline-none">
+                            <option value="">جاري تحميل الأقسام...</option>
                         </select>
                     </div>
                 </div>
@@ -228,6 +225,47 @@
         function closeCustomModal() {
             document.getElementById('customModal').classList.add('hidden');
         }
+
+        // دالة لجلب الأقسام من جدول categories في قاعدة البيانات وتعبئتها في القائمة المنسدلة
+        async function fetchCategories() {
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/categories?select=*`, {
+                    method: 'GET',
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                    }
+                });
+
+                if (!response.ok) throw new Error('فشل في جلب الأقسام');
+
+                const categories = await response.json();
+                const categorySelect = document.getElementById('adCategory');
+                
+                categorySelect.innerHTML = '<option value="">اختر القسم المناسب</option>';
+
+                if (categories && categories.length > 0) {
+                    categories.forEach(cat => {
+                        const option = document.createElement('option');
+                        option.value = cat.name || cat.title; 
+                        option.textContent = cat.name || cat.title;
+                        categorySelect.appendChild(option);
+                    });
+                } else {
+                    categorySelect.innerHTML = '<option value="">لا توجد أقسام متاحة حالياً</option>';
+                }
+
+            } catch (err) {
+                console.error('خطأ في تحميل الأقسام:', err);
+                const categorySelect = document.getElementById('adCategory');
+                categorySelect.innerHTML = '<option value="">تعذر تحميل الأقسام</option>';
+            }
+        }
+
+        // جلب الأقسام فور تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchCategories();
+        });
 
         function convertImageToWebp(file) {
             return new Promise((resolve, reject) => {
@@ -404,7 +442,7 @@
 
                 showCustomModal('تم حفظ إعلانك وإيصال التحويل بنجاح في متجر البيت!');
                 setTimeout(() => {
-                    window.location.href = 'index.html';
+                    window.location.replace('index.html?v=' + Date.now());
                 }, 2000);
             } catch (err) {
                 showCustomModal('عذراً، يرجى التحقق من إعدادات الـ RLS في سوبابيس (أو مفتاح الـ API). تفاصيل الخطأ: ' + err.message);
