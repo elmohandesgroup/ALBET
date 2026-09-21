@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>جميع الأقسام - متجر البيت</title>
+    <title>الصفحة الرئيسية - الأقسام | متجر البيت</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -23,7 +23,7 @@
 </head>
 <body class="bg-gray-50 text-gray-800 pb-20">
 
-    <!-- الهيدر الرئيسي -->
+    <!-- الهيدر الرئيسي الموحد المطابق للصفحة الرئيسية -->
     <header class="bg-white shadow-sm sticky top-0 z-50 px-4 py-3.5">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -37,15 +37,18 @@
                 </a>
             </div>
             <div class="text-center flex-1 mx-2">
-                <h1 class="text-base md:text-xl font-black text-orange-600">جميع أقسام المتجر</h1>
+                <h1 class="text-xs md:text-sm font-bold text-gray-500">الصفحة الرئيسية</h1>
+                <h2 class="text-sm md:text-lg font-black text-orange-600">الأقسام</h2>
             </div>
             <div class="w-10"></div>
         </div>
     </header>
 
-    <!-- محتوى الأقسام -->
+    <!-- محتوى الأقسام والبانرات -->
     <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
+        <!-- مكان ظهور البانر العلوي الخاص بصفحة الأقسام -->
         <div id="topBannerAds" class="w-full"></div>
+
         <div class="flex items-center justify-between">
             <h2 class="font-bold text-gray-800 text-lg">اختر القسم المناسب لك</h2>
             <span id="categories-count" class="text-xs text-gray-400 font-semibold">جاري التحميل...</span>
@@ -53,17 +56,98 @@
 
         <!-- شبكة عرض الأقسام بشكل شيك ومتجاوب -->
         <div id="all-categories-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            <!-- كروت الأقسام هتتحمل هنا ديناميكياً -->
             <div class="col-span-full text-center py-12 text-gray-400 text-sm">جاري تحميل الأقسام...</div>
         </div>
     </main>
 
-    <!-- السكريبت لجلب الأقسام من قاعدة البيانات -->
+    <!-- السكريبت لجلب الأقسام والبانرات من قاعدة البيانات -->
     <script>
         const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
         const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+        // دالة إنشاء وتشغيل الـ Slider للبانرات
+        function setupSlider(containerId, mediaArray) {
+            const container = document.getElementById(containerId);
+            if (!container || mediaArray.length === 0) return;
+
+            let slidesHtml = '';
+            let dotsHtml = '';
+
+            mediaArray.forEach((media, index) => {
+                slidesHtml += `
+                    <div class="absolute inset-0 transition-opacity duration-700 ease-in-out ${index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'} ${containerId}-slide">
+                        <div class="w-full h-40 md:h-56 rounded-2xl overflow-hidden shadow-sm bg-gray-100 relative">
+                            <img src="${media.url}" alt="${media.title || 'إعلان مميز'}" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                `;
+                dotsHtml += `
+                    <button class="w-2 h-2 rounded-full transition-all ${index === 0 ? 'bg-orange-600 w-4' : 'bg-white/70'} ${containerId}-dot" aria-label="شريحة ${index + 1}"></button>
+                `;
+            });
+
+            container.innerHTML = `
+                <div class="relative w-full h-40 md:h-56 rounded-2xl shadow-sm">
+                    ${slidesHtml}
+                    <div class="absolute bottom-2 left-0 right-0 z-20 flex justify-center items-center gap-1.5">
+                        ${dotsHtml}
+                    </div>
+                </div>
+            `;
+
+            if (mediaArray.length > 1) {
+                let currentIdx = 0;
+                const slides = container.querySelectorAll(`.${containerId}-slide`);
+                const dots = container.querySelectorAll(`.${containerId}-dot`);
+
+                setInterval(() => {
+                    slides[currentIdx].classList.remove('opacity-100', 'z-10');
+                    slides[currentIdx].classList.add('opacity-0', 'z-0');
+                    if (dots[currentIdx]) {
+                        dots[currentIdx].classList.remove('bg-orange-600', 'w-4');
+                        dots[currentIdx].classList.add('bg-white/70');
+                    }
+
+                    currentIdx = (currentIdx + 1) % slides.length;
+
+                    slides[currentIdx].classList.remove('opacity-0', 'z-0');
+                    slides[currentIdx].classList.add('opacity-100', 'z-10');
+                    if (dots[currentIdx]) {
+                        dots[currentIdx].classList.remove('bg-white/70');
+                        dots[currentIdx].classList.add('bg-orange-600', 'w-4');
+                    }
+                }, 3500);
+            }
+        }
+
+        // جلب البانرات المخصصة لصفحة الأقسام فقط من لوحة التحكم
+        async function fetchBannerAds() {
+            try {
+                const { data: banners, error } = await db
+                    .from('featured_companies')
+                    .select('*')
+                    .eq('position', 'above')
+                    .eq('page_target', 'categories.html');
+
+                if (error || !banners) return;
+
+                let allTopMedia = [];
+                banners.forEach(banner => {
+                    if (banner.images && banner.images.length > 0) {
+                        banner.images.forEach(imgUrl => {
+                            allTopMedia.push({ url: imgUrl, title: banner.title });
+                        });
+                    }
+                });
+
+                setupSlider('topBannerAds', allTopMedia);
+            } catch (e) {
+                console.log('خطأ في جلب البانرات:', e);
+            }
+        }
+
+        // جلب الأقسام
         async function fetchAllCategories() {
             const container = document.getElementById('all-categories-container');
             const countLabel = document.getElementById('categories-count');
@@ -100,9 +184,11 @@
                 container.innerHTML = '<div class="col-span-full text-center py-12 text-red-400 text-sm">تعذر تحميل الأقسام، حاول مرة أخرى.</div>';
                 countLabel.innerText = 'خطأ';
             }
-        }
+        } 
 
+        // تشغيل الدوال عند تحميل الصفحة
         fetchAllCategories();
+        fetchBannerAds();
     </script>
 </body>
 </html>
