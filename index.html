@@ -40,16 +40,7 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-@keyframes marquee {
-        0% { transform: translateX(0); }
-        100% { transform: translateX(-50%); }
-    }
-    .animate-marquee {
-        animation: marquee 25s linear infinite;
-        display: flex;
-        width: max-content;
-        direction: ltr; /* بيثبت اتجاه الحركة من اليمين للشمال بشكل قاطع */
-    }
+
     .animate-marquee:hover {
         animation-play-state: paused;
     }
@@ -251,7 +242,7 @@
         }
 
         // جلب الأقسام وتفعيل الحركة التلقائية المضمونة
-  async function fetchCategories() {
+ async function fetchCategories() {
             const container = document.getElementById('categories-container');
             if (!container) return;
 
@@ -265,32 +256,22 @@
                 }
 
                 let itemsHtml = '';
-                const renderItems = () => {
-                    categories.forEach((cat) => {
-                        const iconSrc = cat.image_url ? cat.image_url : 'logo192.png';
-                        itemsHtml += `
-                           <a href="category.html?id=${cat.id}" class="flex flex-col items-center justify-center bg-white border border-gray-100 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:border-orange-500 hover:shadow-md transition-all text-center">
-                                <div class="w-16 h-16 bg-orange-50/30 rounded-full flex items-center justify-center mb-2 overflow-hidden shadow-inner">
-                                    <img src="${iconSrc}" alt="${cat.name}" class="w-full h-full object-cover rounded-full">
-                                </div>
-                                <span class="text-xs font-bold text-gray-700 truncate w-full">${cat.name}</span>
-                            </a>
-                        `;
-                    });
-                };
+                categories.forEach((cat) => {
+                    const iconSrc = cat.image_url ? cat.image_url : 'logo192.png';
+                    itemsHtml += `
+                       <a href="category.html?id=${cat.id}" class="flex flex-col items-center justify-center bg-white border border-gray-100 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:border-orange-500 hover:shadow-md transition-all text-center">
+                            <div class="w-16 h-16 bg-orange-50/30 rounded-full flex items-center justify-center mb-2 overflow-hidden shadow-inner">
+                                <img src="${iconSrc}" alt="${cat.name}" class="w-full h-full object-cover rounded-full">
+                            </div>
+                            <span class="text-xs font-bold text-gray-700 truncate w-full">${cat.name}</span>
+                        </a>
+                    `;
+                });
 
-                // تكرار الأقسام 4 مرات عشان نظبط طول اللفة بدقة تامة
-                renderItems();
-                renderItems();
-                renderItems();
-                renderItems();
-
-                container.className = "w-full overflow-hidden pb-2";
-                container.innerHTML = `
-                    <div class="flex gap-4 animate-marquee py-1 items-center" style="display: flex; width: max-content;">
-                        ${itemsHtml}
-                    </div>
-                `;
+                // تفعيل التمرير الأفقي السلس مع إخفاء شريط التمرير (Scrollbar) بشكل احترافي
+                container.className = "flex gap-4 overflow-x-auto no-scrollbar pb-2 px-1";
+                container.style.scrollBehavior = "smooth";
+                container.innerHTML = itemsHtml;
 
             } catch (err) {
                 console.error('خطأ في جلب الأقسام:', err.message);
