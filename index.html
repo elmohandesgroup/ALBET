@@ -40,17 +40,7 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-        @keyframes marquee {
-        0% { transform: translateX(0); }
-        100% { transform: translateX(-25%); }
-    }
-    .animate-marquee {
-        animation: marquee 25s linear infinite;
-    }
-    .animate-marquee:hover {
-        animation-play-state: paused;
-    }
-    </style>
+          </style>
 </head>
 <body class="bg-gray-50 text-gray-800 pb-20">
 
@@ -248,7 +238,7 @@
         }
 
         // جلب الأقسام وتفعيل الحركة التلقائية المضمونة
-      async function fetchCategories() {
+     async function fetchCategories() {
             const container = document.getElementById('categories-container');
             if (!container) return;
 
@@ -262,8 +252,9 @@
                 }
 
                 let itemsHtml = '';
-                const renderItems = (list) => {
-                    list.forEach((cat) => {
+                // نكرر الأقسام 3 مرات عشان نضمن طول كافي جداً للحركة الدائرية
+                const renderItems = () => {
+                    categories.forEach((cat) => {
                         const iconSrc = cat.image_url ? cat.image_url : 'logo192.png';
                         itemsHtml += `
                            <a href="category.html?id=${cat.id}" class="flex flex-col items-center justify-center bg-white border border-gray-100 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:border-orange-500 hover:shadow-md transition-all text-center">
@@ -276,17 +267,42 @@
                     });
                 };
 
-                // تكرار الأقسام 4 مرات لتغطية الشاشة تماماً ومنع أي فراغ نهائياً أثناء اللفة
-                renderItems(categories);
-                renderItems(categories);
-                renderItems(categories);
-                renderItems(categories);
+                renderItems();
+                renderItems();
+                renderItems();
 
-                container.innerHTML = `
-                    <div class="flex gap-4 animate-marquee py-1" style="width: max-content;">
-                        ${itemsHtml}
-                    </div>
-                `;
+                // رجّعنا الحاوية لتقبل التمرير السلس المخفي
+                container.className = "flex gap-4 overflow-x-auto no-scrollbar pb-2";
+                container.style.scrollBehavior = "auto";
+                container.innerHTML = itemsHtml;
+
+                // حركة دائرية تلقائية ذكية ومستمرة
+                let isPaused = false;
+                let speed = 0.8; // سرعة الحركة (كل ما تقلل بتبقى أهدى وأعمق)
+
+                function autoScrollStep() {
+                    if (!isPaused) {
+                        container.scrollLeft += speed;
+                        // أول ما نقرب لنهاية النسخة التانية، نرجع للبداية من غير ما الزائر يحس بأي قطم أو فراغ
+                        const singleSetWidth = container.scrollWidth / 3;
+                        if (container.scrollLeft >= singleSetWidth * 2) {
+                            container.scrollLeft -= singleSetWidth;
+                        } else if (container.scrollLeft <= 0) {
+                            container.scrollLeft += singleSetWidth;
+                        }
+                    }
+                    requestAnimationFrame(autoScrollStep);
+                }
+
+                requestAnimationFrame(autoScrollStep);
+
+                // إيقاف الحركة مؤقتياً لو الزائر حط إيده أو لمس الشاشة للتصفح اليدوي
+                ['touchstart', 'mousedown', 'mouseenter'].forEach(evt => {
+                    container.addEventListener(evt, () => { isPaused = true; });
+                });
+                ['touchend', 'mouseup', 'mouseleave'].forEach(evt => {
+                    container.addEventListener(evt, () => { isPaused = false; });
+                });
 
             } catch (err) {
                 console.error('خطأ في جلب الأقسام:', err.message);
