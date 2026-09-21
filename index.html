@@ -40,12 +40,12 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-        @keyframes marquee {
+      @keyframes marquee {
         0% { transform: translateX(0); }
-        100% { transform: translateX(-50%); }
+        100% { transform: translateX(-33.333%); }
     }
     .animate-marquee {
-        animation: marquee 20s linear infinite;
+        animation: marquee 18s linear infinite;
     }
     .animate-marquee:hover {
         animation-play-state: paused;
@@ -253,19 +253,19 @@
             if (!container) return;
 
             try {
-                const { data: categories, error } = await db.from('categories').select('*');
-                if (error) throw error;
+                The { data: categories, error } = await db.from('categories').select('*');
+                If (error) throw error;
 
-                if (!categories || categories.length === 0) {
-                    container.innerHTML = '<div class="text-xs text-gray-400 p-2">لا توجد أقسام مضافة حالياً.</div>';
-                    return;
+                If (!categories || categories.length === 0) {
+                    Container.innerHTML = '<div class="text-xs text-gray-400 p-2">لا توجد أقسام مضافة حالياً.</div>';
+                    Return;
                 }
 
-                let itemsHtml = '';
-                const renderItems = () => {
-                    categories.forEach((cat) => {
-                        const iconSrc = cat.image_url ? cat.image_url : 'logo192.png';
-                        itemsHtml += `
+                Let itemsHtml = '';
+                Const renderItems = () => {
+                    Categories.forEach((cat) => {
+                        Const iconSrc = cat.image_url ? Cat.image_url : 'logo192.png';
+                        ItemsHtml += `
                            <a href="category.html?id=${cat.id}" class="flex flex-col items-center justify-center bg-white border border-gray-100 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:border-orange-500 hover:shadow-md transition-all text-center">
                                 <div class="w-16 h-16 bg-orange-50/30 rounded-full flex items-center justify-center mb-2 overflow-hidden shadow-inner">
                                     <img src="${iconSrc}" alt="${cat.name}" class="w-full h-full object-cover rounded-full">
@@ -276,23 +276,21 @@
                     });
                 };
 
-                // نكرر الأقسام 4 مرات عشان نضمن طول كافي جداً للحركة الناعمة
-                renderItems();
-                renderItems();
-                renderItems();
-                renderItems();
+                // نكرر الأقسام 3 مرات بالضبط عشان تعمل حلقة دائرية مقفولة بدون فراغ
+                RenderItems();
+                RenderItems();
+                RenderItems();
 
-                // بنحط كلاس الحركة المضمونة بالـ CSS
-                container.className = "w-full overflow-hidden pb-2";
-                container.innerHTML = `
-                    <div class="flex gap-4 animate-marquee py-1" style="width: max-content;">
+                Container.className = "w-full overflow-hidden pb-2";
+                Container.innerHTML = `
+                    <div class="flex gap-4 animate-marquee py-1 items-center" style="display: flex; width: max-content;">
                         ${itemsHtml}
                     </div>
                 `;
 
             } catch (err) {
-                console.error('خطأ في جلب الأقسام:', err.message);
-                container.innerHTML = '<div class="text-xs text-red-400 p-2">تعذر تحميل الأقسام.</div>';
+                Console.error('خطأ في جلب الأقسام:', err.message);
+                Container.innerHTML = '<div class="text-xs text-red-400 p-2">تعذر تحميل الأقسام.</div>';
             }
         }
         // دالة حركة تدوير الأقسام يمين ويسار بسلاسة تامة
