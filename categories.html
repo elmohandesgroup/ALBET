@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>الصفحة الرئيسية - الأقسام | متجر البيت</title>
+    <title>جميع الأقسام - متجر البيت</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -23,30 +23,74 @@
 </head>
 <body class="bg-gray-50 text-gray-800 pb-20">
 
-    <!-- الهيدر الرئيسي الموحد المطابق للصفحة الرئيسية -->
-    <header class="bg-white shadow-sm sticky top-0 z-50 px-4 py-3.5">
+    <!-- الهيدر الرئيسي المطابق تماماً للصفحة الرئيسية -->
+    <header class="bg-white shadow-sm sticky top-0 z-50 px-4 py-3">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <a href="/" class="p-1.5 text-gray-700 hover:text-orange-600 transition-colors" aria-label="الرئيسية">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            <!-- زر أضف إعلانك على الشمال -->
+            <div class="flex items-center">
+                <a href="add-ad.html" class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-bold shadow-sm transition-all flex items-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
                     </svg>
-                </a>
-                <a href="/" class="flex items-center">
-                    <img src="logo192.png" alt="متجر البيت" class="w-10 h-10 object-contain rounded-xl shadow-sm border border-gray-100 bg-white p-1">
+                    <span>أضف إعلانك</span>
                 </a>
             </div>
+
+            <!-- اللوجو واسم المتجر في منتصف الهيدر -->
             <div class="text-center flex-1 mx-2">
-                <h1 class="text-xs md:text-sm font-bold text-gray-500">الصفحة الرئيسية</h1>
-                <h2 class="text-sm md:text-lg font-black text-orange-600">الأقسام</h2>
+                <a href="/" class="inline-block">
+                    <h1 class="text-base sm:text-xl font-black text-orange-600 tracking-tight">متجر البيت</h1>
+                    <p class="text-[10px] text-gray-400 font-semibold -mt-1">الأفضل دائماً</p>
+                </a>
             </div>
-            <div class="w-10"></div>
+
+            <!-- أيقونة المتجر وزر القائمة الجانبية (البرجر) على اليمين -->
+            <div class="flex items-center gap-2">
+                <a href="/" class="w-10 h-10 rounded-xl border border-gray-100 bg-white p-1 shadow-sm flex items-center justify-center">
+                    <img src="logo192.png" alt="متجر البيت" class="w-full h-full object-contain">
+                </a>
+                <button id="menu-btn" class="p-2 text-gray-700 hover:text-orange-600 transition-colors focus:outline-none" aria-label="القائمة">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
         </div>
     </header>
 
+    <!-- القائمة الجانبية المنسدلة (Sidebar Menu) -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-50 hidden transition-opacity opacity-0"></div>
+    <aside id="sidebar-menu" class="fixed top-0 right-0 w-80 max-w-[85%] h-full bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
+        <div class="p-4 border-b border-gray-100 flex items-center justify-between bg-orange-50/30">
+            <div class="flex items-center gap-2">
+                <img src="logo192.png" alt="متجر البيت" class="w-8 h-8 rounded-lg object-contain">
+                <span class="font-black text-orange-600 text-base">متجر البيت</span>
+            </div>
+            <button id="close-sidebar" class="p-1.5 text-gray-400 hover:text-gray-700 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+        <div class="flex-1 overflow-y-auto p-4 space-y-3">
+            <a href="/" class="flex items-center gap-3 p-3 rounded-xl hover:bg-orange-50 text-gray-700 hover:text-orange-600 font-semibold transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                <span>الرئيسية</span>
+            </a>
+            <a href="categories.html" class="flex items-center gap-3 p-3 rounded-xl bg-orange-50 text-orange-600 font-semibold transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-16zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-16z"/></svg>
+                <span>جميع الأقسام</span>
+            </a>
+            <a href="add-ad.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-orange-50 text-gray-700 hover:text-orange-600 font-semibold transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                <span>أضف إعلانك مجاناً</span>
+            </a>
+        </div>
+    </aside>
+
     <!-- محتوى الأقسام والبانرات -->
     <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
-        <!-- مكان ظهور البانر العلوي الخاص بصفحة الأقسام -->
+        <!-- بانر الإعلانات العلوي المخصص لصفحة الأقسام -->
         <div id="topBannerAds" class="w-full"></div>
 
         <div class="flex items-center justify-between">
@@ -54,19 +98,48 @@
             <span id="categories-count" class="text-xs text-gray-400 font-semibold">جاري التحميل...</span>
         </div>
 
-        <!-- شبكة عرض الأقسام بشكل شيك ومتجاوب -->
+        <!-- شبكة الأقسام -->
         <div id="all-categories-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             <div class="col-span-full text-center py-12 text-gray-400 text-sm">جاري تحميل الأقسام...</div>
         </div>
     </main>
 
-    <!-- السكريبت لجلب الأقسام والبانرات من قاعدة البيانات -->
+    <!-- السكريبتات البرمجية للبانرات والأقسام والقائمة الجانبية -->
     <script>
         const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
         const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // دالة إنشاء وتشغيل الـ Slider للبانرات
+        // تشغيل القائمة الجانبية (Sidebar Toggle)
+        const menuBtn = document.getElementById('menu-btn');
+        const closeSidebar = document.getElementById('close-sidebar');
+        const sidebarMenu = document.getElementById('sidebar-menu');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+        function toggleSidebar() {
+            const isOpen = sidebarMenu.classList.contains('translate-x-0');
+            if (isOpen) {
+                sidebarMenu.classList.remove('translate-x-0');
+                sidebarMenu.classList.add('translate-x-full');
+                sidebarOverlay.classList.remove('opacity-100');
+                sidebarOverlay.classList.add('opacity-0');
+                setTimeout(() => sidebarOverlay.classList.add('hidden'), 300);
+            } else {
+                sidebarOverlay.classList.remove('hidden');
+                setTimeout(() => {
+                    sidebarMenu.classList.remove('translate-x-full');
+                    sidebarMenu.classList.add('translate-x-0');
+                    sidebarOverlay.classList.remove('opacity-0');
+                    sidebarOverlay.classList.add('opacity-100');
+                }, 10);
+            }
+        }
+
+        if (menuBtn) menuBtn.addEventListener('click', toggleSidebar);
+        if (closeSidebar) closeSidebar.addEventListener('click', toggleSidebar);
+        if (sidebarOverlay) sidebarOverlay.addEventListener('click', toggleSidebar);
+
+        // دالة الـ Slider للبانرات
         function setupSlider(containerId, mediaArray) {
             const container = document.getElementById(containerId);
             if (!container || mediaArray.length === 0) return;
@@ -83,7 +156,7 @@
                     </div>
                 `;
                 dotsHtml += `
-                    <button class="w-2 h-2 rounded-full transition-all ${index === 0 ? 'bg-orange-600 w-4' : 'bg-white/70'} ${containerId}-dot" aria-label="شريحة ${index + 1}"></button>
+                    <button class="w-2 h-2 rounded-full transition-all ${index === 0 ? 'bg-orange-600 w-4' : 'bg-white/70'} ${containerId}-dot" aria-label="شريحة"></button>
                 `;
             });
 
@@ -121,7 +194,7 @@
             }
         }
 
-        // جلب البانرات المخصصة لصفحة الأقسام فقط من لوحة التحكم
+        // جلب البانرات المخصصة لصفحة الأقسام من قاعدة البيانات
         async function fetchBannerAds() {
             try {
                 const { data: banners, error } = await db
@@ -186,7 +259,6 @@
             }
         } 
 
-        // تشغيل الدوال عند تحميل الصفحة
         fetchAllCategories();
         fetchBannerAds();
     </script>
