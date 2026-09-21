@@ -238,7 +238,7 @@
         }
 
         // جلب الأقسام وتفعيل الحركة التلقائية المضمونة
-     async function fetchCategories() {
+    async function fetchCategories() {
             const container = document.getElementById('categories-container');
             if (!container) return;
 
@@ -252,7 +252,7 @@
                 }
 
                 let itemsHtml = '';
-                // نكرر الأقسام 3 مرات عشان نضمن طول كافي جداً للحركة الدائرية
+                // نكرر الأقسام 3 مرات عشان الشريط يبقى طويل وما يفضاش أبداً
                 const renderItems = () => {
                     categories.forEach((cat) => {
                         const iconSrc = cat.image_url ? cat.image_url : 'logo192.png';
@@ -271,32 +271,36 @@
                 renderItems();
                 renderItems();
 
-                // رجّعنا الحاوية لتقبل التمرير السلس المخفي
+                // ضبط الحاوية للتمرير المخفي السلس
                 container.className = "flex gap-4 overflow-x-auto no-scrollbar pb-2";
-                container.style.scrollBehavior = "auto";
                 container.innerHTML = itemsHtml;
 
-                // حركة دائرية تلقائية ذكية ومستمرة
                 let isPaused = false;
-                let speed = 0.8; // سرعة الحركة (كل ما تقلل بتبقى أهدى وأعمق)
+                let scrollDirection = 1; // الاتجاه
 
-                function autoScrollStep() {
+                // حركة أوتوماتيكية تضمن المشي المستمر بدون توقف
+                function step() {
                     if (!isPaused) {
-                        container.scrollLeft += speed;
-                        // أول ما نقرب لنهاية النسخة التانية، نرجع للبداية من غير ما الزائر يحس بأي قطم أو فراغ
-                        const singleSetWidth = container.scrollWidth / 3;
-                        if (container.scrollLeft >= singleSetWidth * 2) {
-                            container.scrollLeft -= singleSetWidth;
-                        } else if (container.scrollLeft <= 0) {
-                            container.scrollLeft += singleSetWidth;
+                        const maxScroll = container.scrollWidth - container.clientWidth;
+                        
+                        // لو فيه مساحة تمرير
+                        if (maxScroll > 0) {
+                            container.scrollLeft += 0.8 * scrollDirection;
+
+                            // لو وصلنا لنهاية الشريط من اليمين أو اليسار نعكس الاتجاه فوراً عشان يفضل رايح جاي بلا انقطاع
+                            if (container.scrollLeft >= maxScroll - 5) {
+                                scrollDirection = -1; // اعكس للشمال/اليمين العكسي
+                            } else if (container.scrollLeft <= 5) {
+                                scrollDirection = 1; // ارجع للاتجاه الأصلي
+                            }
                         }
                     }
-                    requestAnimationFrame(autoScrollStep);
+                    requestAnimationFrame(step);
                 }
 
-                requestAnimationFrame(autoScrollStep);
+                requestAnimationFrame(step);
 
-                // إيقاف الحركة مؤقتياً لو الزائر حط إيده أو لمس الشاشة للتصفح اليدوي
+                // إيقاف مؤقت عند التفاعل باليد أو الماوس واستئنافها فوراً عند تركها
                 ['touchstart', 'mousedown', 'mouseenter'].forEach(evt => {
                     container.addEventListener(evt, () => { isPaused = true; });
                 });
