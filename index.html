@@ -107,7 +107,23 @@
             </div>
         </div>
     </header>
-
+<!-- بانر تحميل التطبيق السريع في أعلى الصفحة لتفادي وتحديث الكاش -->
+<div class="max-w-7xl mx-auto px-4 pt-4">
+    <div id="pwa-install-banner" class="hidden bg-gradient-to-r from-orange-600 to-amber-600 text-white p-4 rounded-2xl shadow-md flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-xl font-bold">
+                📱
+            </div>
+            <div>
+                <h3 class="text-sm font-bold">تطبيق متجر البيت</h3>
+                <p class="text-xs text-orange-100">ثبت التطبيق لتجربة أسرع وتحديث دوري للكاش</p>
+            </div>
+        </div>
+        <button id="install-pwa-btn" class="bg-white text-orange-600 px-4 py-2 rounded-xl text-xs font-bold shadow hover:bg-orange-50 transition-all whitespace-nowrap">
+            تثبيت الآن
+        </button>
+    </div>
+</div>
     <!-- القائمة الجانبية (Drawer Menu) -->
     <div id="side-menu" class="fixed inset-0 z-50 hidden">
         <div id="menu-overlay" class="absolute inset-0 bg-black/50 transition-opacity"></div>
@@ -390,11 +406,15 @@
             }
         }
 
-        async function fetchBannerAds() {
-            try {
-                const { data: banners, error } = await db.from('featured_companies').select('*');
-                if (error || !banners) return;
+       async function fetchBannerAds() {
+    try {
+        // بنسحب البانرات الخاصة بالصفحة الرئيسية فقط عشان ميتداخلش مع الأقسام
+        const { data: banners, error } = await db
+            .from('featured_companies')
+            .select('*')
+            .or('page_target.eq.index.html,page_target.eq.home');
 
+        if (error || !banners) return;
                 // البانرات العلوية (فوق الأقسام)
                 const topBanners = banners.filter(b => b.position === 'above');
                 let allTopMedia = [];
@@ -428,5 +448,35 @@
         fetchAds();
         fetchBannerAds();
     </script>
+    let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    // منع المتصفح من إظهار النافذة التلقائية فوراً
+    e.preventDefault();
+    deferredPrompt = e;
+    
+    // إظهار البانر الخاص بنا في أول الصفحة
+    const installBanner = document.getElementById('pwa-install-banner');
+    if (installBanner) {
+        installBanner.classList.remove('hidden');
+    }
+});
+
+const installBtn = document.getElementById('install-pwa-btn');
+if (installBtn) {
+    installBtn.addEventListener('click', async () => {
+        const installBanner = document.getElementById('pwa-install-banner');
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                console.log('المستخدم وافق على تثبيت التطبيق');
+            }
+            deferredPrompt = null;
+        }
+        if (installBanner) {
+            installBanner.classList.add('hidden');
+        }
+    });
+}
 </body>
 </html>
