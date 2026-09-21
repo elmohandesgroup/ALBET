@@ -92,10 +92,45 @@
                     </div>
                 </div>
 
-                <!-- رقم الواتساب للتواصل -->
-                <div>
-                    <label class="block text-xs font-bold text-gray-700 mb-1.5">رقم الواتساب للتواصل *</label>
-                    <input type="text" id="adPhone" required placeholder="مثال: 01227802300" class="w-full p-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 outline-none">
+                <!-- رقم الواتساب للتواصل والمحافظة بجانبه -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1.5">رقم الواتساب للتواصل *</label>
+                        <input type="text" id="adPhone" required placeholder="مثال: 01227802300" class="w-full p-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1.5">المحافظة *</label>
+                        <select id="adGovernorate" required class="w-full p-3 border border-gray-200 rounded-xl text-sm bg-white focus:ring-2 focus:ring-orange-500 outline-none">
+                            <option value="">اختر المحافظة</option>
+                            <option value="القاهرة">القاهرة</option>
+                            <option value="الإسكندرية">الإسكندرية</option>
+                            <option value="الجيزة">الجيزة</option>
+                            <option value="القليوبية">القليوبية</option>
+                            <option value="الدقهلية">الدقهلية</option>
+                            <option value="الشرقية">الشرقية</option>
+                            <option value="الغربية">الغربية</option>
+                            <option value="المنوفية">المنوفية</option>
+                            <option value="بحيرة">البحيرة</option>
+                            <option value="كفر الشيخ">كفر الشيخ</option>
+                            <option value="دمياط">دمياط</option>
+                            <option value="بورسعيد">بورسعيد</option>
+                            <option value="الإسماعيلية">الإسماعيلية</option>
+                            <option value="السويس">السويس</option>
+                            <option value="الفيوم">الفيوم</option>
+                            <option value="بني سويف">بني سويف</option>
+                            <option value="المنيا">المنيا</option>
+                            <option value="أسيوط">أسيوط</option>
+                            <option value="سوهاج">سوهاج</option>
+                            <option value="قنا">قنا</option>
+                            <option value="أسوان">أسوان</option>
+                            <option value="الأقصر">الأقصر</option>
+                            <option value="البحر الأحمر">البحر الأحمر</option>
+                            <option value="الوادي الجديد">الوادي الجديد</option>
+                            <option value="مطروح">مطروح</option>
+                            <option value="شمال سيناء">شمال سيناء</option>
+                            <option value="جنوب سيناء">جنوب سيناء</option>
+                        </select>
+                    </div>
                 </div>
 
                 <!-- تفاصيل الدفع والمحفظة -->
@@ -330,6 +365,7 @@
                 const item_condition = document.getElementById('adCondition').value;
                 const category = document.getElementById('adCategory').value;
                 const phone = document.getElementById('adPhone').value;
+                const governorate = document.getElementById('adGovernorate').value;
                 const description = document.getElementById('adDescription').value;
                 const sender_phone = document.getElementById('senderPhone').value;
                 const payment_method = document.getElementById('paymentMethod').value;
@@ -350,7 +386,8 @@
                         price, 
                         condition: item_condition, 
                         category, 
-                        phone, 
+                        phone,
+                        governorate, 
                         description, 
                         image_url,
                         receipt_url,
