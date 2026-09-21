@@ -42,10 +42,10 @@
         }
         @keyframes marquee {
         0% { transform: translateX(0); }
-        100% { transform: translateX(-50%); }
+        100% { transform: translateX(-25%); }
     }
     .animate-marquee {
-        animation: marquee 20s linear infinite;
+        animation: marquee 25s linear infinite;
     }
     .animate-marquee:hover {
         animation-play-state: paused;
@@ -248,7 +248,7 @@
         }
 
         // جلب الأقسام وتفعيل الحركة التلقائية المضمونة
-       async function fetchCategories() {
+      async function fetchCategories() {
             const container = document.getElementById('categories-container');
             if (!container) return;
 
@@ -261,7 +261,6 @@
                     return;
                 }
 
-                // نكرر الأقسام مرتين عشان نعمل لووب (Loop) سلس ومستمر من غير ما تقطع
                 let itemsHtml = '';
                 const renderItems = (list) => {
                     list.forEach((cat) => {
@@ -277,10 +276,12 @@
                     });
                 };
 
+                // تكرار الأقسام 4 مرات لتغطية الشاشة تماماً ومنع أي فراغ نهائياً أثناء اللفة
                 renderItems(categories);
-                renderItems(categories); // تكرار لتكوين شريط متصل
+                renderItems(categories);
+                renderItems(categories);
+                renderItems(categories);
 
-                // تصميم الحاوية بـ Flexbox مع كلاس الحركة التلقائية
                 container.innerHTML = `
                     <div class="flex gap-4 animate-marquee py-1" style="width: max-content;">
                         ${itemsHtml}
@@ -292,7 +293,6 @@
                 container.innerHTML = '<div class="text-xs text-red-400 p-2">تعذر تحميل الأقسام.</div>';
             }
         }
-
         // دالة حركة تدوير الأقسام يمين ويسار بسلاسة تامة
      function startPerfectAutoScroll(container) {
             let scrollDirection = 1; // 1 يمين، -1 يسار
