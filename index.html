@@ -40,8 +40,6 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-        
-        /* حركة خفيفة لإيحاء التمرير في شريط الأقسام */
         @keyframes hintScroll {
             0%, 100% { transform: translateX(0); }
             50% { transform: translateX(-8px); }
@@ -53,7 +51,7 @@
 </head>
 <body class="bg-gray-50 text-gray-800 pb-20">
 
-    <!-- نافذة تثبيت التطبيق بتصميم أسود في أبيض وزر برتقالي -->
+    <!-- نافذة تثبيت التطبيق -->
     <div id="pwa-guide-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[99999] p-4 hidden">
         <div class="bg-gray-900 border border-gray-800 rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl space-y-4 animate-in fade-in zoom-in duration-200">
             <div class="w-20 h-20 bg-gray-800 rounded-2xl mx-auto flex items-center justify-center shadow-inner border border-gray-700 p-2">
@@ -76,7 +74,7 @@
         </div>
     </div>
 
-    <!-- الهيدر الرئيسي (مثبت في الأعلى دائماً) -->
+    <!-- الهيدر الرئيسي -->
     <header class="bg-white shadow-sm sticky top-0 z-50 px-4 py-3.5">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -85,14 +83,14 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
                 </button>
-                <!-- تعديل اللينك إلى index.html لضمان عدم توجيهه لصفحة قديمة -->
+                <!-- توجيه مباشر وصريح لـ index.html -->
                 <a href="index.html" class="flex items-center">
                     <img src="logo192.png" alt="متجر البيت" class="w-12 h-12 object-contain rounded-xl shadow-sm border border-gray-100 bg-white p-1">
                 </a>
             </div>
 
             <div class="text-center flex-1 mx-2">
-                <!-- تعديل اللينك إلى index.html هنا أيضاً -->
+                <!-- توجيه مباشر وصريح لـ index.html -->
                 <a href="index.html" class="block">
                     <h1 class="text-lg md:text-2xl font-black text-orange-600 leading-tight">متجر البيت</h1>
                     <p class="text-[11px] md:text-xs text-gray-500 font-medium">الأفضل دائماً</p>
@@ -110,25 +108,7 @@
         </div>
     </header>
 
-    <!-- بانر تحميل التطبيق السريع في أعلى الصفحة لتفادي وتحديث الكاش -->
-    <div class="max-w-7xl mx-auto px-4 pt-4">
-        <div id="pwa-install-banner" class="hidden bg-gradient-to-r from-orange-600 to-amber-600 text-white p-4 rounded-2xl shadow-md flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-xl font-bold">
-                    📱
-                </div>
-                <div>
-                    <h3 class="text-sm font-bold">تطبيق متجر البيت</h3>
-                    <p class="text-xs text-orange-100">ثبت التطبيق لتجربة أسرع وتحديث دوري للكاش</p>
-                </div>
-            </div>
-            <button id="install-pwa-btn" class="bg-white text-orange-600 px-4 py-2 rounded-xl text-xs font-bold shadow hover:bg-orange-50 transition-all whitespace-nowrap">
-                تثبيت الآن
-            </button>
-        </div>
-    </div>
-
-    <!-- القائمة الجانبية (Drawer Menu) -->
+    <!-- القائمة الجانبية -->
     <div id="side-menu" class="fixed inset-0 z-50 hidden">
         <div id="menu-overlay" class="absolute inset-0 bg-black/50 transition-opacity"></div>
         <div class="absolute right-0 top-0 bottom-0 w-80 bg-white shadow-2xl p-5 flex flex-col justify-between transform transition-transform duration-300 translate-x-full overflow-y-auto" id="menu-content">
@@ -142,7 +122,6 @@
                 </div>
                 
                 <nav class="space-y-2">
-                    <!-- تعديل الرابط إلى index.html في القائمة -->
                     <a href="index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">الرئيسية</a>
                     <a href="categories.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">الأقسام</a>
                     <a href="add-ad.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-orange-600 bg-orange-50 transition-colors">أضف إعلانك الجديد</a>
@@ -167,11 +146,8 @@
 
     <!-- محتوى المتجر الرئيسي -->
     <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
-        
-        <!-- 1. منطقة إعلانات متحركة (فوق الأقسام) -->
         <div id="topBannerAds" class="w-full"></div>
 
-        <!-- الأقسام -->
         <section class="space-y-3">
             <div class="flex justify-between items-center">
                 <h3 class="font-bold text-gray-800 text-base">الأقسام</h3>
@@ -182,24 +158,19 @@
             </div>
         </section>
 
-        <!-- 2. منطقة إعلانات متحركة (تحت الأقسام) -->
         <div id="bottomBannerAds" class="w-full"></div>
 
-        <!-- أحدث الإعلانات -->
         <section class="space-y-3">
             <div class="flex justify-between items-center">
                 <h3 class="font-bold text-gray-800 text-base">أحدث الإعلانات</h3>
                 <span class="text-xs text-gray-400">متجدد باستمرار</span>
             </div>
-            
             <div id="ads-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div class="text-xs text-gray-400 p-4">جاري تحميل الإعلانات...</div>
             </div>
         </section>
-
     </main>
 
-    <!-- السكريبتات ومنظومة الـ PWA -->
     <script>
         const openMenuBtn = document.getElementById('open-menu-btn');
         const closeMenuBtn = document.getElementById('close-menu-btn');
@@ -263,9 +234,12 @@
             });
         }
 
+        // تنظيف الكاش القديم وتحديث سيرفر ووركر فوراً
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js').catch(err => console.log(err));
+                navigator.serviceWorker.register('sw.js').then(reg => {
+                    reg.update();
+                }).catch(err => console.log(err));
             });
         }
 
@@ -356,7 +330,6 @@
             return `<img src="${url}" alt="${title || 'إعلان مميز'}" class="w-full h-full object-cover">`;
         }
 
-        // دالة الـ Slider مع أبعاد مرنة متطورة تناسب الموبايل والكمبيوتر تماماً
         function setupSlider(containerId, mediaArray) {
             const container = document.getElementById(containerId);
             if (!container || mediaArray.length === 0) return;
@@ -367,7 +340,6 @@
             mediaArray.forEach((media, index) => {
                 slidesHtml += `
                     <div class="absolute inset-0 transition-opacity duration-700 ease-in-out ${index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'} ${containerId}-slide">
-                        <!-- تم تعديل الارتفاع ليكون مرناً ومناسباً لكل الشاشات بدون مطة -->
                         <div class="w-full h-44 sm:h-64 md:h-80 lg:h-96 rounded-2xl overflow-hidden shadow-sm bg-gray-100 relative">
                             ${renderMediaElement(media.url, media.title)}
                         </div>
@@ -421,7 +393,6 @@
 
                 if (error || !banners) return;
                 
-                // البانرات العلوية
                 const topBanners = banners.filter(b => b.position === 'above');
                 let allTopMedia = [];
                 topBanners.forEach(banner => {
@@ -433,7 +404,6 @@
                 });
                 setupSlider('topBannerAds', allTopMedia);
 
-                // البانرات السفلية
                 const bottomBanners = banners.filter(b => b.position === 'below');
                 let allBottomMedia = [];
                 bottomBanners.forEach(banner => {
@@ -454,7 +424,6 @@
         fetchAds();
         fetchBannerAds();
 
-        // إظهار نافذة التثبيت تلقائياً وتحديث الكاش فوراً عند فتح الصفحة أو عمل تحديث
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 const installModal = document.getElementById('pwa-guide-modal');
