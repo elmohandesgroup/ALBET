@@ -40,6 +40,16 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+        @keyframes marquee {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+    }
+    .animate-marquee {
+        animation: marquee 20s linear infinite;
+    }
+    .animate-marquee:hover {
+        animation-play-state: paused;
+    }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 pb-20">
@@ -146,7 +156,7 @@
                 <h3 class="font-bold text-gray-800 text-base">الأقسام</h3>
                 <a href="categories.html" class="text-xs text-orange-600 font-semibold hover:underline">عرض الكل</a>
             </div>
-            <div id="categories-container" class="flex gap-4 overflow-x-auto no-scrollbar pb-2" style="scroll-behavior: auto;">
+            <div id="categories-container" class="w-full overflow-hidden pb-2">
                 <div class="text-xs text-gray-400">جاري تحميل الأقسام...</div>
             </div>
         </section>
@@ -238,7 +248,7 @@
         }
 
         // جلب الأقسام وتفعيل الحركة التلقائية المضمونة
-        async function fetchCategories() {
+       async function fetchCategories() {
             const container = document.getElementById('categories-container');
             if (!container) return;
 
@@ -251,22 +261,31 @@
                     return;
                 }
 
-                container.innerHTML = '';
-                categories.forEach((cat) => {
-                    const iconSrc = cat.image_url ? cat.image_url : 'logo192.png';
-                    const catCard = `
-                       <a href="category.html?id=${cat.id}" class="flex flex-col items-center justify-center bg-white border border-gray-100 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:border-orange-500 hover:shadow-md transition-all text-center">
-                            <div class="w-16 h-16 bg-orange-50/30 rounded-full flex items-center justify-center mb-2 overflow-hidden shadow-inner">
-                                <img src="${iconSrc}" alt="${cat.name}" class="w-full h-full object-cover rounded-full">
-                            </div>
-                            <span class="text-xs font-bold text-gray-700 truncate w-full">${cat.name}</span>
-                        </a>
-                    `;
-                    container.innerHTML += catCard;
-                });
+                // نكرر الأقسام مرتين عشان نعمل لووب (Loop) سلس ومستمر من غير ما تقطع
+                let itemsHtml = '';
+                const renderItems = (list) => {
+                    list.forEach((cat) => {
+                        const iconSrc = cat.image_url ? cat.image_url : 'logo192.png';
+                        itemsHtml += `
+                           <a href="category.html?id=${cat.id}" class="flex flex-col items-center justify-center bg-white border border-gray-100 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:border-orange-500 hover:shadow-md transition-all text-center">
+                                <div class="w-16 h-16 bg-orange-50/30 rounded-full flex items-center justify-center mb-2 overflow-hidden shadow-inner">
+                                    <img src="${iconSrc}" alt="${cat.name}" class="w-full h-full object-cover rounded-full">
+                                </div>
+                                <span class="text-xs font-bold text-gray-700 truncate w-full">${cat.name}</span>
+                            </a>
+                        `;
+                    });
+                };
 
-                // تشغيل محرك الحركة التلقائية السلس
-                startPerfectAutoScroll(container);
+                renderItems(categories);
+                renderItems(categories); // تكرار لتكوين شريط متصل
+
+                // تصميم الحاوية بـ Flexbox مع كلاس الحركة التلقائية
+                container.innerHTML = `
+                    <div class="flex gap-4 animate-marquee py-1" style="width: max-content;">
+                        ${itemsHtml}
+                    </div>
+                `;
 
             } catch (err) {
                 console.error('خطأ في جلب الأقسام:', err.message);
