@@ -329,12 +329,11 @@
             return `<img src="${url}" alt="${title || 'إعلان مميز'}" class="w-full h-full object-cover">`;
         }
 
-        function setupSlider(containerId, mediaArray) {
+       function setupSlider(containerId, mediaArray) {
             const container = document.getElementById(containerId);
             if (!container || mediaArray.length === 0) return;
 
             let slidesHtml = '';
-            let dotsHtml = '';
 
             mediaArray.forEach((media, index) => {
                 slidesHtml += `
@@ -344,41 +343,26 @@
                         </div>
                     </div>
                 `;
-                dotsHtml += `
-                    <button class="w-2 h-2 rounded-full transition-all ${index === 0 ? 'bg-orange-600 w-4' : 'bg-white/70'} ${containerId}-dot" aria-label="شريحة ${index + 1}"></button>
-                `;
             });
 
             container.innerHTML = `
                 <div class="relative w-full h-44 sm:h-64 md:h-80 lg:h-96 overflow-hidden rounded-2xl shadow-sm">
                     ${slidesHtml}
-                    <div class="absolute bottom-2 left-0 right-0 z-20 flex justify-center items-center gap-1.5">
-                        ${dotsHtml}
-                    </div>
                 </div>
             `;
 
             if (mediaArray.length > 1) {
                 let currentIdx = 0;
                 const slides = container.querySelectorAll(`.${containerId}-slide`);
-                const dots = container.querySelectorAll(`.${containerId}-dot`);
 
                 setInterval(() => {
                     slides[currentIdx].classList.remove('opacity-100', 'z-10');
                     slides[currentIdx].classList.add('opacity-0', 'z-0');
-                    if(dots[currentIdx]) {
-                        dots[currentIdx].classList.remove('bg-orange-600', 'w-4');
-                        dots[currentIdx].classList.add('bg-white/70');
-                    }
 
                     currentIdx = (currentIdx + 1) % slides.length;
 
                     slides[currentIdx].classList.remove('opacity-0', 'z-0');
                     slides[currentIdx].classList.add('opacity-100', 'z-10');
-                    if(dots[currentIdx]) {
-                        dots[currentIdx].classList.remove('bg-white/70');
-                        dots[currentIdx].classList.add('bg-orange-600', 'w-4');
-                    }
                 }, 3500);
             }
         }
