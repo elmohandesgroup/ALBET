@@ -82,7 +82,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-gray-700 mb-1.5">القسم *</label>
-                        <!-- تم ربط القائمة لتجلب الأقسام تلقائياً من قاعدة البيانات -->
+                        <!-- جلب الأقسام تلقائياً من قاعدة البيانات -->
                         <select id="adCategory" required class="w-full p-3 border border-gray-200 rounded-xl text-sm bg-white focus:ring-2 focus:ring-orange-500 outline-none">
                             <option value="">جاري تحميل الأقسام...</option>
                         </select>
@@ -97,35 +97,9 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-gray-700 mb-1.5">المحافظة *</label>
+                        <!-- جلب المحافظات تلقائياً من جدول governorates في قاعدة البيانات -->
                         <select id="adGovernorate" required class="w-full p-3 border border-gray-200 rounded-xl text-sm bg-white focus:ring-2 focus:ring-orange-500 outline-none">
-                            <option value="">اختر المحافظة</option>
-                            <option value="القاهرة">القاهرة</option>
-                            <option value="الإسكندرية">الإسكندرية</option>
-                            <option value="الجيزة">الجيزة</option>
-                            <option value="القليوبية">القليوبية</option>
-                            <option value="الدقهلية">الدقهلية</option>
-                            <option value="الشرقية">الشرقية</option>
-                            <option value="الغربية">الغربية</option>
-                            <option value="المنوفية">المنوفية</option>
-                            <option value="بحيرة">البحيرة</option>
-                            <option value="كفر الشيخ">كفر الشيخ</option>
-                            <option value="دمياط">دمياط</option>
-                            <option value="بورسعيد">بورسعيد</option>
-                            <option value="الإسماعيلية">الإسماعيلية</option>
-                            <option value="السويس">السويس</option>
-                            <option value="الفيوم">الفيوم</option>
-                            <option value="بني سويف">بني سويف</option>
-                            <option value="المنيا">المنيا</option>
-                            <option value="أسيوط">أسيوط</option>
-                            <option value="سوهاج">سوهاج</option>
-                            <option value="قنا">قنا</option>
-                            <option value="أسوان">أسوان</option>
-                            <option value="الأقصر">الأقصر</option>
-                            <option value="البحر الأحمر">البحر الأحمر</option>
-                            <option value="الوادي الجديد">الوادي الجديد</option>
-                            <option value="مطروح">مطروح</option>
-                            <option value="شمال سيناء">شمال سيناء</option>
-                            <option value="جنوب سيناء">جنوب سيناء</option>
+                            <option value="">جاري تحميل المحافظات...</option>
                         </select>
                     </div>
                 </div>
@@ -226,7 +200,7 @@
             document.getElementById('customModal').classList.add('hidden');
         }
 
-        // دالة لجلب الأقسام من جدول categories في قاعدة البيانات وتعبئتها في القائمة المنسدلة
+        // دالة لجلب الأقسام من جدول categories في قاعدة البيانات
         async function fetchCategories() {
             try {
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/categories?select=*`, {
@@ -254,7 +228,6 @@
                 } else {
                     categorySelect.innerHTML = '<option value="">لا توجد أقسام متاحة حالياً</option>';
                 }
-
             } catch (err) {
                 console.error('خطأ في تحميل الأقسام:', err);
                 const categorySelect = document.getElementById('adCategory');
@@ -262,9 +235,45 @@
             }
         }
 
-        // جلب الأقسام فور تحميل الصفحة
+        // دالة لجلب المحافظات من جدول governorates المستقل في قاعدة البيانات
+        async function fetchGovernorates() {
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/governorates?select=*`, {
+                    method: 'GET',
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                    }
+                });
+
+                if (!response.ok) throw new Error('فشل في جلب المحافظات');
+
+                const governorates = await response.json();
+                const govSelect = document.getElementById('adGovernorate');
+                
+                govSelect.innerHTML = '<option value="">اختر المحافظة</option>';
+
+                if (governorates && governorates.length > 0) {
+                    governorates.forEach(gov => {
+                        const option = document.createElement('option');
+                        option.value = gov.name; 
+                        option.textContent = gov.name;
+                        govSelect.appendChild(option);
+                    });
+                } else {
+                    govSelect.innerHTML = '<option value="">لا توجد محافظات متاحة</option>';
+                }
+            } catch (err) {
+                console.error('خطأ في تحميل المحافظات:', err);
+                const govSelect = document.getElementById('adGovernorate');
+                govSelect.innerHTML = '<option value="">تعذر تحميل المحافظات</option>';
+            }
+        }
+
+        // جلب الأقسام والمحافظات فور تحميل الصفحة
         document.addEventListener('DOMContentLoaded', () => {
             fetchCategories();
+            fetchGovernorates();
         });
 
         function convertImageToWebp(file) {
