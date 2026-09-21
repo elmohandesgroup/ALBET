@@ -447,6 +447,15 @@
         fetchCategories();
         fetchAds();
         fetchBannerAds();
+        // إظهار نافذة التثبيت تلقائياً وتحديث الكاش فوراً عند فتح الصفحة أو عمل تحديث
+    window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            const installModal = document.getElementById('pwa-guide-modal');
+            if (installModal) {
+                installModal.classList.remove('hidden');
+            }
+        }, 800);
+    });
     </script>
   </body>
 </html>
