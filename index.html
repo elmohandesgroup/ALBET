@@ -5,27 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>متجر البيت - الأفضل دائماً</title>
     
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-34S913WKK2"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-34S913WKK2');
-    </script>
-
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <!-- PWA Settings -->
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#ea580c">
-    <link rel="apple-touch-icon" href="logo192.png">
-
-    <!-- Google Fonts (Cairo) & Animations -->
+    <!-- Google Fonts (Cairo) -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
         body {
@@ -33,50 +19,11 @@
             background-color: #f8f9fa;
             -webkit-tap-highlight-color: transparent;
         }
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        
-        /* حركة خفيفة لإيحاء التمرير في شريط الأقسام */
-        @keyframes hintScroll {
-            0%, 100% { transform: translateX(0); }
-            50% { transform: translateX(-8px); }
-        }
-        .scroll-hint {
-            animation: hintScroll 2s infinite ease-in-out;
-        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 pb-20">
 
-    <!-- نافذة تثبيت التطبيق بتصميم أسود في أبيض وزر برتقالي -->
-    <div id="pwa-guide-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[99999] p-4 hidden">
-        <div class="bg-gray-900 border border-gray-800 rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl space-y-4 animate-in fade-in zoom-in duration-200">
-            <div class="w-20 h-20 bg-gray-800 rounded-2xl mx-auto flex items-center justify-center shadow-inner border border-gray-700 p-2">
-                <img src="logo192.png" alt="متجر البيت" class="w-full h-full object-contain">
-            </div>
-            <div>
-                <h3 class="font-black text-white text-xl">حمل تطبيق "متجر البيت" الآن</h3>
-                <p class="text-xs text-gray-300 mt-1 leading-relaxed">
-                    استمتع بتجربة تصفح أسرع وأسهل بتثبيت التطبيق على شاشة هاتفك أو جهازك.
-                </p>
-            </div>
-            <div class="space-y-2 pt-1">
-                <button id="modalInstallActionBtn" class="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 rounded-xl text-sm font-bold transition-all shadow-sm">
-                    تثبيت التطبيق الآن
-                </button>
-                <button onclick="closeInstallGuideModal()" class="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 py-2.5 rounded-xl text-xs font-bold transition-all">
-                    تخطي
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- الهيدر الرئيسي (مثبت في الأعلى دائماً) -->
+    <!-- الهيدر الرئيسي -->
     <header class="bg-white shadow-sm sticky top-0 z-50 px-4 py-3.5">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -85,13 +32,13 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
                 </button>
-                <a href="/" class="flex items-center">
+                <a href="index.html" class="flex items-center">
                     <img src="logo192.png" alt="متجر البيت" class="w-12 h-12 object-contain rounded-xl shadow-sm border border-gray-100 bg-white p-1">
                 </a>
             </div>
 
             <div class="text-center flex-1 mx-2">
-                <a href="/" class="block">
+                <a href="index.html" class="block">
                     <h1 class="text-lg md:text-2xl font-black text-orange-600 leading-tight">متجر البيت</h1>
                     <p class="text-[11px] md:text-xs text-gray-500 font-medium">الأفضل دائماً</p>
                 </a>
@@ -107,23 +54,7 @@
             </div>
         </div>
     </header>
-<!-- بانر تحميل التطبيق السريع في أعلى الصفحة لتفادي وتحديث الكاش -->
-<div class="max-w-7xl mx-auto px-4 pt-4">
-    <div id="pwa-install-banner" class="hidden bg-gradient-to-r from-orange-600 to-amber-600 text-white p-4 rounded-2xl shadow-md flex items-center justify-between">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-xl font-bold">
-                📱
-            </div>
-            <div>
-                <h3 class="text-sm font-bold">تطبيق متجر البيت</h3>
-                <p class="text-xs text-orange-100">ثبت التطبيق لتجربة أسرع وتحديث دوري للكاش</p>
-            </div>
-        </div>
-        <button id="install-pwa-btn" class="bg-white text-orange-600 px-4 py-2 rounded-xl text-xs font-bold shadow hover:bg-orange-50 transition-all whitespace-nowrap">
-            تثبيت الآن
-        </button>
-    </div>
-</div>
+
     <!-- القائمة الجانبية (Drawer Menu) -->
     <div id="side-menu" class="fixed inset-0 z-50 hidden">
         <div id="menu-overlay" class="absolute inset-0 bg-black/50 transition-opacity"></div>
@@ -138,9 +69,9 @@
                 </div>
                 
                 <nav class="space-y-2">
-                    <a href="/" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">الرئيسية</a>
+                    <a href="index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-orange-600 bg-orange-50 transition-colors">الرئيسية</a>
                     <a href="categories.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">الأقسام</a>
-                    <a href="add-ad.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-orange-600 bg-orange-50 transition-colors">أضف إعلانك الجديد</a>
+                    <a href="add-ad.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">أضف إعلانك الجديد</a>
                     
                     <button id="menuInstallBtn" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition-colors text-right">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -160,42 +91,45 @@
         </div>
     </div>
 
-    <!-- محتوى المتجر الرئيسي -->
+    <!-- المحتوى الرئيسي -->
     <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
         
-        <!-- 1. منطقة إعلانات متحركة (فوق الأقسام) -->
+        <!-- بانر الشركات الكبرى (مع ارتفاع مرن للموبايل والكمبيوتر) -->
         <div id="topBannerAds" class="w-full"></div>
 
         <!-- الأقسام -->
         <section class="space-y-3">
-            <div class="flex justify-between items-center">
-                <h3 class="font-bold text-gray-800 text-base">الأقسام</h3>
-                <a href="categories.html" class="text-xs text-orange-600 font-semibold hover:underline">عرض الكل</a>
+            <div class="flex items-center justify-between">
+                <h2 class="font-bold text-gray-800 text-base md:text-lg">الأقسام</h2>
+                <a href="categories.html" class="text-xs font-bold text-orange-600 hover:underline">عرض الكل</a>
             </div>
-            <div id="categories-container" class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
-                <div class="text-xs text-gray-400">جاري تحميل الأقسام...</div>
+            <div id="categories-container" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
+                <div class="col-span-full text-center py-6 text-gray-400 text-xs">جاري تحميل الأقسام...</div>
             </div>
         </section>
 
-        <!-- 2. منطقة إعلانات متحركة (تحت الأقسام - أصبحت Slider مثل الأعلى) -->
-        <div id="bottomBannerAds" class="w-full"></div>
+        <!-- بانر المنتجات الوسطي (بمرونة كاملة) -->
+        <div id="middleBannerAds" class="w-full"></div>
 
         <!-- أحدث الإعلانات -->
         <section class="space-y-3">
-            <div class="flex justify-between items-center">
-                <h3 class="font-bold text-gray-800 text-base">أحدث الإعلانات</h3>
+            <div class="flex items-center justify-between">
+                <h2 class="font-bold text-gray-800 text-base md:text-lg">أحدث الإعلانات</h2>
                 <span class="text-xs text-gray-400">متجدد باستمرار</span>
             </div>
-            
-            <div id="ads-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div class="text-xs text-gray-400 p-4">جاري تحميل الإعلانات...</div>
+            <div id="ads-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div class="col-span-full text-center py-12 text-gray-400 text-sm">جاري تحميل الإعلانات...</div>
             </div>
         </section>
-
     </main>
 
-    <!-- السكريبتات ومنظومة الـ PWA -->
+    <!-- البرمجة والسكربتات -->
     <script>
+        const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
+        const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // القائمة الجانبية
         const openMenuBtn = document.getElementById('open-menu-btn');
         const closeMenuBtn = document.getElementById('close-menu-btn');
         const sideMenu = document.getElementById('side-menu');
@@ -212,146 +146,30 @@
             setTimeout(() => { sideMenu.classList.add('hidden'); }, 300);
         }
 
-        openMenuBtn.addEventListener('click', openMenu);
-        closeMenuBtn.addEventListener('click', closeMenu);
-        menuOverlay.addEventListener('click', closeMenu);
+        if (openMenuBtn) openMenuBtn.addEventListener('click', openMenu);
+        if (closeMenuBtn) closeMenuBtn.addEventListener('click', closeMenu);
+        if (menuOverlay) menuOverlay.addEventListener('click', closeMenu);
 
-        const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
-        const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
+        // تثبيت التطبيق PWA
         let deferredPrompt = null;
-        const installModal = document.getElementById('pwa-guide-modal');
-        const modalInstallActionBtn = document.getElementById('modalInstallActionBtn');
-        const menuInstallBtn = document.getElementById('menuInstallBtn');
-
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            if(installModal) installModal.classList.remove('hidden');
         });
 
-        function closeInstallGuideModal() {
-            if (installModal) installModal.classList.add('hidden');
-        }
-
-        function openInstallGuideModal() {
-            if (installModal) installModal.classList.remove('hidden');
-        }
-
-        async function triggerInstall() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                deferredPrompt = null;
-                closeInstallGuideModal();
-            } else {
-                closeInstallGuideModal();
-            }
-        }
-
-        if (modalInstallActionBtn) modalInstallActionBtn.addEventListener('click', triggerInstall);
+        const menuInstallBtn = document.getElementById('menuInstallBtn');
         if (menuInstallBtn) {
-            menuInstallBtn.addEventListener('click', () => {
+            menuInstallBtn.addEventListener('click', async () => {
                 closeMenu();
-                openInstallGuideModal();
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    deferredPrompt = null;
+                }
             });
         }
 
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js').catch(err => console.log(err));
-            });
-        }
-
-        async function fetchCategories() {
-            const container = document.getElementById('categories-container');
-            if (!container) return;
-
-            try {
-                const { data: categories, error } = await db.from('categories').select('*');
-                if (error) throw error;
-
-                if (!categories || categories.length === 0) {
-                    container.innerHTML = '<div class="text-xs text-gray-400 p-2">لا توجد أقسام مضافة حالياً.</div>';
-                    return;
-                }
-
-                container.innerHTML = '';
-                categories.forEach((cat, index) => {
-                    const iconSrc = cat.image_url ? cat.image_url : 'logo192.png';
-                    const hintClass = index === 0 ? 'scroll-hint' : '';
-                    const catCard = `
-                       <a href="category.html?id=${cat.id}" class="flex flex-col items-center justify-center bg-white border border-gray-100 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:border-orange-500 hover:shadow-md transition-all text-center ${hintClass}">
-                            <div class="w-16 h-16 bg-orange-50/30 rounded-full flex items-center justify-center mb-2 overflow-hidden shadow-inner">
-                                <img src="${iconSrc}" alt="${cat.name}" class="w-full h-full object-cover rounded-full">
-                            </div>
-                            <span class="text-xs font-bold text-gray-700 truncate w-full">${cat.name}</span>
-                        </a>
-                    `;
-                    container.innerHTML += catCard;
-                });
-            } catch (err) {
-                console.error('خطأ في جلب الأقسام:', err.message);
-                container.innerHTML = '<div class="text-xs text-red-400 p-2">تعذر تحميل الأقسام.</div>';
-            }
-        }
-
-        async function fetchAds() {
-            const container = document.getElementById('ads-container');
-            if (!container) return;
-            
-            try {
-                const { data: ads, error } = await db
-                    .from('ads')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
-                if (error) throw error;
-
-                if (!ads || ads.length === 0) {
-                    container.innerHTML = '<div class="text-xs text-gray-400 p-4 col-span-full text-center">لا توجد إعلانات مضافة حالياً.</div>';
-                    return;
-                }
-
-                container.innerHTML = ''; 
-                ads.forEach(ad => {
-                    const adCard = `
-                        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
-                            <div class="relative rounded-xl overflow-hidden mb-3 bg-gray-100 h-48 md:h-64">
-                                <span class="absolute top-2 right-2 bg-emerald-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow z-10">جديد</span>
-                                <img src="${ad.image_url}" alt="${ad.title}" class="w-full h-full object-cover">
-                            </div>
-                            <div class="space-y-2">
-                                <div class="flex justify-between items-start">
-                                    <h4 class="font-bold text-gray-800 text-sm md:text-base">${ad.title}</h4>
-                                    <span class="text-orange-600 font-black text-sm md:text-base">${ad.price ? ad.price.toLocaleString() : 0} ج.م</span>
-                                </div>
-                                <p class="text-xs text-gray-500 line-clamp-2">${ad.description || ''}</p>
-                                <a href="https://wa.me/${ad.phone}?text=${encodeURIComponent('مرحباً، أريد الاستفسار عن إعلانك: ' + ad.title)}" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm">
-                                    <span>تواصل مع البائع عبر واتساب</span>
-                                </a>
-                            </div>
-                        </div>
-                    `;
-                    container.innerHTML += adCard;
-                });
-            } catch (err) {
-                console.error('خطأ في جلب الإعلانات:', err.message);
-                container.innerHTML = '<div class="text-xs text-red-400 p-4 col-span-full text-center">تعذر تحميل الإعلانات.</div>';
-            }
-        }
-
-        function renderMediaElement(url, title) {
-            if (!url) return '';
-            const lower = url.toLowerCase();
-            if (lower.includes('data:video') || lower.endsWith('.mp4') || lower.endsWith('.webm')) {
-                return `<video src="${url}" autoplay muted loop playsinline class="w-full h-full object-cover"></video>`;
-            }
-            return `<img src="${url}" alt="${title || 'إعلان مميز'}" class="w-full h-full object-cover">`;
-        }
-
-        // دالة لإنشاء وتشغيل الـ Sliders للبانرات
+        // دالة السلايدر المرن للشاشات المختلفة
         function setupSlider(containerId, mediaArray) {
             const container = document.getElementById(containerId);
             if (!container || mediaArray.length === 0) return;
@@ -362,20 +180,20 @@
             mediaArray.forEach((media, index) => {
                 slidesHtml += `
                     <div class="absolute inset-0 transition-opacity duration-700 ease-in-out ${index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'} ${containerId}-slide">
-                        <div class="w-full h-40 md:h-56 rounded-2xl overflow-hidden shadow-sm bg-gray-100 relative">
-                            ${renderMediaElement(media.url, media.title)}
+                        <div class="w-full h-44 sm:h-64 md:h-80 lg:h-96 rounded-2xl overflow-hidden shadow-sm bg-gray-100 relative">
+                            <img src="${media.url}" alt="${media.title || 'إعلان'}" class="w-full h-full object-cover">
                         </div>
                     </div>
                 `;
                 dotsHtml += `
-                    <button class="w-2 h-2 rounded-full transition-all ${index === 0 ? 'bg-orange-600 w-4' : 'bg-white/70'} ${containerId}-dot" aria-label="شريحة ${index + 1}"></button>
+                    <button class="w-2 h-2 rounded-full transition-all ${index === 0 ? 'bg-orange-600 w-4' : 'bg-white/70'} ${containerId}-dot" aria-label="شريحة"></button>
                 `;
             });
 
             container.innerHTML = `
-                <div class="relative w-full h-40 md:h-56 overflow-hidden rounded-2xl shadow-sm">
+                <div class="relative w-full h-44 sm:h-64 md:h-80 lg:h-96 rounded-2xl shadow-sm">
                     ${slidesHtml}
-                    <div class="absolute bottom-2 left-0 right-0 z-20 flex justify-center items-center gap-1.5">
+                    <div class="absolute bottom-3 left-0 right-0 z-20 flex justify-center items-center gap-1.5">
                         ${dotsHtml}
                     </div>
                 </div>
@@ -389,7 +207,7 @@
                 setInterval(() => {
                     slides[currentIdx].classList.remove('opacity-100', 'z-10');
                     slides[currentIdx].classList.add('opacity-0', 'z-0');
-                    if(dots[currentIdx]) {
+                    if (dots[currentIdx]) {
                         dots[currentIdx].classList.remove('bg-orange-600', 'w-4');
                         dots[currentIdx].classList.add('bg-white/70');
                     }
@@ -398,7 +216,7 @@
 
                     slides[currentIdx].classList.remove('opacity-0', 'z-0');
                     slides[currentIdx].classList.add('opacity-100', 'z-10');
-                    if(dots[currentIdx]) {
+                    if (dots[currentIdx]) {
                         dots[currentIdx].classList.remove('bg-white/70');
                         dots[currentIdx].classList.add('bg-orange-600', 'w-4');
                     }
@@ -406,56 +224,91 @@
             }
         }
 
-       async function fetchBannerAds() {
-    try {
-        // بنسحب البانرات الخاصة بالصفحة الرئيسية فقط عشان ميتداخلش مع الأقسام
-        const { data: banners, error } = await db
-            .from('featured_companies')
-            .select('*')
-            .or('page_target.eq.index.html,page_target.eq.home');
+        // جلب البانرات من Supabase
+        async function fetchBanners() {
+            try {
+                const { data: banners, error } = await db.from('featured_companies').select('*');
+                if (error || !banners) return;
 
-        if (error || !banners) return;
-                // البانرات العلوية (فوق الأقسام)
-                const topBanners = banners.filter(b => b.position === 'above');
-                let allTopMedia = [];
-                topBanners.forEach(banner => {
-                    if (banner.images && banner.images.length > 0) {
-                        banner.images.forEach(imgUrl => {
-                            allTopMedia.push({ url: imgUrl, title: banner.title });
+                let topMedia = [];
+                let middleMedia = [];
+
+                banners.forEach(b => {
+                    if (b.images && b.images.length > 0) {
+                        b.images.forEach(img => {
+                            if (b.position === 'above') topMedia.push({ url: img, title: b.title });
+                            else middleMedia.push({ url: img, title: b.title });
                         });
                     }
                 });
-                setupSlider('topBannerAds', allTopMedia);
 
-                // البانرات السفلية (تحت الأقسام - أصبحت متحركة Slider أيضاً)
-                const bottomBanners = banners.filter(b => b.position === 'below');
-                let allBottomMedia = [];
-                bottomBanners.forEach(banner => {
-                    if (banner.images && banner.images.length > 0) {
-                        banner.images.forEach(imgUrl => {
-                            allBottomMedia.push({ url: imgUrl, title: banner.title });
-                        });
-                    }
-                });
-                setupSlider('bottomBannerAds', allBottomMedia);
-
+                if (topMedia.length > 0) setupSlider('topBannerAds', topMedia);
+                if (middleMedia.length > 0) setupSlider('middleBannerAds', middleMedia);
             } catch (e) {
-                console.log('خطأ في جلب البانرات:', e);
+                console.log('خطأ في البانرات:', e);
             }
         }
 
+        // جلب الأقسام
+        async function fetchCategories() {
+            const container = document.getElementById('categories-container');
+            try {
+                const { data: categories, error } = await db.from('categories').select('*').limit(8);
+                if (error) throw error;
+                if (!categories || categories.length === 0) {
+                    container.innerHTML = '<div class="col-span-full text-center py-4 text-gray-400 text-xs">لا توجد أقسام مضافة.</div>';
+                    return;
+                }
+                container.innerHTML = '';
+                categories.forEach(cat => {
+                    const icon = cat.image_url ? cat.image_url : 'logo192.png';
+                    container.innerHTML += `
+                        <a href="category.html?id=${cat.id}" class="bg-white border border-gray-100 rounded-2xl p-2.5 flex flex-col items-center justify-center text-center shadow-sm hover:border-orange-500 transition-all group">
+                            <div class="w-14 h-14 bg-orange-50 rounded-xl flex items-center justify-center mb-2 overflow-hidden border border-orange-100 group-hover:scale-105 transition-transform">
+                                <img src="${icon}" alt="${cat.name}" class="w-full h-full object-cover">
+                            </div>
+                            <h3 class="font-bold text-gray-700 text-xs group-hover:text-orange-600 truncate w-full">${cat.name}</h3>
+                        </a>
+                    `;
+                });
+            } catch (err) {
+                container.innerHTML = '<div class="col-span-full text-center py-4 text-red-400 text-xs">تعذر تحميل الأقسام</div>';
+            }
+        }
+
+        // جلب أحدث الإعلانات
+        async function fetchAds() {
+            const container = document.getElementById('ads-container');
+            try {
+                const { data: ads, error } = await db.from('ads').select('*').order('created_at', { ascending: false }).limit(12);
+                if (error) throw error;
+                if (!ads || ads.length === 0) {
+                    container.innerHTML = '<div class="col-span-full text-center py-12 text-gray-400 text-sm">لا توجد إعلانات مضافة حالياً.</div>';
+                    return;
+                }
+                container.innerHTML = '';
+                ads.forEach(ad => {
+                    const img = (ad.images && ad.images.length > 0) ? ad.images[0] : 'logo192.png';
+                    container.innerHTML += `
+                        <a href="ad-details.html?id=${ad.id}" class="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col">
+                            <div class="w-full h-48 bg-gray-100 overflow-hidden relative">
+                                <img src="${img}" alt="${ad.title}" class="w-full h-full object-cover">
+                            </div>
+                            <div class="p-4 flex flex-col justify-between flex-1">
+                                <h3 class="font-bold text-gray-800 text-sm mb-2 line-clamp-1">${ad.title}</h3>
+                                <div class="text-orange-600 font-extrabold text-sm">${ad.price ? ad.price + ' ج.م' : ''}</div>
+                            </div>
+                        </a>
+                    `;
+                });
+            } catch (err) {
+                container.innerHTML = '<div class="col-span-full text-center py-12 text-red-400 text-sm">تعذر تحميل الإعلانات</div>';
+            }
+        }
+
+        fetchBanners();
         fetchCategories();
         fetchAds();
-        fetchBannerAds();
-        // إظهار نافذة التثبيت تلقائياً وتحديث الكاش فوراً عند فتح الصفحة أو عمل تحديث
-    window.addEventListener('DOMContentLoaded', () => {
-        setTimeout(() => {
-            const installModal = document.getElementById('pwa-guide-modal');
-            if (installModal) {
-                installModal.classList.remove('hidden');
-            }
-        }, 800);
-    });
     </script>
-  </body>
+</body>
 </html>
