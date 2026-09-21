@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>تفاصيل القسم - متجر البيت</title>
+    <title>تصفح الإعلانات - متجر البيت</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -32,13 +32,13 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
                 </button>
-                <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="flex items-center">
+                <a href="index.html" class="flex items-center">
                     <img src="logo192.png" alt="متجر البيت" class="w-12 h-12 object-contain rounded-xl shadow-sm border border-gray-100 bg-white p-1">
                 </a>
             </div>
 
             <div class="text-center flex-1 mx-2">
-                <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="block">
+                <a href="index.html" class="block">
                     <h1 class="text-lg md:text-2xl font-black text-orange-600 leading-tight">متجر البيت</h1>
                     <p class="text-[11px] md:text-xs text-gray-500 font-medium">الأفضل دائماً</p>
                 </a>
@@ -72,48 +72,47 @@
                     <a href="index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">الرئيسية</a>
                     <a href="sections.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">الأقسام</a>
                     <a href="add-ad.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">أضف إعلانك الجديد</a>
-                    
-                    <button id="menuInstallBtn" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition-colors text-right">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                        </svg>
-                        <span>تثبيت التطبيق على جهازك</span>
-                    </button>
-
-                    <div class="pt-2 pb-1 text-xs font-bold text-gray-400 px-3">سياسات المتجر</div>
-                    <a href="privacy.html" class="block px-3 py-2 rounded-xl text-xs font-medium text-gray-600 hover:bg-gray-100">سياسة الاستخدام والخصوصية</a>
-                    <a href="terms.html" class="block px-3 py-2 rounded-xl text-xs font-medium text-gray-600 hover:bg-gray-100">الشروط والأحكام</a>
                 </nav>
-            </div>
-            <div class="text-center text-[11px] text-gray-400 pt-4 border-t">
-                جميع الحقوق محفوظة &copy; متجر البيت 2026
             </div>
         </div>
     </div>
 
-    <!-- المحتوى الديناميكي للقسم -->
+    <!-- محتوى الإعلانات -->
     <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
-        <div class="flex items-center justify-between border-b pb-4">
+        
+        <!-- عنوان القسم -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b pb-4 gap-4">
             <div>
                 <h2 id="section-title" class="font-black text-gray-800 text-xl md:text-2xl">جاري تحميل القسم...</h2>
-                <p id="section-subtitle" class="text-xs text-gray-400 mt-1">عرض الإعلانات التابعة لهذا القسم أوتوماتيكياً</p>
+                <p id="section-subtitle" class="text-xs text-gray-400 mt-1">اختر التصفية المناسبة (جديد أو مستعمل)</p>
             </div>
-            <span id="ads-count" class="text-xs font-bold text-orange-600 bg-orange-50 px-3 py-1.5 rounded-full border border-orange-100">...</span>
+            
+            <!-- أزرار التبديل بين (الكل / جديد / مستعمل) -->
+            <div class="flex items-center bg-white p-1 rounded-2xl border border-gray-200 shadow-sm self-start sm:self-auto">
+                <button onclick="filterAds('all')" id="btn-all" class="px-4 py-1.5 rounded-xl text-xs font-bold transition-all bg-orange-600 text-white shadow-sm">الكل</button>
+                <button onclick="filterAds('جديد')" id="btn-new" class="px-4 py-1.5 rounded-xl text-xs font-bold transition-all text-gray-600 hover:text-orange-600">جديد</button>
+                <button onclick="filterAds('مستعمل')" id="btn-used" class="px-4 py-1.5 rounded-xl text-xs font-bold transition-all text-gray-600 hover:text-orange-600">مستعمل</button>
+            </div>
+        </div>
+
+        <!-- عدد النتائج -->
+        <div class="flex items-center justify-between text-xs text-gray-500 font-bold px-1">
+            <span id="ads-count">جاري العد...</span>
         </div>
 
         <!-- شبكة عرض الإعلانات -->
-        <div id="ads-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4">
-            <div class="col-span-full text-center py-16 text-gray-400 text-sm">جاري جلب الإعلانات من قاعدة البيانات...</div>
+        <div id="ads-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            <div class="col-span-full text-center py-16 text-gray-400 text-sm">جاري جلب الإعلانات...</div>
         </div>
     </main>
 
-    <!-- البرمجة والربط بـ Supabase -->
+    <!-- البرمجة والربط -->
     <script>
         const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
         const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // تشغيل القائمة الجانبية
+        // القائمة الجانبية
         const openMenuBtn = document.getElementById('open-menu-btn');
         const closeMenuBtn = document.getElementById('close-menu-btn');
         const sideMenu = document.getElementById('side-menu');
@@ -124,123 +123,123 @@
             sideMenu.classList.remove('hidden');
             setTimeout(() => { menuContent.classList.remove('translate-x-full'); }, 10);
         }
-
         function closeMenu() {
             menuContent.classList.add('translate-x-full');
             setTimeout(() => { sideMenu.classList.add('hidden'); }, 300);
         }
-
         if (openMenuBtn) openMenuBtn.addEventListener('click', openMenu);
         if (closeMenuBtn) closeMenuBtn.addEventListener('click', closeMenu);
         if (menuOverlay) menuOverlay.addEventListener('click', closeMenu);
 
-        let deferredPrompt = null;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-        });
-
-        const menuInstallBtn = document.getElementById('menuInstallBtn');
-        if (menuInstallBtn) {
-            menuInstallBtn.addEventListener('click', async () => {
-                closeMenu();
-                if (deferredPrompt) {
-                    deferredPrompt.prompt();
-                    const { outcome } = await deferredPrompt.userChoice;
-                    deferredPrompt = null;
-                }
-            });
-        }
-
-        // قراءة الـ ID أو الاسم من رابط الـ URL
         const urlParams = new URLSearchParams(window.location.search);
-        const sectionId = urlParams.get('id');
-        const sectionName = urlParams.get('cat');
+        const categoryName = urlParams.get('cat'); // اسم القسم الفرعي (مثل: غسالات)
 
-        async function loadSectionDataAndAds() {
+        let allAdsData = []; // لحفظ الإعلانات وجلبتها مرة واحدة للفلترة السريعة
+
+        async function fetchAds() {
             const titleEl = document.getElementById('section-title');
-            const subtitleEl = document.getElementById('section-subtitle');
-            const countEl = document.getElementById('ads-count');
             const container = document.getElementById('ads-container');
+            const countEl = document.getElementById('ads-count');
+
+            if (!categoryName) {
+                titleEl.innerText = "القسم غير معروف";
+                container.innerHTML = '<div class="col-span-full text-center py-16 text-gray-400 text-sm">عذراً، لم يتم تحديد القسم المطلوب.</div>';
+                return;
+            }
+
+            titleEl.innerText = `إعلانات: ${categoryName}`;
 
             try {
-                let currentName = sectionName;
-
-                if (sectionId) {
-                    const { data: catData } = await db
-                        .from('categories')
-                        .select('name')
-                        .eq('id', sectionId)
-                        .single();
-                    
-                    if (catData) {
-                        currentName = catData.name;
-                    }
-                }
-
-                if (!currentName) {
-                    titleEl.innerText = "القسم غير موجود";
-                    countEl.innerText = "0 إعلان";
-                    container.innerHTML = '<div class="col-span-full text-center py-16 text-gray-400 text-sm">عذراً، لم يتم تحديد القسم المطلوب.</div>';
-                    return;
-                }
-
-                titleEl.innerText = `إعلانات قسم: ${currentName}`;
-                subtitleEl.innerText = `تصفح أحدث الإعلانات المضافة في قسم ${currentName}`;
-
-                const { data: ads, error: adsError } = await db
+                // جلب كل الإعلانات التابعة لهذا القسم
+                const { data: ads, error } = await db
                     .from('ads')
                     .select('*')
-                    .eq('category', currentName)
+                    .eq('category', categoryName) // تأكد أن حقل category في جدول الads يطابق اسم القسم الفرعي
                     .order('created_at', { ascending: false });
 
-                if (adsError) throw adsError;
+                if (error) throw error;
 
-                if (!ads || ads.length === 0) {
-                    countEl.innerText = '0 إعلان';
-                    container.innerHTML = `
-                        <div class="col-span-full text-center py-16 bg-white rounded-2xl border border-gray-100 shadow-sm">
-                            <p class="text-gray-400 text-sm font-medium">لا توجد إعلانات مضافة في هذا القسم حالياً.</p>
-                            <a href="add-ad.html" class="inline-block mt-4 bg-orange-600 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-sm">أضف أول إعلان هنا</a>
-                        </div>
-                    `;
-                    return;
-                }
-
-                countEl.innerText = `${ads.length} إعلان متاحة`;
-                container.innerHTML = '';
-
-                ads.forEach(ad => {
-                    const mainImage = (ad.images && ad.images.length > 0) ? ad.images[0] : 'logo192.png';
-                    const adCard = `
-                        <a href="ad-details.html?id=${ad.id}" class="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:border-orange-500 hover:shadow-md transition-all group flex flex-col">
-                            <div class="w-full h-40 bg-gray-100 overflow-hidden relative">
-                                <img src="${mainImage}" alt="${ad.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                            </div>
-                            <div class="p-3.5 flex flex-col flex-1 justify-between">
-                                <div>
-                                    <h3 class="font-bold text-gray-800 text-sm line-clamp-1 group-hover:text-orange-600 transition-colors">${ad.title}</h3>
-                                    <p class="text-orange-600 font-black text-base mt-1.5">${ad.price ? ad.price + ' جنيه' : 'السعر عند الاتصال'}</p>
-                                </div>
-                                <div class="flex items-center justify-between text-[11px] text-gray-400 mt-3 pt-2 border-t border-gray-50">
-                                    <span>${ad.governorate || 'مصر'}</span>
-                                    <span>${new Date(ad.created_at || Date.now()).toLocaleDateString('ar-EG')}</span>
-                                </div>
-                            </div>
-                        </a>
-                    `;
-                    container.innerHTML += adCard;
-                });
+                allAdsData = ads || [];
+                renderAds(allAdsData);
 
             } catch (err) {
-                console.error('خطأ في جلب بيانات القسم:', err.message);
-                titleEl.innerText = "خطأ في التحميل";
-                countEl.innerText = "خطأ";
+                console.error('خطأ في جلب الإعلانات:', err.message);
                 container.innerHTML = '<div class="col-span-full text-center py-16 text-red-400 text-sm">تعذر جلب الإعلانات، تحقق من الاتصال.</div>';
             }
         }
 
-        loadSectionDataAndAds();
+        // دالة عرض الإعلانات داخل الشبكة
+        function renderAds(adsArray) {
+            const container = document.getElementById('ads-container');
+            const countEl = document.getElementById('ads-count');
+
+            countEl.innerText = `تم العثور على ${adsArray.length} إعلان`;
+
+            if (adsArray.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-16 bg-white rounded-2xl border border-gray-100 shadow-sm">
+                        <p class="text-gray-400 text-sm font-medium">لا توجد إعلانات مطابقة لهذه الفئة حالياً.</p>
+                        <a href="add-ad.html" class="inline-block mt-4 bg-orange-600 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-sm">أضف أول إعلان هنا</a>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+            adsArray.forEach(ad => {
+                const mainImage = (ad.images && ad.images.length > 0) ? ad.images[0] : 'logo192.png';
+                // افترض أن حقل الحالة في الإعلان اسمه condition أو status ويحمل قيم (جديد / مستعمل)
+                const conditionBadge = ad.condition ? `<span class="absolute top-2 right-2 bg-black/60 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full">${ad.condition}</span>` : '';
+
+                const card = `
+                    <a href="ad-details.html?id=${ad.id}" class="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:border-orange-500 hover:shadow-md transition-all group flex flex-col relative">
+                        <div class="w-full h-40 bg-gray-100 overflow-hidden relative">
+                            <img src="${mainImage}" alt="${ad.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                            ${conditionBadge}
+                        </div>
+                        <div class="p-3.5 flex flex-col flex-1 justify-between">
+                            <div>
+                                <h3 class="font-bold text-gray-800 text-sm line-clamp-1 group-hover:text-orange-600 transition-colors">${ad.title}</h3>
+                                <p class="text-orange-600 font-black text-base mt-1.5">${ad.price ? ad.price + ' جنيه' : 'السعر عند الاتصال'}</p>
+                            </div>
+                            <div class="flex items-center justify-between text-[11px] text-gray-400 mt-3 pt-2 border-t border-gray-50">
+                                <span>${ad.governorate || 'مصر'}</span>
+                                <span>${new Date(ad.created_at || Date.now()).toLocaleDateString('ar-EG')}</span>
+                            </div>
+                        </div>
+                    </a>
+                `;
+                container.innerHTML += card;
+            });
+        }
+
+        // دالة الفلترة عند الضغط على أزرار (الكل / جديد / مستعمل)
+        function filterAds(type) {
+            const btnAll = document.getElementById('btn-all');
+            const btnNew = document.getElementById('btn-new');
+            const btnUsed = document.getElementById('btn-used');
+
+            // إعادة تعيين ألوان الأزرار
+            [btnAll, btnNew, btnUsed].forEach(btn => {
+                btn.className = "px-4 py-1.5 rounded-xl text-xs font-bold transition-all text-gray-600 hover:text-orange-600";
+            });
+
+            // تمييز الزر المختار
+            if (type === 'all') {
+                btnAll.className = "px-4 py-1.5 rounded-xl text-xs font-bold transition-all bg-orange-600 text-white shadow-sm";
+                renderAds(allAdsData);
+            } else if (type === 'جديد') {
+                btnNew.className = "px-4 py-1.5 rounded-xl text-xs font-bold transition-all bg-orange-600 text-white shadow-sm";
+                const filtered = allAdsData.filter(ad => ad.condition === 'جديد' || ad.condition === 'New');
+                renderAds(filtered);
+            } else if (type === 'مستعمل') {
+                btnUsed.className = "px-4 py-1.5 rounded-xl text-xs font-bold transition-all bg-orange-600 text-white shadow-sm";
+                const filtered = allAdsData.filter(ad => ad.condition === 'مستعمل' || ad.condition === 'Used');
+                renderAds(filtered);
+            }
+        }
+
+        fetchAds();
     </script>
 </body>
 </html>
