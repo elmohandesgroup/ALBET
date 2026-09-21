@@ -40,12 +40,12 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
- @keyframes marquee {
-        0% { transform: translateX(-50%); }
-        100% { transform: translateX(0); }
+@keyframes marquee {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
     }
     .animate-marquee {
-        animation: marquee 25s linear infinite;
+        animation: marquee 20s linear infinite;
         display: flex;
         width: max-content;
     }
@@ -250,7 +250,7 @@
         }
 
         // جلب الأقسام وتفعيل الحركة التلقائية المضمونة
-   async function fetchCategories() {
+  async function fetchCategories() {
             const container = document.getElementById('categories-container');
             if (!container) return;
 
@@ -278,8 +278,7 @@
                     });
                 };
 
-                // تكرار الأقسام 3 مرات لعمل شريط متصل
-                renderItems();
+                // تكرار مرتين بس عشان الـ -50% تظبط الماركيز صح
                 renderItems();
                 renderItems();
 
