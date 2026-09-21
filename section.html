@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>تفاصيل القسم - متجر البيت</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Google Fonts (Cairo) -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f8f9fa;
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 pb-20">
+
+    <!-- الهيدر الرئيسي -->
+    <header class="bg-white shadow-sm sticky top-0 z-50 px-4 py-3.5">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <button id="open-menu-btn" class="p-1.5 text-gray-700 hover:text-orange-600 transition-colors focus:outline-none" aria-label="فتح القائمة">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+                <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="flex items-center">
+                    <img src="logo192.png" alt="متجر البيت" class="w-12 h-12 object-contain rounded-xl shadow-sm border border-gray-100 bg-white p-1">
+                </a>
+            </div>
+
+            <div class="text-center flex-1 mx-2">
+                <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="block">
+                    <h1 class="text-lg md:text-2xl font-black text-orange-600 leading-tight">متجر البيت</h1>
+                    <p class="text-[11px] md:text-xs text-gray-500 font-medium">الأفضل دائماً</p>
+                </a>
+            </div>
+
+            <div class="flex items-center">
+                <a href="add-ad.html" class="bg-orange-600 hover:bg-orange-700 text-white px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition-all shadow-sm flex items-center gap-1.5 whitespace-nowrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    <span>أضف إعلانك</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- القائمة الجانبية (Drawer Menu) -->
+    <div id="side-menu" class="fixed inset-0 z-50 hidden">
+        <div id="menu-overlay" class="absolute inset-0 bg-black/50 transition-opacity"></div>
+        <div class="absolute right-0 top-0 bottom-0 w-80 bg-white shadow-2xl p-5 flex flex-col justify-between transform transition-transform duration-300 translate-x-full overflow-y-auto" id="menu-content">
+            <div>
+                <div class="flex items-center justify-between pb-4 border-b mb-4">
+                    <div class="flex items-center gap-2">
+                        <img src="logo192.png" alt="متجر البيت" class="w-10 h-10 object-contain">
+                        <span class="font-black text-orange-600 text-lg">متجر البيت</span>
+                    </div>
+                    <button id="close-menu-btn" class="text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
+                </div>
+                
+                <nav class="space-y-2">
+                    <a href="index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">الرئيسية</a>
+                    <a href="sections.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">الأقسام</a>
+                    <a href="add-ad.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">أضف إعلانك الجديد</a>
+                    
+                    <button id="menuInstallBtn" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition-colors text-right">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                        <span>تثبيت التطبيق على جهازك</span>
+                    </button>
+
+                    <div class="pt-2 pb-1 text-xs font-bold text-gray-400 px-3">سياسات المتجر</div>
+                    <a href="privacy.html" class="block px-3 py-2 rounded-xl text-xs font-medium text-gray-600 hover:bg-gray-100">سياسة الاستخدام والخصوصية</a>
+                    <a href="terms.html" class="block px-3 py-2 rounded-xl text-xs font-medium text-gray-600 hover:bg-gray-100">الشروط والأحكام</a>
+                </nav>
+            </div>
+            <div class="text-center text-[11px] text-gray-400 pt-4 border-t">
+                جميع الحقوق محفوظة &copy; متجر البيت 2026
+            </div>
+        </div>
+    </div>
+
+    <!-- المحتوى الديناميكي للقسم -->
+    <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
+        <div class="flex items-center justify-between border-b pb-4">
+            <div>
+                <h2 id="section-title" class="font-black text-gray-800 text-xl md:text-2xl">جاري تحميل القسم...</h2>
+                <p id="section-subtitle" class="text-xs text-gray-400 mt-1">عرض الإعلانات التابعة لهذا القسم أوتوماتيكياً</p>
+            </div>
+            <span id="ads-count" class="text-xs font-bold text-orange-600 bg-orange-50 px-3 py-1.5 rounded-full border border-orange-100">...</span>
+        </div>
+
+        <!-- شبكة عرض الإعلانات -->
+        <div id="ads-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4">
+            <div class="col-span-full text-center py-16 text-gray-400 text-sm">جاري جلب الإعلانات من قاعدة البيانات...</div>
+        </div>
+    </main>
+
+    <!-- البرمجة والربط بـ Supabase -->
+    <script>
+        const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
+        const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // تشغيل القائمة الجانبية
+        const openMenuBtn = document.getElementById('open-menu-btn');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
+        const sideMenu = document.getElementById('side-menu');
+        const menuOverlay = document.getElementById('menu-overlay');
+        const menuContent = document.getElementById('menu-content');
+
+        function openMenu() {
+            sideMenu.classList.remove('hidden');
+            setTimeout(() => { menuContent.classList.remove('translate-x-full'); }, 10);
+        }
+
+        function closeMenu() {
+            menuContent.classList.add('translate-x-full');
+            setTimeout(() => { sideMenu.classList.add('hidden'); }, 300);
+        }
+
+        if (openMenuBtn) openMenuBtn.addEventListener('click', openMenu);
+        if (closeMenuBtn) closeMenuBtn.addEventListener('click', closeMenu);
+        if (menuOverlay) menuOverlay.addEventListener('click', closeMenu);
+
+        let deferredPrompt = null;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+
+        const menuInstallBtn = document.getElementById('menuInstallBtn');
+        if (menuInstallBtn) {
+            menuInstallBtn.addEventListener('click', async () => {
+                closeMenu();
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    deferredPrompt = null;
+                }
+            });
+        }
+
+        // قراءة الـ ID أو الاسم من رابط الـ URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const sectionId = urlParams.get('id');
+        const sectionName = urlParams.get('cat');
+
+        async function loadSectionDataAndAds() {
+            const titleEl = document.getElementById('section-title');
+            const subtitleEl = document.getElementById('section-subtitle');
+            const countEl = document.getElementById('ads-count');
+            const container = document.getElementById('ads-container');
+
+            try {
+                let currentName = sectionName;
+
+                if (sectionId) {
+                    const { data: catData } = await db
+                        .from('categories')
+                        .select('name')
+                        .eq('id', sectionId)
+                        .single();
+                    
+                    if (catData) {
+                        currentName = catData.name;
+                    }
+                }
+
+                if (!currentName) {
+                    titleEl.innerText = "القسم غير موجود";
+                    countEl.innerText = "0 إعلان";
+                    container.innerHTML = '<div class="col-span-full text-center py-16 text-gray-400 text-sm">عذراً، لم يتم تحديد القسم المطلوب.</div>';
+                    return;
+                }
+
+                titleEl.innerText = `إعلانات قسم: ${currentName}`;
+                subtitleEl.innerText = `تصفح أحدث الإعلانات المضافة في قسم ${currentName}`;
+
+                const { data: ads, error: adsError } = await db
+                    .from('ads')
+                    .select('*')
+                    .eq('category', currentName)
+                    .order('created_at', { ascending: false });
+
+                if (adsError) throw adsError;
+
+                if (!ads || ads.length === 0) {
+                    countEl.innerText = '0 إعلان';
+                    container.innerHTML = `
+                        <div class="col-span-full text-center py-16 bg-white rounded-2xl border border-gray-100 shadow-sm">
+                            <p class="text-gray-400 text-sm font-medium">لا توجد إعلانات مضافة في هذا القسم حالياً.</p>
+                            <a href="add-ad.html" class="inline-block mt-4 bg-orange-600 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-sm">أضف أول إعلان هنا</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                countEl.innerText = `${ads.length} إعلان متاحة`;
+                container.innerHTML = '';
+
+                ads.forEach(ad => {
+                    const mainImage = (ad.images && ad.images.length > 0) ? ad.images[0] : 'logo192.png';
+                    const adCard = `
+                        <a href="ad-details.html?id=${ad.id}" class="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:border-orange-500 hover:shadow-md transition-all group flex flex-col">
+                            <div class="w-full h-40 bg-gray-100 overflow-hidden relative">
+                                <img src="${mainImage}" alt="${ad.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                            </div>
+                            <div class="p-3.5 flex flex-col flex-1 justify-between">
+                                <div>
+                                    <h3 class="font-bold text-gray-800 text-sm line-clamp-1 group-hover:text-orange-600 transition-colors">${ad.title}</h3>
+                                    <p class="text-orange-600 font-black text-base mt-1.5">${ad.price ? ad.price + ' جنيه' : 'السعر عند الاتصال'}</p>
+                                </div>
+                                <div class="flex items-center justify-between text-[11px] text-gray-400 mt-3 pt-2 border-t border-gray-50">
+                                    <span>${ad.governorate || 'مصر'}</span>
+                                    <span>${new Date(ad.created_at || Date.now()).toLocaleDateString('ar-EG')}</span>
+                                </div>
+                            </div>
+                        </a>
+                    `;
+                    container.innerHTML += adCard;
+                });
+
+            } catch (err) {
+                console.error('خطأ في جلب بيانات القسم:', err.message);
+                titleEl.innerText = "خطأ في التحميل";
+                countEl.innerText = "خطأ";
+                container.innerHTML = '<div class="col-span-full text-center py-16 text-red-400 text-sm">تعذر جلب الإعلانات، تحقق من الاتصال.</div>';
+            }
+        }
+
+        loadSectionDataAndAds();
+    </script>
+</body>
+</html>
