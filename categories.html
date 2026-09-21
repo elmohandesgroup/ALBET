@@ -23,71 +23,73 @@
 </head>
 <body class="bg-gray-50 text-gray-800 pb-20">
 
-    <!-- الهيدر الرئيسي المطابق تماماً للرئيسية (اللوجو والبرجر يمين، وأضف إعلانك شمال) -->
-    <header class="bg-white shadow-sm sticky top-0 z-50 px-4 py-3">
+    <!-- الهيدر الرئيسي المطابق تماماً لصفحة index -->
+    <header class="bg-white shadow-sm sticky top-0 z-50 px-4 py-3.5">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
-            
-            <!-- زر أضف إعلانك على الشمال -->
-            <div class="flex items-center">
-                <a href="add-ad.html" class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-bold shadow-sm transition-all flex items-center gap-1.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
-                    </svg>
-                    <span>أضف إعلانك</span>
-                </a>
-            </div>
-
-            <!-- اللوجو، اسم المتجر، وزر القائمة على اليمين -->
             <div class="flex items-center gap-3">
-                <a href="/" class="text-right">
-                    <h1 class="text-base sm:text-lg font-black text-orange-600 tracking-tight leading-none">متجر البيت</h1>
-                    <p class="text-[10px] text-gray-400 font-semibold mt-0.5">الأفضل دائماً</p>
-                </a>
-                <a href="/" class="w-10 h-10 rounded-xl border border-gray-100 bg-white p-1 shadow-sm flex items-center justify-center">
-                    <img src="logo192.png" alt="متجر البيت" class="w-full h-full object-contain">
-                </a>
-                <button id="menu-btn" class="p-2 text-gray-700 hover:text-orange-600 transition-colors focus:outline-none" aria-label="القائمة">
+                <button id="open-menu-btn" class="p-1.5 text-gray-700 hover:text-orange-600 transition-colors focus:outline-none" aria-label="فتح القائمة">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
                 </button>
+                <a href="/" class="flex items-center">
+                    <img src="logo192.png" alt="متجر البيت" class="w-12 h-12 object-contain rounded-xl shadow-sm border border-gray-100 bg-white p-1">
+                </a>
             </div>
 
+            <div class="text-center flex-1 mx-2">
+                <a href="/" class="block">
+                    <h1 class="text-lg md:text-2xl font-black text-orange-600 leading-tight">متجر البيت</h1>
+                    <p class="text-[11px] md:text-xs text-gray-500 font-medium">الأفضل دائماً</p>
+                </a>
+            </div>
+
+            <div class="flex items-center">
+                <a href="add-ad.html" class="bg-orange-600 hover:bg-orange-700 text-white px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition-all shadow-sm flex items-center gap-1.5 whitespace-nowrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    <span>أضف إعلانك</span>
+                </a>
+            </div>
         </div>
     </header>
 
-    <!-- القائمة الجانبية المنسدلة (Sidebar Menu) -->
-    <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-50 hidden transition-opacity opacity-0"></div>
-    <aside id="sidebar-menu" class="fixed top-0 right-0 w-80 max-w-[85%] h-full bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
-        <div class="p-4 border-b border-gray-100 flex items-center justify-between bg-orange-50/30">
-            <div class="flex items-center gap-2">
-                <img src="logo192.png" alt="متجر البيت" class="w-8 h-8 rounded-lg object-contain">
-                <span class="font-black text-orange-600 text-base">متجر البيت</span>
+    <!-- القائمة الجانبية (Drawer Menu) المطابق لـ index -->
+    <div id="side-menu" class="fixed inset-0 z-50 hidden">
+        <div id="menu-overlay" class="absolute inset-0 bg-black/50 transition-opacity"></div>
+        <div class="absolute right-0 top-0 bottom-0 w-80 bg-white shadow-2xl p-5 flex flex-col justify-between transform transition-transform duration-300 translate-x-full overflow-y-auto" id="menu-content">
+            <div>
+                <div class="flex items-center justify-between pb-4 border-b mb-4">
+                    <div class="flex items-center gap-2">
+                        <img src="logo192.png" alt="متجر البيت" class="w-10 h-10 object-contain">
+                        <span class="font-black text-orange-600 text-lg">متجر البيت</span>
+                    </div>
+                    <button id="close-menu-btn" class="text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
+                </div>
+                
+                <nav class="space-y-2">
+                    <a href="/" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">الرئيسية</a>
+                    <a href="categories.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-orange-600 bg-orange-50 transition-colors">الأقسام</a>
+                    <a href="add-ad.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">أضف إعلانك الجديد</a>
+                    
+                    <button id="menuInstallBtn" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition-colors text-right">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                        <span>تثبيت التطبيق على جهازك</span>
+                    </button>
+
+                    <div class="pt-2 pb-1 text-xs font-bold text-gray-400 px-3">سياسات المتجر</div>
+                    <a href="privacy.html" class="block px-3 py-2 rounded-xl text-xs font-medium text-gray-600 hover:bg-gray-100">سياسة الاستخدام والخصوصية</a>
+                    <a href="terms.html" class="block px-3 py-2 rounded-xl text-xs font-medium text-gray-600 hover:bg-gray-100">الشروط والأحكام</a>
+                </nav>
             </div>
-            <button id="close-sidebar" class="p-1.5 text-gray-400 hover:text-gray-700 rounded-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
+            <div class="text-center text-[11px] text-gray-400 pt-4 border-t">
+                جميع الحقوق محفوظة &copy; متجر البيت 2026
+            </div>
         </div>
-        <div class="flex-1 overflow-y-auto p-4 space-y-3">
-            <a href="/" class="flex items-center gap-3 p-3 rounded-xl hover:bg-orange-50 text-gray-700 hover:text-orange-600 font-semibold transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-                <span>الرئيسية</span>
-            </a>
-            <a href="categories.html" class="flex items-center gap-3 p-3 rounded-xl bg-orange-50 text-orange-600 font-semibold transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-16zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-16z"/></svg>
-                <span>جميع الأقسام</span>
-            </a>
-            <a href="add-ad.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-orange-50 text-gray-700 hover:text-orange-600 font-semibold transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                <span>أضف إعلانك الجديد</span>
-            </a>
-        </div>
-        <div class="p-4 border-t border-gray-100 text-center text-xs text-gray-400">
-            جميع الحقوق محفوظة &copy; متجر البيت 2026
-        </div>
-    </aside>
+    </div>
 
     <!-- محتوى الأقسام والبانرات -->
     <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
@@ -111,34 +113,44 @@
         const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
         const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // تشغيل القائمة الجانبية (Sidebar Toggle)
-        const menuBtn = document.getElementById('menu-btn');
-        const closeSidebar = document.getElementById('close-sidebar');
-        const sidebarMenu = document.getElementById('sidebar-menu');
-        const sidebarOverlay = document.getElementById('sidebar-overlay');
+        // تشغيل القائمة الجانبية (Drawer Menu) المطابقة لـ index
+        const openMenuBtn = document.getElementById('open-menu-btn');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
+        const sideMenu = document.getElementById('side-menu');
+        const menuOverlay = document.getElementById('menu-overlay');
+        const menuContent = document.getElementById('menu-content');
 
-        function toggleSidebar() {
-            const isOpen = sidebarMenu.classList.contains('translate-x-0');
-            if (isOpen) {
-                sidebarMenu.classList.remove('translate-x-0');
-                sidebarMenu.classList.add('translate-x-full');
-                sidebarOverlay.classList.remove('opacity-100');
-                sidebarOverlay.classList.add('opacity-0');
-                setTimeout(() => sidebarOverlay.classList.add('hidden'), 300);
-            } else {
-                sidebarOverlay.classList.remove('hidden');
-                setTimeout(() => {
-                    sidebarMenu.classList.remove('translate-x-full');
-                    sidebarMenu.classList.add('translate-x-0');
-                    sidebarOverlay.classList.remove('opacity-0');
-                    sidebarOverlay.classList.add('opacity-100');
-                }, 10);
-            }
+        function openMenu() {
+            sideMenu.classList.remove('hidden');
+            setTimeout(() => { menuContent.classList.remove('translate-x-full'); }, 10);
         }
 
-        if (menuBtn) menuBtn.addEventListener('click', toggleSidebar);
-        if (closeSidebar) closeSidebar.addEventListener('click', toggleSidebar);
-        if (sidebarOverlay) sidebarOverlay.addEventListener('click', toggleSidebar);
+        function closeMenu() {
+            menuContent.classList.add('translate-x-full');
+            setTimeout(() => { sideMenu.classList.add('hidden'); }, 300);
+        }
+
+        if (openMenuBtn) openMenuBtn.addEventListener('click', openMenu);
+        if (closeMenuBtn) closeMenuBtn.addEventListener('click', closeMenu);
+        if (menuOverlay) menuOverlay.addEventListener('click', closeMenu);
+
+        let deferredPrompt = null;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+
+        const menuInstallBtn = document.getElementById('menuInstallBtn');
+        if (menuInstallBtn) {
+            menuInstallBtn.addEventListener('click', async () => {
+                closeMenu();
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    deferredPrompt = null;
+                }
+            });
+        }
 
         // دالة الـ Slider للبانرات
         function setupSlider(containerId, mediaArray) {
@@ -195,7 +207,7 @@
             }
         }
 
-        // جلب البانرات المخصصة لصفحة الأقسام من قاعدة البيانات
+        // جلب البانرات الخاصة بصفحة الأقسام من جدول featured_companies
         async function fetchBannerAds() {
             try {
                 const { data: banners, error } = await db
@@ -221,7 +233,7 @@
             }
         }
 
-        // جلب الأقسام
+        // جلب الأقسام وعرضها في شبكة
         async function fetchAllCategories() {
             const container = document.getElementById('all-categories-container');
             const countLabel = document.getElementById('categories-count');
