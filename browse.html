@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>تصفح الأقسام والمنتجات - متجر البيت</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Google Fonts (Cairo) -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f8f9fa;
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* إخفاء شريط التمرير للأفقية في الموبايل لكي يبدو احترافياً */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 pb-20">
+
+    <!-- الهيدر الرئيسي -->
+    <header class="bg-white shadow-sm sticky top-0 z-50 px-4 py-3.5">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <a href="index.html" class="flex items-center">
+                <img src="logo192.png" alt="متجر البيت" class="w-12 h-12 object-contain rounded-xl shadow-sm border border-gray-100 bg-white p-1">
+            </a>
+            <div class="text-center flex-1 mx-2">
+                <a href="index.html" class="block">
+                    <h1 class="text-lg md:text-2xl font-black text-orange-600 leading-tight">متجر البيت</h1>
+                    <p class="text-[11px] md:text-xs text-gray-500 font-medium">الأفضل دائماً</p>
+                </a>
+            </div>
+            <a href="add-ad.html" class="bg-orange-600 hover:bg-orange-700 text-white px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition-all shadow-sm flex items-center gap-1.5 whitespace-nowrap">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                <span>أضف إعلانك</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- 1. شريط الأقسام الفرعية المتحرك (زي الكروكي الأول والثاني) -->
+    <nav class="bg-white border-b sticky top-[68px] z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 py-3">
+            <div id="subcategories-bar" class="flex items-center gap-3 overflow-x-auto no-scrollbar pb-1">
+                <span class="text-xs text-gray-400 whitespace-nowrap">جاري تحميل الأقسام...</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- محتوى الصفحة -->
+    <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
+        
+        <!-- 2. البنر الدعائي (زي الكروكي التالت والرابع) -->
+        <div id="banner-container" class="rounded-2xl overflow-hidden shadow-sm border border-gray-100 bg-gradient-to-r from-orange-500 to-amber-500 text-white p-6 flex items-center justify-between">
+            <div>
+                <span class="bg-white/20 text-[10px] px-2.5 py-1 rounded-full font-bold">مساحة إعلانية مميزة</span>
+                <h3 id="banner-title" class="text-lg font-black mt-2">أعلن عن منتجاتك هنا الآن!</h3>
+                <p class="text-xs text-white/90 mt-1">تواصل مع آلاف المشترين مباشرة.</p>
+            </div>
+            <a href="add-ad.html" class="bg-white text-orange-600 px-4 py-2 rounded-xl text-xs font-bold shadow-sm whitespace-nowrap hover:bg-orange-50 transition-colors">أضف إعلانك</a>
+        </div>
+
+        <!-- 3. شريط تبويبات الفلترة (جديد / مستعمل) (زي الكروكي التالت والرابع) -->
+        <div class="bg-white p-1.5 rounded-2xl border border-gray-100 shadow-sm flex items-center max-w-xs mx-auto">
+            <button onclick="setConditionFilter('مستعمل')" id="btn-used" class="flex-1 py-2 text-xs font-bold rounded-xl text-gray-500 hover:text-gray-800 transition-all">مستعمل (Used)</button>
+            <button onclick="setConditionFilter('جديد')" id="btn-new" class="flex-1 py-2 text-xs font-bold rounded-xl bg-orange-600 text-white shadow-sm transition-all">جديد (New)</button>
+        </div>
+
+        <!-- 4. شبكة عرض الإعلانات / المنتجات -->
+        <section>
+            <div class="flex items-center justify-between mb-4">
+                <h2 id="current-section-title" class="font-black text-gray-800 text-base md:text-lg">الإعلانات المتاحة</h2>
+                <span id="ads-count" class="text-xs text-gray-400 font-bold">0 إعلان</span>
+            </div>
+
+            <div id="ads-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                <div class="col-span-full text-center py-12 text-gray-400 text-sm">اختر قسماً فرعياً لعرض الإعلانات...</div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- الربط والبرمجة بـ Supabase -->
+    <script>
+        const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
+        const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // جلب الباراميترز من الـ URL (القسم الرئيسي والقسم الفرعي الحالي)
+        const urlParams = new URLSearchParams(window.location.search);
+        let parentCat = urlParams.get('cat') || 'أجهزة منزلية';
+        let currentSubCat = urlParams.get('sub') || '';
+        let currentCondition = 'جديد'; // الافتراضي
+
+        async function initPage() {
+            await loadSubcategoriesBar();
+            loadAds();
+        }
+
+        // تحميل شريط الأقسام الفرعية أفقياً
+        async function loadSubcategoriesBar() {
+            const bar = document.getElementById('subcategories-bar');
+            try {
+                const { data: subs, error } = await db
+                    .from('categories')
+                    .select('*')
+                    .eq('parent_name', parentCat);
+
+                if (error) throw error;
+
+                if (subs && subs.length > 0) {
+                    // لو مفيش قسم فرعي محدد، نختار أول واحد تلقائياً
+                    if (!currentSubCat) currentSubCat = subs[0].name;
+
+                    bar.innerHTML = '';
+                    subs.forEach(sub => {
+                        const isActive = sub.name === currentSubCat;
+                        const activeClass = isActive 
+                            ? 'bg-orange-600 text-white shadow-sm border-orange-600' 
+                            : 'bg-gray-50 text-gray-700 hover:bg-orange-50 border-gray-100';
+
+                        bar.innerHTML += `
+                            <button onclick="selectSubCategory('${sub.name}')" class="px-4 py-2 rounded-xl text-xs font-bold border transition-all whitespace-nowrap flex items-center gap-2 ${activeClass}">
+                                <span>${sub.name}</span>
+                            </button>
+                        `;
+                    });
+                } else {
+                    bar.innerHTML = '<span class="text-xs text-gray-400">لا توجد أقسام فرعية مضافة هنا.</span>';
+                }
+            } catch (err) {
+                console.error('خطأ في جلب الأقسام الفرعية:', err.message);
+            }
+        }
+
+        // عند الضغط على قسم فرعي من الشريط
+        function selectSubCategory(subName) {
+            currentSubCat = subName;
+            // تحديث رابط الURL بدون إعادة تحميل الصفحة
+            const newUrl = `browse.html?cat=${encodeURIComponent(parentCat)}&sub=${encodeURIComponent(subName)}`;
+            window.history.pushState({path: newUrl}, '', newUrl);
+            
+            loadSubcategoriesBar();
+            loadAds();
+        }
+
+        // تبديل حالة الفلتر (جديد / مستعمل)
+        function setConditionFilter(condition) {
+            currentCondition = condition;
+            
+            const btnNew = document.getElementById('btn-new');
+            const btnUsed = document.getElementById('btn-used');
+
+            if (condition === 'جديد') {
+                btnNew.className = "flex-1 py-2 text-xs font-bold rounded-xl bg-orange-600 text-white shadow-sm transition-all";
+                btnUsed.className = "flex-1 py-2 text-xs font-bold rounded-xl text-gray-500 hover:text-gray-800 transition-all";
+            } else {
+                btnUsed.className = "flex-1 py-2 text-xs font-bold rounded-xl bg-orange-600 text-white shadow-sm transition-all";
+                btnNew.className = "flex-1 py-2 text-xs font-bold rounded-xl text-gray-500 hover:text-gray-800 transition-all";
+            }
+
+            loadAds();
+        }
+
+        // جلب الإعلانات بناءً على القسم الفرعي وحالة المنتج (جديد/مستعمل)
+        async function loadAds() {
+            const grid = document.getElementById('ads-grid');
+            const titleEl = document.getElementById('current-section-title');
+            const countEl = document.getElementById('ads-count');
+
+            titleEl.innerText = currentSubCat ? `${currentSubCat} (${currentCondition})` : 'الإعلانات';
+            grid.innerHTML = '<div class="col-span-full text-center py-12 text-gray-400 text-xs">جاري جلب الإعلانات...</div>';
+
+            try {
+                let query = db.from('ads').select('*').eq('condition', currentCondition);
+                if (currentSubCat) {
+                    query = query.eq('sub_category', currentSubCat);
+                }
+
+                const { data: ads, error } = await query;
+
+                if (error) throw error;
+
+                if (ads && ads.length > 0) {
+                    countEl.innerText = `${ads.length} إعلان`;
+                    grid.innerHTML = '';
+                    ads.forEach(ad => {
+                        const img = ad.image_url ? ad.image_url : 'logo192.png';
+                        grid.innerHTML += `
+                            <div class="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+                                <div>
+                                    <div class="w-full h-36 bg-gray-100 overflow-hidden relative">
+                                        <img src="${img}" alt="${ad.title}" class="w-full h-full object-cover">
+                                        <span class="absolute top-2 right-2 bg-black/60 backdrop-blur-md text-white text-[10px] px-2 py-0.5 rounded-full font-bold">${ad.condition || 'جديد'}</span>
+                                    </div>
+                                    <div class="p-3">
+                                        <h4 class="font-bold text-gray-800 text-xs truncate">${ad.title}</h4>
+                                        <p class="text-orange-600 font-black text-sm mt-1">${ad.price ? ad.price + ' جنيه' : 'السعر عند الاتصال'}</p>
+                                    </div>
+                                </div>
+                                <div class="p-3 pt-0">
+                                    <a href="ad-details.html?id=${ad.id}" class="w-full block text-center bg-orange-50 hover:bg-orange-100 text-orange-600 text-xs font-bold py-2 rounded-xl transition-colors">تفاصيل الإعلان</a>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    countEl.innerText = `0 إعلان`;
+                    grid.innerHTML = `
+                        <div class="col-span-full text-center py-12 bg-white rounded-2xl border border-gray-100 shadow-sm">
+                            <p class="text-gray-400 text-xs font-medium">لا توجد إعلانات مطابقة حالياً في قسم (${currentSubCat}) بحالة (${currentCondition}).</p>
+                        </div>
+                    `;
+                }
+
+            } catch (err) {
+                console.error('خطأ في جلب الإعلانات:', err.message);
+                grid.innerHTML = '<div class="col-span-full text-center py-12 text-red-400 text-xs">حدث خطأ أثناء تحميل الإعلانات.</div>';
+            }
+        }
+
+        initPage();
+    </script>
+</body>
+</html>
