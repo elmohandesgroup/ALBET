@@ -448,35 +448,5 @@
         fetchAds();
         fetchBannerAds();
     </script>
-    let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => {
-    // منع المتصفح من إظهار النافذة التلقائية فوراً
-    e.preventDefault();
-    deferredPrompt = e;
-    
-    // إظهار البانر الخاص بنا في أول الصفحة
-    const installBanner = document.getElementById('pwa-install-banner');
-    if (installBanner) {
-        installBanner.classList.remove('hidden');
-    }
-});
-
-const installBtn = document.getElementById('install-pwa-btn');
-if (installBtn) {
-    installBtn.addEventListener('click', async () => {
-        const installBanner = document.getElementById('pwa-install-banner');
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') {
-                console.log('المستخدم وافق على تثبيت التطبيق');
-            }
-            deferredPrompt = null;
-        }
-        if (installBanner) {
-            installBanner.classList.add('hidden');
-        }
-    });
-}
-</body>
+  </body>
 </html>
