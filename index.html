@@ -54,9 +54,8 @@
 <body class="bg-gray-50 text-gray-800 pb-20">
 
     <!-- نافذة تثبيت التطبيق بتصميم أسود في أبيض وزر برتقالي -->
-    <div id="pwa-guide-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[99999] p-4">
+    <div id="pwa-guide-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[99999] p-4 hidden">
         <div class="bg-gray-900 border border-gray-800 rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl space-y-4 animate-in fade-in zoom-in duration-200">
-            <!-- اللوجو في منتصف النافذة -->
             <div class="w-20 h-20 bg-gray-800 rounded-2xl mx-auto flex items-center justify-center shadow-inner border border-gray-700 p-2">
                 <img src="logo192.png" alt="متجر البيت" class="w-full h-full object-contain">
             </div>
@@ -77,11 +76,9 @@
         </div>
     </div>
 
-    <!-- الهيدر الرئيسي -->
+    <!-- الهيدر الرئيسي (مثبت في الأعلى دائماً) -->
     <header class="bg-white shadow-sm sticky top-0 z-50 px-4 py-3.5">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
-            
-            <!-- القسم الأيمن: زر القائمة + اللوجو -->
             <div class="flex items-center gap-3">
                 <button id="open-menu-btn" class="p-1.5 text-gray-700 hover:text-orange-600 transition-colors focus:outline-none" aria-label="فتح القائمة">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -93,7 +90,6 @@
                 </a>
             </div>
 
-            <!-- القسم الأوسط: اسم المتجر والسلوجان -->
             <div class="text-center flex-1 mx-2">
                 <a href="/" class="block">
                     <h1 class="text-lg md:text-2xl font-black text-orange-600 leading-tight">متجر البيت</h1>
@@ -101,7 +97,6 @@
                 </a>
             </div>
 
-            <!-- القسم الأيسر: زر أضف إعلانك -->
             <div class="flex items-center">
                 <a href="add-ad.html" class="bg-orange-600 hover:bg-orange-700 text-white px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition-all shadow-sm flex items-center gap-1.5 whitespace-nowrap">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -110,7 +105,6 @@
                     <span>أضف إعلانك</span>
                 </a>
             </div>
-
         </div>
     </header>
 
@@ -129,9 +123,9 @@
                 
                 <nav class="space-y-2">
                     <a href="/" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">الرئيسية</a>
+                    <a href="categories.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">الأقسام</a>
                     <a href="add-ad.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-orange-600 bg-orange-50 transition-colors">أضف إعلانك الجديد</a>
                     
-                    <!-- زر التثبيت من القائمة المنسدلة -->
                     <button id="menuInstallBtn" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition-colors text-right">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
@@ -167,8 +161,8 @@
             </div>
         </section>
 
-        <!-- 2. منطقة إعلانات (تحت الأقسام) -->
-        <div id="bottomBannerAds" class="w-full space-y-4"></div>
+        <!-- 2. منطقة إعلانات متحركة (تحت الأقسام - أصبحت Slider مثل الأعلى) -->
+        <div id="bottomBannerAds" class="w-full"></div>
 
         <!-- أحدث الإعلانات -->
         <section class="space-y-3">
@@ -186,7 +180,6 @@
 
     <!-- السكريبتات ومنظومة الـ PWA -->
     <script>
-        // إعدادات القائمة الجانبية
         const openMenuBtn = document.getElementById('open-menu-btn');
         const closeMenuBtn = document.getElementById('close-menu-btn');
         const sideMenu = document.getElementById('side-menu');
@@ -207,12 +200,10 @@
         closeMenuBtn.addEventListener('click', closeMenu);
         menuOverlay.addEventListener('click', closeMenu);
 
-        // إعدادات Supabase
         const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
         const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // منظومة الـ PWA والتثبيت الذكي
         let deferredPrompt = null;
         const installModal = document.getElementById('pwa-guide-modal');
         const modalInstallActionBtn = document.getElementById('modalInstallActionBtn');
@@ -221,6 +212,7 @@
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
+            if(installModal) installModal.classList.remove('hidden');
         });
 
         function closeInstallGuideModal() {
@@ -250,14 +242,12 @@
             });
         }
 
-        // Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js').catch(err => console.log(err));
             });
         }
 
-        // جلب الأقسام مع حركة التنبيه للتمرير
         async function fetchCategories() {
             const container = document.getElementById('categories-container');
             if (!container) return;
@@ -274,7 +264,6 @@
                 container.innerHTML = '';
                 categories.forEach((cat, index) => {
                     const iconSrc = cat.image_url ? cat.image_url : 'logo192.png';
-                    // إضافة حركة خفيفة لأول عنصر عشان يلفت انتباه الزائر للتمرير
                     const hintClass = index === 0 ? 'scroll-hint' : '';
                     const catCard = `
                        <a href="category.html?id=${cat.id}" class="flex flex-col items-center justify-center bg-white border border-gray-100 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:border-orange-500 hover:shadow-md transition-all text-center ${hintClass}">
@@ -292,7 +281,6 @@
             }
         }
 
-        // جلب الإعلانات
         async function fetchAds() {
             const container = document.getElementById('ads-container');
             if (!container) return;
@@ -347,14 +335,67 @@
             return `<img src="${url}" alt="${title || 'إعلان مميز'}" class="w-full h-full object-cover">`;
         }
 
+        // دالة لإنشاء وتشغيل الـ Sliders للبانرات
+        function setupSlider(containerId, mediaArray) {
+            const container = document.getElementById(containerId);
+            if (!container || mediaArray.length === 0) return;
+
+            let slidesHtml = '';
+            let dotsHtml = '';
+
+            mediaArray.forEach((media, index) => {
+                slidesHtml += `
+                    <div class="absolute inset-0 transition-opacity duration-700 ease-in-out ${index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'} ${containerId}-slide">
+                        <div class="w-full h-40 md:h-56 rounded-2xl overflow-hidden shadow-sm bg-gray-100 relative">
+                            ${renderMediaElement(media.url, media.title)}
+                        </div>
+                    </div>
+                `;
+                dotsHtml += `
+                    <button class="w-2 h-2 rounded-full transition-all ${index === 0 ? 'bg-orange-600 w-4' : 'bg-white/70'} ${containerId}-dot" aria-label="شريحة ${index + 1}"></button>
+                `;
+            });
+
+            container.innerHTML = `
+                <div class="relative w-full h-40 md:h-56 overflow-hidden rounded-2xl shadow-sm">
+                    ${slidesHtml}
+                    <div class="absolute bottom-2 left-0 right-0 z-20 flex justify-center items-center gap-1.5">
+                        ${dotsHtml}
+                    </div>
+                </div>
+            `;
+
+            if (mediaArray.length > 1) {
+                let currentIdx = 0;
+                const slides = container.querySelectorAll(`.${containerId}-slide`);
+                const dots = container.querySelectorAll(`.${containerId}-dot`);
+
+                setInterval(() => {
+                    slides[currentIdx].classList.remove('opacity-100', 'z-10');
+                    slides[currentIdx].classList.add('opacity-0', 'z-0');
+                    if(dots[currentIdx]) {
+                        dots[currentIdx].classList.remove('bg-orange-600', 'w-4');
+                        dots[currentIdx].classList.add('bg-white/70');
+                    }
+
+                    currentIdx = (currentIdx + 1) % slides.length;
+
+                    slides[currentIdx].classList.remove('opacity-0', 'z-0');
+                    slides[currentIdx].classList.add('opacity-100', 'z-10');
+                    if(dots[currentIdx]) {
+                        dots[currentIdx].classList.remove('bg-white/70');
+                        dots[currentIdx].classList.add('bg-orange-600', 'w-4');
+                    }
+                }, 3500);
+            }
+        }
+
         async function fetchBannerAds() {
             try {
                 const { data: banners, error } = await db.from('featured_companies').select('*');
                 if (error || !banners) return;
 
-                const topContainer = document.getElementById('topBannerAds');
-                const bottomContainer = document.getElementById('bottomBannerAds');
-
+                // البانرات العلوية (فوق الأقسام)
                 const topBanners = banners.filter(b => b.position === 'above');
                 let allTopMedia = [];
                 topBanners.forEach(banner => {
@@ -364,73 +405,19 @@
                         });
                     }
                 });
+                setupSlider('topBannerAds', allTopMedia);
 
-                if (topContainer && allTopMedia.length > 0) {
-                    let slidesHtml = '';
-                    let dotsHtml = '';
-
-                    allTopMedia.forEach((media, index) => {
-                        slidesHtml += `
-                            <div class="absolute inset-0 transition-opacity duration-700 ease-in-out ${index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'} banner-slide">
-                                <div class="w-full h-40 md:h-56 rounded-2xl overflow-hidden shadow-sm bg-gray-100 relative">
-                                    ${renderMediaElement(media.url, media.title)}
-                                </div>
-                            </div>
-                        `;
-                        dotsHtml += `
-                            <button onclick="currentSlide(${index})" class="w-2 h-2 rounded-full transition-all ${index === 0 ? 'bg-orange-600 w-4' : 'bg-white/70'} slider-dot" aria-label="شريحة ${index + 1}"></button>
-                        `;
-                    });
-
-                    topContainer.innerHTML = `
-                        <div class="relative w-full h-40 md:h-56 overflow-hidden rounded-2xl shadow-sm group" id="sliderContainer">
-                            ${slidesHtml}
-                            <div class="absolute bottom-2 left-0 right-0 z-20 flex justify-center items-center gap-1.5">
-                                ${dotsHtml}
-                            </div>
-                        </div>
-                    `;
-
-                    if (allTopMedia.length > 1) {
-                        let currentIdx = 0;
-                        const slides = topContainer.querySelectorAll('.banner-slide');
-                        const dots = topContainer.querySelectorAll('.slider-dot');
-
-                        setInterval(() => {
-                            slides[currentIdx].classList.remove('opacity-100', 'z-10');
-                            slides[currentIdx].classList.add('opacity-0', 'z-0');
-                            if(dots[currentIdx]) {
-                                dots[currentIdx].classList.remove('bg-orange-600', 'w-4');
-                                dots[currentIdx].classList.add('bg-white/70');
-                            }
-
-                            currentIdx = (currentIdx + 1) % slides.length;
-
-                            slides[currentIdx].classList.remove('opacity-0', 'z-0');
-                            slides[currentIdx].classList.add('opacity-100', 'z-10');
-                            if(dots[currentIdx]) {
-                                dots[currentIdx].classList.remove('bg-white/70');
-                                dots[currentIdx].classList.add('bg-orange-600', 'w-4');
-                            }
-                        }, 3500);
-                    }
-                }
-
+                // البانرات السفلية (تحت الأقسام - أصبحت متحركة Slider أيضاً)
                 const bottomBanners = banners.filter(b => b.position === 'below');
-                if (bottomContainer && bottomBanners.length > 0) {
-                    bottomContainer.innerHTML = '';
-                    bottomBanners.forEach(banner => {
-                        if (banner.images && banner.images.length > 0) {
-                            banner.images.forEach(imgUrl => {
-                                bottomContainer.innerHTML += `
-                                    <div class="w-full h-40 md:h-56 rounded-2xl overflow-hidden shadow-sm bg-gray-100 mb-3">
-                                        ${renderMediaElement(imgUrl, banner.title)}
-                                    </div>
-                                `;
-                            });
-                        }
-                    });
-                }
+                let allBottomMedia = [];
+                bottomBanners.forEach(banner => {
+                    if (banner.images && banner.images.length > 0) {
+                        banner.images.forEach(imgUrl => {
+                            allBottomMedia.push({ url: imgUrl, title: banner.title });
+                        });
+                    }
+                });
+                setupSlider('bottomBannerAds', allBottomMedia);
 
             } catch (e) {
                 console.log('خطأ في جلب البانرات:', e);
