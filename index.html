@@ -42,12 +42,13 @@
         }
 @keyframes marquee {
         0% { transform: translateX(0); }
-        100% { transform: translateX(-25%); }
+        100% { transform: translateX(-50%); }
     }
     .animate-marquee {
-        animation: marquee 22s linear infinite;
+        animation: marquee 25s linear infinite;
         display: flex;
         width: max-content;
+        direction: ltr; /* بيثبت اتجاه الحركة من اليمين للشمال بشكل قاطع */
     }
     .animate-marquee:hover {
         animation-play-state: paused;
