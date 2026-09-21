@@ -202,7 +202,8 @@
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            if(installModal) installModal.classList.remove('hidden');
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+            if(!isStandalone && installModal) installModal.classList.remove('hidden');
         });
 
         function closeInstallGuideModal() {
@@ -259,7 +260,7 @@
                     const iconSrc = cat.image_url ? cat.image_url : 'logo192.png';
                     const hintClass = index === 0 ? 'scroll-hint' : '';
                     const catCard = `
-                       <a href="section.html?id=${cat.id}" class="flex flex-col items-center justify-center bg-white border border-gray-100 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:border-orange-500 hover:shadow-md transition-all text-center ${hintClass}">
+                       <a href="#" onclick="loadSubCategories('${cat.id}', '${cat.name}'); return false;" class="flex flex-col items-center justify-center bg-white border border-gray-100 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:border-orange-500 hover:shadow-md transition-all text-center ${hintClass}">
                             <div class="w-16 h-16 bg-orange-50/30 rounded-full flex items-center justify-center mb-2 overflow-hidden shadow-inner">
                                 <img src="${iconSrc}" alt="${cat.name}" class="w-full h-full object-cover rounded-full">
                             </div>
@@ -423,19 +424,24 @@
         fetchBannerAds();
 
         window.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                const installModal = document.getElementById('pwa-guide-modal');
-                if (installModal) {
-                    installModal.classList.remove('hidden');
-                }
-            }, 800);
+            // التحقق مما إذا كان التطبيق مثبتاً بالفعل لكي لا تظهر رسالة التثبيت عند كل تحديث
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+            
+            if (!isStandalone) {
+                setTimeout(() => {
+                    const installModal = document.getElementById('pwa-guide-modal');
+                    if (installModal) {
+                        installModal.classList.remove('hidden');
+                    }
+                }, 800);
+            }
         });
     </script>
     <script src="categories-handler.js"></script>
     <script src="location-filter.js"></script>
     <script>
-  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-</script>
-<script defer src="/_vercel/insights/script.js"></script>
+      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
