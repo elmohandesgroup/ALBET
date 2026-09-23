@@ -247,7 +247,12 @@
             if (!container) return;
 
             try {
-                const { data: categories, error } = await db.from('categories').select('*');
+                // جلب الأقسام الرئيسية فقط التي ليس لها قسم أب (parent_id is null)
+                const { data: categories, error } = await db
+                    .from('categories')
+                    .select('*')
+                    .is('parent_id', null);
+
                 if (error) throw error;
 
                 if (!categories || categories.length === 0) {
@@ -408,7 +413,6 @@
         fetchBannerAds();
 
         window.addEventListener('DOMContentLoaded', () => {
-            // التحقق مما إذا كان التطبيق مثبتاً بالفعل لكي لا تظهر رسالة التثبيت عند كل تحديث
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
             
             if (!isStandalone) {
