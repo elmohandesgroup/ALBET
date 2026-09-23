@@ -70,7 +70,7 @@
                 </div>
                 
                 <nav class="space-y-2">
-                    <a href="/" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">الرئيسية</a>
+                    <a href="index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">الرئيسية</a>
                     <a href="categories.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-orange-600 bg-orange-50 transition-colors">الأقسام</a>
                     <a href="add-ad.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">أضف إعلانك الجديد</a>
                     
@@ -153,13 +153,12 @@
             });
         }
 
-        // دالة الـ Slider للبانرات
+        // دالة الـ Slider للبانرات (بدون نقاط)
         function setupSlider(containerId, mediaArray) {
             const container = document.getElementById(containerId);
             if (!container || mediaArray.length === 0) return;
 
             let slidesHtml = '';
-            let dotsHtml = '';
 
             mediaArray.forEach((media, index) => {
                 slidesHtml += `
@@ -169,41 +168,26 @@
                         </div>
                     </div>
                 `;
-                dotsHtml += `
-                    <button class="w-2 h-2 rounded-full transition-all ${index === 0 ? 'bg-orange-600 w-4' : 'bg-white/70'} ${containerId}-dot" aria-label="شريحة"></button>
-                `;
             });
 
             container.innerHTML = `
                 <div class="relative w-full h-40 md:h-56 rounded-2xl shadow-sm">
                     ${slidesHtml}
-                    <div class="absolute bottom-2 left-0 right-0 z-20 flex justify-center items-center gap-1.5">
-                        ${dotsHtml}
-                    </div>
                 </div>
             `;
 
             if (mediaArray.length > 1) {
                 let currentIdx = 0;
                 const slides = container.querySelectorAll(`.${containerId}-slide`);
-                const dots = container.querySelectorAll(`.${containerId}-dot`);
 
                 setInterval(() => {
                     slides[currentIdx].classList.remove('opacity-100', 'z-10');
                     slides[currentIdx].classList.add('opacity-0', 'z-0');
-                    if (dots[currentIdx]) {
-                        dots[currentIdx].classList.remove('bg-orange-600', 'w-4');
-                        dots[currentIdx].classList.add('bg-white/70');
-                    }
 
                     currentIdx = (currentIdx + 1) % slides.length;
 
                     slides[currentIdx].classList.remove('opacity-0', 'z-0');
                     slides[currentIdx].classList.add('opacity-100', 'z-10');
-                    if (dots[currentIdx]) {
-                        dots[currentIdx].classList.remove('bg-white/70');
-                        dots[currentIdx].classList.add('bg-orange-600', 'w-4');
-                    }
                 }, 3500);
             }
         }
@@ -234,33 +218,38 @@
             }
         }
 
-        // جلب الأقسام وعرضها في شبكة
+        // جلب الأقسام الرئيسية فقط وعرضها في شبكة
         async function fetchAllCategories() {
             const container = document.getElementById('all-categories-container');
             const countLabel = document.getElementById('categories-count');
 
             try {
-                const { data: categories, error } = await db.from('categories').select('*');
+                // جلب الأقسام الرئيسية فقط التي ليس لها قسم أب (parent_id is null)
+                const { data: categories, error } = await db
+                    .from('categories')
+                    .select('*')
+                    .is('parent_id', null);
+
                 if (error) throw error;
 
                 if (!categories || categories.length === 0) {
-                    container.innerHTML = '<div class="col-span-full text-center py-12 text-gray-400 text-sm">لا توجد أقسام مضافة حالياً.</div>';
+                    container.innerHTML = '<div class="col-span-full text-center py-12 text-gray-400 text-sm">لا توجد أقسام رئيسية مضافة حالياً.</div>';
                     countLabel.innerText = '0 قسم';
                     return;
                 }
 
-                countLabel.innerText = `${categories.length} قسم متاحة`;
+                countLabel.innerText = `${categories.length} قسم رئيسي متاحة`;
                 container.innerHTML = '';
 
                 categories.forEach(cat => {
                     const iconSrc = cat.image_url ? cat.image_url : 'logo192.png';
                     const card = `
-                        <a href="section.html?id=${cat.id}" class="bg-white border border-gray-100 rounded-2xl p-4 flex flex-col items-center justify-center text-center shadow-sm hover:border-orange-500 hover:shadow-md transition-all group">
+                        <a href="#" onclick="loadSubCategories('${cat.id}', '${cat.name}'); return false;" class="bg-white border border-gray-100 rounded-2xl p-4 flex flex-col items-center justify-center text-center shadow-sm hover:border-orange-500 hover:shadow-md transition-all group">
                             <div class="w-20 h-20 bg-orange-50/50 rounded-2xl flex items-center justify-center mb-3 overflow-hidden shadow-inner border border-orange-100/50 group-hover:scale-105 transition-transform">
                                 <img src="${iconSrc}" alt="${cat.name}" class="w-full h-full object-cover">
                             </div>
                             <h3 class="font-bold text-gray-800 text-sm group-hover:text-orange-600 transition-colors truncate w-full">${cat.name}</h3>
-                            <span class="text-[11px] text-gray-400 mt-1">تصفح الإعلانات</span>
+                            <span class="text-[11px] text-gray-400 mt-1">تصفح الأقسام</span>
                         </a>
                     `;
                     container.innerHTML += card;
@@ -276,5 +265,6 @@
         fetchAllCategories();
         fetchBannerAds();
     </script>
+    <script src="categories-handler.js"></script>
 </body>
 </html>
