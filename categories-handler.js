@@ -10,26 +10,18 @@ async function loadSubCategories(parentId, parentName) {
     // تحديث الهيدر فوراً وبشكل مستقل عشان يظهر الترتيب الصح في كل الحالات
     const pageHeaderArea = document.getElementById('categories-header-area');
     if (pageHeaderArea) {
-        pageHeaderArea.innerHTML = `
+       pageHeaderArea.innerHTML = `
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
                 <div class="flex items-center gap-2 flex-wrap">
-                    <h2 class="font-black text-gray-900 text-base md:text-lg">${parentName}</h2>
-                    
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                    </svg>
-                    
-                    <a href="categories.html" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm">
-                        <span>الأقسام</span>
-                    </a>
-                    
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                    </svg>
-                    
                     <button onclick="location.reload();" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer">
                         <span>الرئيسية</span>
                     </button>
+                    
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                    
+                    <h2 class="font-black text-gray-900 text-base md:text-lg">${parentName}</h2>
                 </div>
                 
                 <span id="categories-count" class="text-xs text-gray-400 font-semibold">جاري التحميل...</span>
