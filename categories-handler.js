@@ -40,11 +40,11 @@ async function loadSubCategories(parentId, parentName) {
             });
 
             // ضبط تنسيق الهيدر مطابقاً للتصميم المطلوب تماماً (Breadcrumbs)
-           const pageHeaderArea = document.getElementById('categories-header-area');
+          const pageHeaderArea = document.getElementById('categories-header-area');
             if (pageHeaderArea) {
                 pageHeaderArea.innerHTML = `
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
-                        <!-- جهة اليمين: اسم القسم الرئيسي وأزرار التنقل بالأسهم -->
+                        <!-- الترتيب الصح: اسم القسم الفرعي > الأقسام > الرئيسية -->
                         <div class="flex items-center gap-2 flex-wrap">
                             <h2 class="font-black text-gray-900 text-base md:text-lg">${parentName}</h2>
                             
@@ -65,11 +65,10 @@ async function loadSubCategories(parentId, parentName) {
                             </a>
                         </div>
                         
-                        <!-- جهة اليسار: عداد الأقسام الفرعية -->
+                        <!-- عداد الأقسام الفرعية على الشمال -->
                         <span id="categories-count" class="text-xs text-gray-400 font-semibold">${subCategories.length} قسم فرعي</span>
                     </div>
                 `;
-            }
 
         } else {
             subCategories.forEach((sub, index) => {
