@@ -39,15 +39,12 @@ async function loadSubCategories(parentId, parentName) {
                 container.innerHTML += subCard;
             });
 
-            const countLabel = document.getElementById('categories-count');
-            if (countLabel) countLabel.innerText = `${subCategories.length} قسم فرعي متاح`;
-
-            // تنسيق العنوان وزر العودة للأقسام الرئيسية بشكل شيك ومنظم
+            // ضبط تنسيق العنوان وزر العودة بنفس الشكل الـ شيك على الشمال
             const pageHeaderArea = document.getElementById('categories-header-area');
             if (pageHeaderArea) {
                 pageHeaderArea.innerHTML = `
                     <h2 class="font-bold text-gray-800 text-lg">أقسام: ${parentName}</h2>
-                    <div class="flex items-center gap-3">
+                    <div class="flex items-center justify-between sm:justify-end gap-3">
                         <a href="categories.html" class="inline-flex items-center gap-1.5 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3.5 py-2 rounded-xl text-xs font-bold transition-all shadow-sm">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
