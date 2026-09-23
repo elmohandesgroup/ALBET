@@ -40,7 +40,7 @@ async function loadSubCategories(parentId, parentName) {
             });
 
             // ضبط تنسيق الهيدر مطابقاً للتصميم المطلوب تماماً (Breadcrumbs)
-            const pageHeaderArea = document.getElementById('categories-header-area');
+           const pageHeaderArea = document.getElementById('categories-header-area');
             if (pageHeaderArea) {
                 pageHeaderArea.innerHTML = `
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
@@ -65,7 +65,7 @@ async function loadSubCategories(parentId, parentName) {
                             </a>
                         </div>
                         
-                        <!-- جهة اليسار: عدد الاقسام الفرعية -->
+                        <!-- جهة اليسار: عداد الأقسام الفرعية -->
                         <span id="categories-count" class="text-xs text-gray-400 font-semibold">${subCategories.length} قسم فرعي</span>
                     </div>
                 `;
