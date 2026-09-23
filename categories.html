@@ -98,7 +98,7 @@
 
         <!-- منطقة العنوان وزر الرجوع الموحد -->
         <div id="categories-header-area" class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
-            <h2 class="font-bold text-gray-800 text-lg">الأقسام</h2>
+            <h2 id="main-section-title" class="font-bold text-gray-800 text-lg">الأقسام</h2>
             <div class="flex items-center gap-3">
                 <a href="index.html" class="inline-flex items-center gap-1.5 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3.5 py-2 rounded-xl text-xs font-bold transition-all shadow-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -161,13 +161,12 @@
             });
         }
 
-        // دالة الـ Slider للبانرات (بدون نقاط)
+        // دالة الـ Slider للبانرات
         function setupSlider(containerId, mediaArray) {
             const container = document.getElementById(containerId);
             if (!container || mediaArray.length === 0) return;
 
             let slidesHtml = '';
-
             mediaArray.forEach((media, index) => {
                 slidesHtml += `
                     <div class="absolute inset-0 transition-opacity duration-700 ease-in-out ${index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'} ${containerId}-slide">
@@ -187,13 +186,10 @@
             if (mediaArray.length > 1) {
                 let currentIdx = 0;
                 const slides = container.querySelectorAll(`.${containerId}-slide`);
-
                 setInterval(() => {
                     slides[currentIdx].classList.remove('opacity-100', 'z-10');
                     slides[currentIdx].classList.add('opacity-0', 'z-0');
-
                     currentIdx = (currentIdx + 1) % slides.length;
-
                     slides[currentIdx].classList.remove('opacity-0', 'z-0');
                     slides[currentIdx].classList.add('opacity-100', 'z-10');
                 }, 3500);
@@ -230,6 +226,9 @@
         async function fetchAllCategories() {
             const container = document.getElementById('all-categories-container');
             const countLabel = document.getElementById('categories-count');
+            const titleLabel = document.getElementById('main-section-title');
+
+            titleLabel.innerText = 'الأقسام الرئيسية';
 
             try {
                 const { data: categories, error } = await db
@@ -269,9 +268,72 @@
             }
         } 
 
+        // دالة جلب وعرض الأقسام الفرعية عند الضغط على القسم الرئيسي
+        async function loadSubCategories(parentId, parentName) {
+            const container = document.getElementById('all-categories-container');
+            const countLabel = document.getElementById('categories-count');
+            const titleLabel = document.getElementById('main-section-title');
+
+            titleLabel.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <button onclick="fetchAllCategories()" class="text-orange-600 hover:underline text-xs bg-orange-50 px-2 py-1 rounded-lg">← العودة للأقسام الرئيسية</button>
+                    <span>${parentName}</span>
+                </div>
+            `;
+            container.innerHTML = '<div class="col-span-full text-center py-12 text-gray-400 text-sm">جاري تحميل الأقسام الفرعية...</div>';
+
+            try {
+                const { data: subCategories, error } = await db
+                    .from('categories')
+                    .select('*')
+                    .eq('parent_id', parentId);
+
+                if (error) throw error;
+
+                if (!subCategories || subCategories.length === 0) {
+                    container.innerHTML = '<div class="col-span-full text-center py-12 text-gray-400 text-sm">لا توجد أقسام فرعية متاحة تحت هذا القسم حالياً.</div>';
+                    countLabel.innerText = '0 قسم فرعي';
+                    return;
+                }
+
+                countLabel.innerText = `${subCategories.length} قسم فرعي`;
+                container.innerHTML = '';
+
+                subCategories.forEach(sub => {
+                    const iconSrc = sub.image_url ? sub.image_url : 'logo192.png';
+                    const card = `
+                        <a href="index.html?category=${sub.id}" class="bg-white border border-gray-100 rounded-2xl p-4 flex flex-col items-center justify-center text-center shadow-sm hover:border-orange-500 hover:shadow-md transition-all group">
+                            <div class="w-20 h-20 bg-orange-50/50 rounded-2xl flex items-center justify-center mb-3 overflow-hidden shadow-inner border border-orange-100/50 group-hover:scale-105 transition-transform">
+                                <img src="${iconSrc}" alt="${sub.name}" class="w-full h-full object-cover">
+                            </div>
+                            <h3 class="font-bold text-gray-800 text-sm group-hover:text-orange-600 transition-colors truncate w-full">${sub.name}</h3>
+                            <span class="text-[11px] text-orange-500 mt-1">عرض الإعلانات</span>
+                        </a>
+                    `;
+                    container.innerHTML += card;
+                });
+
+            } catch (err) {
+                console.error('خطأ في جلب الأقسام الفرعية:', err.message);
+                container.innerHTML = '<div class="col-span-full text-center py-12 text-red-400 text-sm">تعذر تحميل الأقسام الفرعية، حاول مرة أخرى.</div>';
+                countLabel.innerText = 'خطأ';
+            }
+        }
+
+        // تشغيل الصفحة عند التحميل
         fetchAllCategories();
         fetchBannerAds();
     </script>
-    <script src="categories-handler.js"></script>
+
+    <!-- سكربت تنظيف الكاش والتحديث التلقائي -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(registrations => {
+                for(let registration of registrations) {
+                    registration.update();
+                }
+            });
+        }
+    </script>
 </body>
 </html>
