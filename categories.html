@@ -98,17 +98,17 @@
 
         <!-- منطقة العنوان وزر الرجوع -->
         <div id="categories-header-area" class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
-            <h2 id="main-section-title" class="font-bold text-gray-800 text-lg">الأقسام</h2>
-            <div class="flex items-center gap-3">
-               <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="inline-flex items-center gap-1.5 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3.5 py-2 rounded-xl text-xs font-bold transition-all shadow-sm">
-    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-    </svg>
-    <span>العودة للصفحة الرئيسية</span>
-</a>
-                <span id="categories-count" class="text-xs text-gray-400 font-semibold">جاري التحميل...</span>
-            </div>
-        </div>
+    <h2 id="main-section-title" class="font-bold text-gray-800 text-lg">الأقسام الرئيسية</h2>
+    <div class="flex items-center justify-between sm:justify-end gap-3">
+        <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="inline-flex items-center gap-1.5 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3.5 py-2 rounded-xl text-xs font-bold transition-all shadow-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+            <span>الرئيسية</span>
+        </a>
+        <span id="categories-count" class="text-xs text-gray-400 font-semibold">جاري التحميل...</span>
+    </div>
+</div>
 
         <!-- شبكة الأقسام -->
         <div id="all-categories-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
