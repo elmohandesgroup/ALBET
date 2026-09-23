@@ -1,18 +1,15 @@
 // categories-handler.js
 
 async function loadSubCategories(parentId, parentName) {
-    // التحقق من المكان الحالي: هل نحن في صفحة الأقسام العامة أم الصفحة الرئيسية؟
     const gridContainer = document.getElementById('all-categories-container');
     const barContainer = document.getElementById('categories-container');
     
     const container = gridContainer || barContainer;
     if (!container) return;
 
-    // عرض حالة التحميل مؤقتاً
     container.innerHTML = '<div class="col-span-full text-center text-xs text-gray-400 p-4">جاري تحميل الأقسام الفرعية...</div>';
 
     try {
-        // استعلام Supabase لجلب الأقسام الفرعية التي تتبع القسم الرئيسي المحدد
         const { data: subCategories, error } = await db
             .from('categories')
             .select('*')
@@ -27,7 +24,6 @@ async function loadSubCategories(parentId, parentName) {
 
         container.innerHTML = '';
 
-        // إذا كنا في صفحة الأقسام العامة (شبكة Grid)، نرسمها بشكل شبكي جميل
         if (gridContainer) {
             subCategories.forEach(sub => {
                 const iconSrc = sub.image_url ? sub.image_url : 'logo192.png';
@@ -43,27 +39,27 @@ async function loadSubCategories(parentId, parentName) {
                 container.innerHTML += subCard;
             });
 
-            // تحديث عدد الأقسام وعنوان الصفحة مع زر رجوع أنيق وواضح بخط جميل
             const countLabel = document.getElementById('categories-count');
             if (countLabel) countLabel.innerText = `${subCategories.length} قسم فرعي متاح`;
 
-            const pageTitle = document.querySelector('h2.font-bold.text-gray-800');
-            if (pageTitle) {
-                pageTitle.innerHTML = `
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 w-full">
-                        <span class="text-lg font-black text-gray-800">أقسام: ${parentName}</span>
-                        <a href="categories.html" class="inline-flex items-center gap-1.5 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm w-fit">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            // تنسيق العنوان وزر العودة للأقسام الرئيسية بشكل شيك ومنظم
+            const pageHeaderArea = document.getElementById('categories-header-area');
+            if (pageHeaderArea) {
+                pageHeaderArea.innerHTML = `
+                    <h2 class="font-bold text-gray-800 text-lg">أقسام: ${parentName}</h2>
+                    <div class="flex items-center gap-3">
+                        <a href="categories.html" class="inline-flex items-center gap-1.5 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3.5 py-2 rounded-xl text-xs font-bold transition-all shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                             </svg>
                             <span>العودة للأقسام الرئيسية</span>
                         </a>
+                        <span id="categories-count" class="text-xs text-gray-400 font-semibold">${subCategories.length} قسم فرعي متاح</span>
                     </div>
                 `;
             }
 
         } else {
-            // التصميم الأفقي الخاص بالصفحة الرئيسية (شريط)
             subCategories.forEach((sub, index) => {
                 const iconSrc = sub.image_url ? sub.image_url : 'logo192.png';
                 const hintClass = index === 0 ? 'scroll-hint' : '';
