@@ -40,18 +40,21 @@ async function loadSubCategories(parentId, parentName) {
             });
 
             // ضبط تنسيق العنوان وزر العودة
-          const pageHeaderArea = document.getElementById('categories-header-area');
+         const pageHeaderArea = document.getElementById('categories-header-area');
 if (pageHeaderArea) {
     pageHeaderArea.innerHTML = `
         <h2 class="font-bold text-gray-800 text-lg">أقسام: ${parentName}</h2>
         <div class="flex items-center justify-between sm:justify-end gap-3">
-            <a href="index.html" class="inline-flex items-center gap-1.5 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3.5 py-2 rounded-xl text-xs font-bold transition-all shadow-sm">
+            <a href="categories.html" class="inline-flex items-center gap-1.5 bg-gray-50 hover:bg-gray-100 text-gray-700 border border-gray-200 px-3 py-2 rounded-xl text-xs font-bold transition-all shadow-sm">
+                <span>الأقسام الرئيسية</span>
+            </a>
+            <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="inline-flex items-center gap-1.5 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3.5 py-2 rounded-xl text-xs font-bold transition-all shadow-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                 </svg>
-                <span>العودة للصفحة الرئيسية</span>
+                <span>الرئيسية</span>
             </a>
-            <span id="categories-count" class="text-xs text-gray-400 font-semibold">${subCategories.length} قسم فرعي متاح</span>
+            <span id="categories-count" class="text-xs text-gray-400 font-semibold">${subCategories.length} قسم فرعي</span>
         </div>
     `;
 }
