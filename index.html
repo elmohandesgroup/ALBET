@@ -367,41 +367,39 @@
             }
         }
 
-       async function fetchCategories() {
-            const container = document.getElementById('categories-container');
-            if (!container) return;
-
+        async function fetchBannerAds() {
             try {
-                // تعديل الاستعلام لجلب الأقسام الرئيسية فقط التي ليس لها قسم أب (parent_id is null)
-                const { data: categories, error } = await db
-                    .from('categories')
+                const { data: banners, error } = await db
+                    .from('featured_companies')
                     .select('*')
-                    .is('parent_id', null); // الشرط ده هيمنع ظهور الأقسام الفرعية زي الثلاجات في الشريط الرئيسي
+                    .or('page_target.eq.index.html,page_target.eq.home');
 
-                if (error) throw error;
-
-                if (!categories || categories.length === 0) {
-                    container.innerHTML = '<div class="text-xs text-gray-400 p-2">لا توجد أقسام مضافة حالياً.</div>';
-                    return;
-                }
-
-                container.innerHTML = '';
-                categories.forEach((cat, index) => {
-                    const iconSrc = cat.image_url ? cat.image_url : 'logo192.png';
-                    const hintClass = index === 0 ? 'scroll-hint' : '';
-                    const catCard = `
-                       <a href="#" onclick="loadSubCategories('${cat.id}', '${cat.name}'); return false;" class="flex flex-col items-center justify-center bg-white border border-gray-100 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:border-orange-500 hover:shadow-md transition-all text-center ${hintClass}">
-                            <div class="w-16 h-16 bg-orange-50/30 rounded-full flex items-center justify-center mb-2 overflow-hidden shadow-inner">
-                                <img src="${iconSrc}" alt="${cat.name}" class="w-full h-full object-cover rounded-full">
-                            </div>
-                            <span class="text-xs font-bold text-gray-700 truncate w-full">${cat.name}</span>
-                        </a>
-                    `;
-                    container.innerHTML += catCard;
+                if (error || !banners) return;
+                
+                const topBanners = banners.filter(b => b.position === 'above');
+                let allTopMedia = [];
+                topBanners.forEach(banner => {
+                    if (banner.images && banner.images.length > 0) {
+                        banner.images.forEach(imgUrl => {
+                            allTopMedia.push({ url: imgUrl, title: banner.title });
+                        });
+                    }
                 });
-            } catch (err) {
-                console.error('خطأ في جلب الأقسام:', err.message);
-                container.innerHTML = '<div class="text-xs text-red-400 p-2">تعذر تحميل الأقسام.</div>';
+                setupSlider('topBannerAds', allTopMedia);
+
+                const bottomBanners = banners.filter(b => b.position === 'below');
+                let allBottomMedia = [];
+                bottomBanners.forEach(banner => {
+                    if (banner.images && banner.images.length > 0) {
+                        banner.images.forEach(imgUrl => {
+                            allBottomMedia.push({ url: imgUrl, title: banner.title });
+                        });
+                    }
+                });
+                setupSlider('bottomBannerAds', allBottomMedia);
+
+            } catch (e) {
+                console.log('خطأ في جلب البانرات:', e);
             }
         }
 
