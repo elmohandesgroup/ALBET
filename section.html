@@ -109,13 +109,6 @@
                 <button onclick="filterAds('مستعمل')" id="btn-used" class="px-3 py-1 rounded-lg text-xs font-bold transition-all text-gray-600 hover:text-orange-600">مستعمل</button>
             </div>
         </div>
-            <!-- أزرار التبديل بين (الكل / جديد / مستعمل) -->
-            <div class="flex items-center bg-white p-1 rounded-2xl border border-gray-200 shadow-sm self-start sm:self-auto">
-                <button onclick="filterAds('all')" id="btn-all" class="px-4 py-1.5 rounded-xl text-xs font-bold transition-all bg-orange-600 text-white shadow-sm">الكل</button>
-                <button onclick="filterAds('جديد')" id="btn-new" class="px-4 py-1.5 rounded-xl text-xs font-bold transition-all text-gray-600 hover:text-orange-600">جديد</button>
-                <button onclick="filterAds('مستعمل')" id="btn-used" class="px-4 py-1.5 rounded-xl text-xs font-bold transition-all text-gray-600 hover:text-orange-600">مستعمل</button>
-            </div>
-        </div>
 
         <!-- عدد النتائج -->
         <div class="flex items-center justify-between text-xs text-gray-500 font-bold px-1">
@@ -210,7 +203,6 @@
             container.innerHTML = '';
             adsArray.forEach(ad => {
                 const mainImage = (ad.images && ad.images.length > 0) ? ad.images[0] : 'logo192.png';
-                // افترض أن حقل الحالة في الإعلان اسمه condition أو status ويحمل قيم (جديد / مستعمل)
                 const conditionBadge = ad.condition ? `<span class="absolute top-2 right-2 bg-black/60 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full">${ad.condition}</span>` : '';
 
                 const card = `
@@ -243,19 +235,19 @@
 
             // إعادة تعيين ألوان الأزرار
             [btnAll, btnNew, btnUsed].forEach(btn => {
-                btn.className = "px-4 py-1.5 rounded-xl text-xs font-bold transition-all text-gray-600 hover:text-orange-600";
+                btn.className = "px-3 py-1 rounded-lg text-xs font-bold transition-all text-gray-600 hover:text-orange-600";
             });
 
             // تمييز الزر المختار
             if (type === 'all') {
-                btnAll.className = "px-4 py-1.5 rounded-xl text-xs font-bold transition-all bg-orange-600 text-white shadow-sm";
+                btnAll.className = "px-3 py-1 rounded-lg text-xs font-bold transition-all bg-orange-600 text-white shadow-sm";
                 renderAds(allAdsData);
             } else if (type === 'جديد') {
-                btnNew.className = "px-4 py-1.5 rounded-xl text-xs font-bold transition-all bg-orange-600 text-white shadow-sm";
+                btnNew.className = "px-3 py-1 rounded-lg text-xs font-bold transition-all bg-orange-600 text-white shadow-sm";
                 const filtered = allAdsData.filter(ad => ad.condition === 'جديد' || ad.condition === 'New');
                 renderAds(filtered);
             } else if (type === 'مستعمل') {
-                btnUsed.className = "px-4 py-1.5 rounded-xl text-xs font-bold transition-all bg-orange-600 text-white shadow-sm";
+                btnUsed.className = "px-3 py-1 rounded-lg text-xs font-bold transition-all bg-orange-600 text-white shadow-sm";
                 const filtered = allAdsData.filter(ad => ad.condition === 'مستعمل' || ad.condition === 'Used');
                 renderAds(filtered);
             }
