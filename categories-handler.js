@@ -9,6 +9,36 @@ async function loadSubCategories(parentId, parentName) {
 
     container.innerHTML = '<div class="col-span-full text-center text-xs text-gray-400 p-4">جاري تحميل الأقسام الفرعية...</div>';
 
+    // تحديث الهيدر فوراً وبشكل مستقل عشان يظهر الترتيب الصح في كل الحالات
+    const pageHeaderArea = document.getElementById('categories-header-area');
+    if (pageHeaderArea) {
+        pageHeaderArea.innerHTML = `
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <h2 class="font-black text-gray-900 text-base md:text-lg">${parentName}</h2>
+                    
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                    
+                    <a href="categories.html" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm">
+                        <span>الأقسام</span>
+                    </a>
+                    
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                    
+                    <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm">
+                        <span>الرئيسية</span>
+                    </a>
+                </div>
+                
+                <span id="categories-count" class="text-xs text-gray-400 font-semibold">جاري التحميل...</span>
+            </div>
+        `;
+    }
+
     try {
         const { data: subCategories, error } = await db
             .from('categories')
@@ -39,37 +69,10 @@ async function loadSubCategories(parentId, parentName) {
                 container.innerHTML += subCard;
             });
 
-            // ضبط تنسيق الهيدر مطابقاً للتصميم المطلوب تماماً (Breadcrumbs)
-         const pageHeaderArea = document.getElementById('categories-header-area');
-            if (pageHeaderArea) {
-                pageHeaderArea.innerHTML = `
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
-                        <!-- الترتيب الدقيق: اسم القسم الفرعي > الأقسام > الرئيسية -->
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <h2 class="font-black text-gray-900 text-base md:text-lg">${parentName}</h2>
-                            
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                            </svg>
-                            
-                            <a href="categories.html" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm">
-                                <span>الأقسام</span>
-                            </a>
-                            
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                            </svg>
-                            
-                            <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm">
-                                <span>الرئيسية</span>
-                            </a>
-                        </div>
-                        
-                        <!-- عداد الأقسام الفرعية على الشمال -->
-                        <span id="categories-count" class="text-xs text-gray-400 font-semibold">${subCategories.length} قسم فرعي</span>
-                    </div>
-                `;
-            }
+            // تحديث العداد بعد التحميل
+            const countSpan = document.getElementById('categories-count');
+            if (countSpan) countSpan.innerText = `${subCategories.length} قسم فرعي`;
+
         } else {
             subCategories.forEach((sub, index) => {
                 const iconSrc = sub.image_url ? sub.image_url : 'logo192.png';
