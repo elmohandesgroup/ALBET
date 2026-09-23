@@ -1,5 +1,3 @@
-// categories-handler.js
-
 async function loadSubCategories(parentId, parentName) {
     const gridContainer = document.getElementById('all-categories-container');
     const barContainer = document.getElementById('categories-container');
@@ -29,9 +27,9 @@ async function loadSubCategories(parentId, parentName) {
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                     </svg>
                     
-                    <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm">
+                    <button onclick="location.reload();" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer">
                         <span>الرئيسية</span>
-                    </a>
+                    </button>
                 </div>
                 
                 <span id="categories-count" class="text-xs text-gray-400 font-semibold">جاري التحميل...</span>
@@ -58,13 +56,13 @@ async function loadSubCategories(parentId, parentName) {
             subCategories.forEach(sub => {
                 const iconSrc = sub.image_url ? sub.image_url : 'logo192.png';
                 const subCard = `
-                    <a href="index.html?category=${sub.id}" class="bg-white border border-gray-100 rounded-2xl p-4 flex flex-col items-center justify-center text-center shadow-sm hover:border-orange-500 hover:shadow-md transition-all group">
+                    <div onclick="filterAdsByCategory('${sub.name}', '${sub.id}')" class="bg-white border border-gray-100 rounded-2xl p-4 flex flex-col items-center justify-center text-center shadow-sm hover:border-orange-500 hover:shadow-md transition-all group cursor-pointer">
                         <div class="w-20 h-20 bg-orange-50/50 rounded-2xl flex items-center justify-center mb-3 overflow-hidden shadow-inner border border-orange-100/50 group-hover:scale-105 transition-transform">
                             <img src="${iconSrc}" alt="${sub.name}" class="w-full h-full object-cover">
                         </div>
                         <h3 class="font-bold text-gray-800 text-sm group-hover:text-orange-600 transition-colors truncate w-full">${sub.name}</h3>
                         <span class="text-[11px] text-gray-400 mt-1">تصفح الإعلانات</span>
-                    </a>
+                    </div>
                 `;
                 container.innerHTML += subCard;
             });
@@ -79,12 +77,12 @@ async function loadSubCategories(parentId, parentName) {
                 const hintClass = index === 0 ? 'scroll-hint' : '';
                 
                 const subCard = `
-                    <a href="index.html?category=${sub.id}" class="flex flex-col items-center justify-center bg-white border border-gray-100 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:border-orange-500 hover:shadow transition-all ${hintClass}">
+                    <div onclick="filterAdsByCategory('${sub.name}', '${sub.id}')" class="flex flex-col items-center justify-center bg-white border border-gray-100 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:border-orange-500 hover:shadow transition-all ${hintClass} cursor-pointer">
                         <div class="w-16 h-16 bg-orange-50/30 rounded-full flex items-center justify-center mb-2 overflow-hidden shadow-inner">
                             <img src="${iconSrc}" alt="${sub.name}" class="w-full h-full object-cover rounded-full">
                         </div>
                         <span class="text-xs font-bold text-gray-700 truncate w-full text-center">${sub.name}</span>
-                    </a>
+                    </div>
                 `;
                 container.innerHTML += subCard;
             });
