@@ -40,7 +40,7 @@ async function loadSubCategories(parentId, parentName) {
             });
 
             // ضبط تنسيق الهيدر مطابقاً للتصميم المطلوب تماماً (Breadcrumbs)
-            const pageHeaderArea = document.getElementById('categories-header-area');
+           const pageHeaderArea = document.getElementById('categories-header-area');
             if (pageHeaderArea) {
                 pageHeaderArea.innerHTML = `
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
@@ -52,7 +52,7 @@ async function loadSubCategories(parentId, parentName) {
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                             </svg>
                             
-                            <a href="categories.html" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm">
+                            <a href="categories.html" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm">
                                 <span>الأقسام</span>
                             </a>
                             
@@ -60,7 +60,7 @@ async function loadSubCategories(parentId, parentName) {
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                             </svg>
                             
-                            <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm">
+                            <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm">
                                 <span>الرئيسية</span>
                             </a>
                         </div>
@@ -69,8 +69,7 @@ async function loadSubCategories(parentId, parentName) {
                         <span id="categories-count" class="text-xs text-gray-400 font-semibold">${subCategories.length} قسم فرعي</span>
                     </div>
                 `;
-            } // <-- القوس ده كان ناقص أو في مكانه غلط وتم ضبطه هنا بسلام
-
+            }
         } else {
             subCategories.forEach((sub, index) => {
                 const iconSrc = sub.image_url ? sub.image_url : 'logo192.png';
