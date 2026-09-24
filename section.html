@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>متجر البيت - تصفح الأقسام والإعلانات</title>
+    <title>إعلانات القسم - متجر البيت</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -19,8 +19,6 @@
             background-color: #f8f9fa;
             -webkit-tap-highlight-color: transparent;
         }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 pb-20">
@@ -34,13 +32,14 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
                 </button>
-                <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="flex items-center">
+                <!-- زر الرئيسية المعدل لمنع الكاش -->
+                <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="flex items-center cursor-pointer">
                     <img src="logo192.png" alt="متجر البيت" class="w-12 h-12 object-contain rounded-xl shadow-sm border border-gray-100 bg-white p-1">
                 </a>
             </div>
 
             <div class="text-center flex-1 mx-2">
-                <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="block">
+                <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="block cursor-pointer">
                     <h1 class="text-lg md:text-2xl font-black text-orange-600 leading-tight">متجر البيت</h1>
                     <p class="text-[11px] md:text-xs text-gray-500 font-medium">الأفضل دائماً</p>
                 </a>
@@ -71,66 +70,51 @@
                 </div>
                 
                 <nav class="space-y-2">
-                    <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">الرئيسية</a>
+                    <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors cursor-pointer">الرئيسية</a>
                     <a href="categories.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">الأقسام</a>
                     <a href="add-ad.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">أضف إعلانك الجديد</a>
+                    
+                    <button id="menuInstallBtn" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition-colors text-right">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                        <span>تثبيت التطبيق على جهازك</span>
+                    </button>
+
+                    <div class="pt-2 pb-1 text-xs font-bold text-gray-400 px-3">سياسات المتجر</div>
+                    <a href="privacy.html" class="block px-3 py-2 rounded-xl text-xs font-medium text-gray-600 hover:bg-gray-100">سياسة الاستخدام والخصوصية</a>
+                    <a href="terms.html" class="block px-3 py-2 rounded-xl text-xs font-medium text-gray-600 hover:bg-gray-100">الشروط والأحكام</a>
                 </nav>
+            </div>
+            <div class="text-center text-[11px] text-gray-400 pt-4 border-t">
+                جميع الحقوق محفوظة &copy; متجر البيت 2026
             </div>
         </div>
     </div>
 
-    <!-- محتوى الصفحة -->
+    <!-- محتوى الإعلانات والبانرات -->
     <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
-        
-        <!-- مسار التنقل (Breadcrumbs) وعنوان الصفحة -->
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div id="breadcrumb-area" class="flex items-center gap-2 flex-wrap">
-                <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                    </svg>
-                    <span>الرئيسية</span>
-                </a>
-                
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-                
-                <a href="categories.html" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-sm">
-                    <span>الأقسام</span>
-                </a>
+        <!-- بانر الإعلانات العلوي -->
+        <div id="topBannerAds" class="w-full"></div>
 
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-                
-                <h2 id="section-title" class="font-black text-gray-900 text-base md:text-lg">جاري التحميل...</h2>
-            </div>
-            <span id="results-count" class="text-xs text-gray-400 font-semibold">جاري التحميل...</span>
+        <div class="categories-header-area bg-white p-4 rounded-2xl shadow-sm border border-gray-100 mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <h2 id="main-section-title" class="font-black text-gray-900 text-base md:text-lg">إعلانات القسم</h2>
+            <span id="ads-count" class="text-xs text-gray-400 font-semibold">جاري التحميل...</span>
         </div>
 
-        <!-- قسم أزرار التبديل (تظهر فقط عند عرض الإعلانات) -->
-        <div id="ads-filter-section" class="hidden flex items-center justify-between flex-wrap gap-3">
-            <div class="flex items-center bg-gray-50 p-1 rounded-xl border border-gray-200 shadow-inner">
-                <button onclick="filterAds('all')" id="btn-all" class="px-3 py-1 rounded-lg text-xs font-bold transition-all bg-orange-600 text-white shadow-sm">الكل</button>
-                <button onclick="filterAds('جديد')" id="btn-new" class="px-3 py-1 rounded-lg text-xs font-bold transition-all text-gray-600 hover:text-orange-600">جديد</button>
-                <button onclick="filterAds('مستعمل')" id="btn-used" class="px-3 py-1 rounded-lg text-xs font-bold transition-all text-gray-600 hover:text-orange-600">مستعمل</button>
-            </div>
-        </div>
-
-        <!-- حاوية المحتوى الديناميكي (ستعرض إما أقسام فرعية أو إعلانات) -->
-        <div id="dynamic-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            <div class="col-span-full text-center py-16 text-gray-400 text-sm">جاري جلب البيانات...</div>
+        <!-- شبكة عرض الإعلانات -->
+        <div id="ads-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div class="col-span-full text-center py-12 text-gray-400 text-sm">جاري تحميل الإعلانات...</div>
         </div>
     </main>
 
-    <!-- البرمجة والربط -->
+    <!-- السكريبتات البرمجية الأساسية -->
     <script>
         const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
         const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // القائمة الجانبية
+        // تشغيل القائمة الجانبية (Drawer Menu)
         const openMenuBtn = document.getElementById('open-menu-btn');
         const closeMenuBtn = document.getElementById('close-menu-btn');
         const sideMenu = document.getElementById('side-menu');
@@ -141,246 +125,204 @@
             sideMenu.classList.remove('hidden');
             setTimeout(() => { menuContent.classList.remove('translate-x-full'); }, 10);
         }
+
         function closeMenu() {
             menuContent.classList.add('translate-x-full');
             setTimeout(() => { sideMenu.classList.add('hidden'); }, 300);
         }
+
         if (openMenuBtn) openMenuBtn.addEventListener('click', openMenu);
         if (closeMenuBtn) closeMenuBtn.addEventListener('click', closeMenu);
         if (menuOverlay) menuOverlay.addEventListener('click', closeMenu);
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const mainCat = urlParams.get('cat');
-        const subCat = urlParams.get('sub');
+        let deferredPrompt = null;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
 
-        let allAdsData = [];
+        const menuInstallBtn = document.getElementById('menuInstallBtn');
+        if (menuInstallBtn) {
+            menuInstallBtn.addEventListener('click', async () => {
+                closeMenu();
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    deferredPrompt = null;
+                }
+            });
+        }
 
-       async function initPage() {
-            const titleEl = document.getElementById('section-title');
-            const countEl = document.getElementById('results-count');
-            const container = document.getElementById('dynamic-container');
-            const filterSection = document.getElementById('ads-filter-section');
-            const breadcrumbArea = document.getElementById('breadcrumb-area');
+        // دالة الـ Slider للبانرات
+        function setupSlider(containerId, mediaArray) {
+            const container = document.getElementById(containerId);
+            if (!container || mediaArray.length === 0) return;
 
-            if (!mainCat) {
-                titleEl.innerText = "كل الأقسام والإعلانات";
-                countEl.innerText = "";
-                container.innerHTML = '<div class="col-span-full text-center py-16 text-gray-400">الرجاء اختيار قسم رئيسي.</div>';
-                return;
-            }
+            let slidesHtml = '';
+            mediaArray.forEach((media, index) => {
+                slidesHtml += `
+                    <div class="absolute inset-0 transition-opacity duration-700 ease-in-out ${index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'} ${containerId}-slide">
+                        <div class="w-full h-40 md:h-56 rounded-2xl overflow-hidden shadow-sm bg-gray-100 relative">
+                            <img src="${media.url}" alt="${media.title || 'إعلان مميز'}" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                `;
+            });
 
-            // توحيد شكل المسار (Breadcrumbs) في كل الصفحات بنفس التنسيق الاحترافي الموحد
-            let breadcrumbHTML = `
-                <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                    </svg>
-                    <span>الرئيسية</span>
-                </a>
-                
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-                
-                <a href="categories.html" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-sm">
-                    <span>الأقسام</span>
-                </a>
+            container.innerHTML = `
+                <div class="relative w-full h-40 md:h-56 rounded-2xl shadow-sm overflow-hidden">
+                    ${slidesHtml}
+                </div>
             `;
 
-            // الحالة الأولى: لو المستخدم اختار قسم فرعي
-            if (subCat) {
-                breadcrumbHTML += `
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                    </svg>
-                    <a href="section.html?cat=${encodeURIComponent(mainCat)}" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-sm">
-                        <span>${mainCat}</span>
-                    </a>
-
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                    </svg>
-
-                    <span class="inline-flex items-center gap-1 bg-orange-600 text-white border border-orange-600 px-3 py-1 rounded-xl text-xs font-bold shadow-sm">
-                        <span>${subCat}</span>
-                    </span>
-                `;
-                breadcrumbArea.innerHTML = breadcrumbHTML;
-                
-                filterSection.classList.remove('hidden');
-                container.className = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4";
-                fetchAds(subCat);
-            } 
-            // الحالة الثانية: لو المستخدم في القسم الرئيسي
-            else {
-                breadcrumbHTML += `
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                    </svg>
-
-                    <span class="inline-flex items-center gap-1 bg-orange-600 text-white border border-orange-600 px-3 py-1 rounded-xl text-xs font-bold shadow-sm">
-                        <span>${mainCat}</span>
-                    </span>
-                `;
-                breadcrumbArea.innerHTML = breadcrumbHTML;
-                
-                fetchSubCategories(mainCat);
+            if (mediaArray.length > 1) {
+                let currentIdx = 0;
+                const slides = container.querySelectorAll(`.${containerId}-slide`);
+                setInterval(() => {
+                    slides[currentIdx].classList.remove('opacity-100', 'z-10');
+                    slides[currentIdx].classList.add('opacity-0', 'z-0');
+                    currentIdx = (currentIdx + 1) % slides.length;
+                    slides[currentIdx].classList.remove('opacity-0', 'z-0');
+                    slides[currentIdx].classList.add('opacity-100', 'z-10');
+                }, 3500);
             }
         }
-        // جلب الأقسام الفرعية ديناميكياً من قاعدة البيانات
-        async function fetchSubCategories(parentCategoryName) {
-            const container = document.getElementById('dynamic-container');
-            const countEl = document.getElementById('results-count');
+
+        // جلب البانرات الخاصة بصفحة السكشن
+        async function fetchBannerAds() {
+            try {
+                const { data: banners, error } = await db
+                    .from('featured_companies')
+                    .select('*')
+                    .eq('position', 'above')
+                    .eq('page_target', 'section.html');
+
+                if (error || !banners) return;
+
+                let allTopMedia = [];
+                banners.forEach(banner => {
+                    if (banner.images && banner.images.length > 0) {
+                        banner.images.forEach(imgUrl => {
+                            allTopMedia.push({ url: imgUrl, title: banner.title });
+                        });
+                    }
+                });
+
+                setupSlider('topBannerAds', allTopMedia);
+            } catch (e) {
+                console.log('خطأ في جلب البانرات:', e);
+            }
+        }
+
+        // جلب الإعلانات بناءً على القسم أو القسم الفرعي القادم من الرابط
+        async function fetchAds() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const categoryName = urlParams.get('cat');
+            const subCategoryName = urlParams.get('sub');
+
+            const container = document.getElementById('ads-container');
+            const countLabel = document.getElementById('ads-count');
+            const titleLabel = document.getElementById('main-section-title');
+
+            if (!container) return;
+
+            // تحديث مسار التنقل في العنوان (Breadcrumb)
+            let breadcrumbHtml = `
+                <div class="flex items-center gap-2 flex-wrap">
+                    <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer">
+                        <span>الرئيسية</span>
+                    </a>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                    <a href="categories.html" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-sm">
+                        <span>الأقسام</span>
+                    </a>
+            `;
+
+            if (categoryName) {
+                breadcrumbHtml += `
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                    <span class="inline-flex items-center gap-1 bg-orange-600 text-white border border-orange-600 px-3 py-1 rounded-xl text-xs font-bold shadow-sm">
+                        <span>${categoryName}</span>
+                    </span>
+                `;
+            }
+
+            if (subCategoryName) {
+                breadcrumbHtml += `
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                    <span class="inline-flex items-center gap-1 bg-orange-600 text-white border border-orange-600 px-3 py-1 rounded-xl text-xs font-bold shadow-sm">
+                        <span>${subCategoryName}</span>
+                    </span>
+                `;
+            }
+
+            breadcrumbHtml += `</div>`;
+            titleLabel.innerHTML = breadcrumbHtml;
 
             try {
-                // أولاً: نحضر الـ ID للقسم الرئيسي من جدول categories
-                const { data: parentData, error: parentError } = await db
-                    .from('categories')
-                    .select('id')
-                    .eq('name', parentCategoryName)
-                    .single();
+                // استعلام جلب الإعلانات من جدول الـ ads أو اسم الجدول عندك (تأكد من اسم جدول الإعلانات لديك مثل ads أو items)
+                let query = db.from('ads').select('*');
 
-                if (parentError || !parentData) {
-                    // إذا لم نجد القسم بالاسم مباشرة، نحاول جلبه كـ نص عادي أو جلب كل الأقسام الفرعية المرتبطة
-                    throw new Error('القسم غير موجود');
+                if (categoryName) {
+                    query = query.eq('category', categoryName);
+                }
+                if (subCategoryName) {
+                    query = query.eq('subcategory', subCategoryName);
                 }
 
-                // ثانياً: جلب الأقسام الفرعية التي تتبع هذا الـ parent_id
-                const { data: subCategories, error: subError } = await db
-                    .from('categories')
-                    .select('*')
-                    .eq('parent_id', parentData.id);
+                const { data: ads, error } = await query;
 
-                if (subError) throw subError;
+                if (error) throw error;
 
-                if (!subCategories || subCategories.length === 0) {
-                    container.innerHTML = '<div class="col-span-full text-center py-16 text-gray-400 text-sm bg-white rounded-2xl border border-gray-100 shadow-sm">لا توجد أقسام فرعية متاحة حالياً، جاري عرض الإعلانات المباشرة...</div>';
-                    countEl.innerText = '0 قسم فرعي';
-                    // لو مفيش أقسام فرعية، اعرض إعلانات القسم الرئيسي مباشرة
-                    filterSection.classList.remove('hidden');
-                    container.className = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4";
-                    fetchAds(parentCategoryName);
+                if (!ads || ads.length === 0) {
+                    container.innerHTML = '<div class="col-span-full text-center py-12 text-gray-400 text-sm">لا توجد إعلانات مضافة في هذا القسم حالياً.</div>';
+                    countLabel.innerText = '0 إعلان';
                     return;
                 }
 
-                countEl.innerText = `${subCategories.length} قسم فرعي متاح`;
+                countLabel.innerText = `${ads.length} إعلان متاح`;
                 container.innerHTML = '';
 
-                subCategories.forEach(sub => {
-                    const iconSrc = sub.image_url ? sub.image_url : 'logo192.png';
+                ads.forEach(ad => {
+                    const imgUrl = (ad.images && ad.images.length > 0) ? ad.images[0] : 'logo192.png';
                     const card = `
-                        <a href="section.html?cat=${encodeURIComponent(parentCategoryName)}&sub=${encodeURIComponent(sub.name)}" class="bg-white border border-gray-100 rounded-2xl p-4 flex flex-col items-center justify-center text-center shadow-sm hover:border-orange-500 hover:shadow-md transition-all group">
-                            <div class="w-20 h-20 bg-orange-50/50 rounded-2xl flex items-center justify-center mb-3 overflow-hidden shadow-inner border border-orange-100/50 group-hover:scale-105 transition-transform">
-                                <img src="${iconSrc}" alt="${sub.name}" class="w-full h-full object-cover">
+                        <a href="ad-details.html?id=${ad.id}" class="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:border-orange-500 hover:shadow-md transition-all group flex flex-col">
+                            <div class="w-full h-44 bg-gray-100 relative overflow-hidden">
+                                <img src="${imgUrl}" alt="${ad.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform">
                             </div>
-                            <h3 class="font-bold text-gray-800 text-sm group-hover:text-orange-600 transition-colors truncate w-full">${sub.name}</h3>
-                            <span class="text-[11px] text-orange-500 mt-1">عرض الإعلانات</span>
+                            <div class="p-4 flex flex-col flex-1 justify-between">
+                                <div>
+                                    <h3 class="font-bold text-gray-800 text-sm group-hover:text-orange-600 transition-colors line-clamp-1 mb-1">${ad.title}</h3>
+                                    <p class="text-xs text-gray-500 line-clamp-2 mb-3">${ad.description || ''}</p>
+                                </div>
+                                <div class="flex items-center justify-between pt-2 border-t border-gray-100">
+                                    <span class="font-black text-orange-600 text-sm">${ad.price ? ad.price + ' جنيه' : ''}</span>
+                                    <span class="text-[11px] text-gray-400">${ad.created_at ? new Date(ad.created_at).toLocaleDateString('ar-EG') : ''}</span>
+                                </div>
+                            </div>
                         </a>
                     `;
                     container.innerHTML += card;
                 });
 
             } catch (err) {
-                console.error('خطأ في جلب الأقسام الفرعية:', err.message);
-                // كاحتياط: لو حدث خطأ في ربط الـ IDs، نجلب الإعلانات مباشرة للقسم
-                filterSection.classList.remove('hidden');
-                container.className = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4";
-                fetchAds(parentCategoryName);
-            }
-        }
-
-        // جلب الإعلانات من قاعدة البيانات
-        async function fetchAds(categoryName) {
-            const container = document.getElementById('dynamic-container');
-            const countEl = document.getElementById('results-count');
-
-            try {
-                const { data: ads, error } = await db
-                    .from('ads')
-                    .select('*')
-                    .eq('category', categoryName)
-                    .order('created_at', { ascending: false });
-
-                if (error) throw error;
-
-                allAdsData = ads || [];
-                renderAds(allAdsData);
-
-            } catch (err) {
                 console.error('خطأ في جلب الإعلانات:', err.message);
-                container.innerHTML = '<div class="col-span-full text-center py-16 text-red-400 text-sm">تعذر جلب الإعلانات، تحقق من الاتصال.</div>';
+                container.innerHTML = '<div class="col-span-full text-center py-12 text-red-400 text-sm">تعذر تحميل الإعلانات، حاول مرة أخرى.</div>';
+                countLabel.innerText = 'خطأ';
             }
         }
 
-        // دالة عرض كروت الإعلانات
-        function renderAds(adsArray) {
-            const container = document.getElementById('dynamic-container');
-            const countEl = document.getElementById('results-count');
-
-            countEl.innerText = `تم العثور على ${adsArray.length} إعلان`;
-
-            if (adsArray.length === 0) {
-                container.innerHTML = `
-                    <div class="col-span-full text-center py-16 bg-white rounded-2xl border border-gray-100 shadow-sm">
-                        <p class="text-gray-400 text-sm font-medium">لا توجد إعلانات مطابقة حالياً في هذا القسم.</p>
-                        <a href="add-ad.html" class="inline-block mt-4 bg-orange-600 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-sm">أضف أول إعلان هنا</a>
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = '';
-            adsArray.forEach(ad => {
-                const mainImage = (ad.images && ad.images.length > 0) ? ad.images[0] : 'logo192.png';
-                const conditionBadge = ad.condition ? `<span class="absolute top-2 right-2 bg-black/60 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full">${ad.condition}</span>` : '';
-
-                const card = `
-                    <a href="ad-details.html?id=${ad.id}" class="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:border-orange-500 hover:shadow-md transition-all group flex flex-col relative">
-                        <div class="w-full h-40 bg-gray-100 overflow-hidden relative">
-                            <img src="${mainImage}" alt="${ad.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                            ${conditionBadge}
-                        </div>
-                        <div class="p-3.5 flex flex-col flex-1 justify-between">
-                            <div>
-                                <h3 class="font-bold text-gray-800 text-sm line-clamp-1 group-hover:text-orange-600 transition-colors">${ad.title}</h3>
-                                <p class="text-orange-600 font-black text-base mt-1.5">${ad.price ? ad.price + ' جنيه' : 'السعر عند الاتصال'}</p>
-                            </div>
-                            <div class="flex items-center justify-between text-[11px] text-gray-400 mt-3 pt-2 border-t border-gray-50">
-                                <span>${ad.governorate || 'مصر'}</span>
-                                <span>${new Date(ad.created_at || Date.now()).toLocaleDateString('ar-EG')}</span>
-                            </div>
-                        </div>
-                    </a>
-                `;
-                container.innerHTML += card;
-            });
-        }
-
-        // دالة الفلترة (جديد / مستعمل / الكل)
-        function filterAds(type) {
-            const btnAll = document.getElementById('btn-all');
-            const btnNew = document.getElementById('btn-new');
-            const btnUsed = document.getElementById('btn-used');
-
-            [btnAll, btnNew, btnUsed].forEach(btn => {
-                btn.className = "px-3 py-1 rounded-lg text-xs font-bold transition-all text-gray-600 hover:text-orange-600";
-            });
-
-            if (type === 'all') {
-                btnAll.className = "px-3 py-1 rounded-lg text-xs font-bold transition-all bg-orange-600 text-white shadow-sm";
-                renderAds(allAdsData);
-            } else if (type === 'جديد') {
-                btnNew.className = "px-3 py-1 rounded-lg text-xs font-bold transition-all bg-orange-600 text-white shadow-sm";
-                const filtered = allAdsData.filter(ad => ad.condition === 'جديد' || ad.condition === 'New');
-                renderAds(filtered);
-            } else if (type === 'مستعمل') {
-                btnUsed.className = "px-3 py-1 rounded-lg text-xs font-bold transition-all bg-orange-600 text-white shadow-sm";
-                const filtered = allAdsData.filter(ad => ad.condition === 'مستعمل' || ad.condition === 'Used');
-                renderAds(filtered);
-            }
-        }
-
-        initPage();
+        // عند تحميل الصفحة
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchAds();
+            fetchBannerAds();
+        });
     </script>
 </body>
 </html>
