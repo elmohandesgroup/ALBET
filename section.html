@@ -166,29 +166,55 @@
                 return;
             }
 
+            // إعادة ضبط المسار بالترتيب الصحيح تماماً (من اليمين لليسار: الرئيسية > الأقسام > القسم الرئيسي > القسم الفرعي)
+            let breadcrumbHTML = `
+                <a href="index.html" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-sm">
+                    <span>الرئيسية</span>
+                </a>
+                
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+                
+                <a href="categories.html" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-sm">
+                    <span>الأقسام</span>
+                </a>
+
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+            `;
+
             // الحالة الأولى: لو المستخدم اختار قسم فرعي (نعرض الإعلانات)
             if (subCat) {
-                titleEl.innerText = subCat;
-                // إضافة القسم الرئيسي في المسار لتوضيح الهرمية
-                breadcrumbArea.innerHTML += `
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                    </svg>
+                // القسم الرئيسي يكون رابط، والفرعي هو العنوان الحالي
+                breadcrumbHTML += `
                     <a href="section.html?cat=${encodeURIComponent(mainCat)}" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-sm">
                         <span>${mainCat}</span>
                     </a>
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+
+                    <h2 id="section-title" class="font-black text-gray-900 text-base md:text-lg">${subCat}</h2>
                 `;
+                breadcrumbArea.innerHTML = breadcrumbHTML;
+                
                 filterSection.classList.remove('hidden');
-                container.className = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"; // شبكة الإعلانات
+                container.className = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4";
                 fetchAds(subCat);
             } 
             // الحالة الثانية: لو المستخدم في القسم الرئيسي فقط (نعرض الأقسام الفرعية ديناميكياً)
             else {
-                titleEl.innerText = mainCat;
+                breadcrumbHTML += `
+                    <h2 id="section-title" class="font-black text-gray-900 text-base md:text-lg">${mainCat}</h2>
+                `;
+                breadcrumbArea.innerHTML = breadcrumbHTML;
+                
                 fetchSubCategories(mainCat);
             }
         }
-
         // جلب الأقسام الفرعية ديناميكياً من قاعدة البيانات
         async function fetchSubCategories(parentCategoryName) {
             const container = document.getElementById('dynamic-container');
