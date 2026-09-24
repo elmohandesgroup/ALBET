@@ -152,7 +152,7 @@
 
         let allAdsData = [];
 
-        async function initPage() {
+       async function initPage() {
             const titleEl = document.getElementById('section-title');
             const countEl = document.getElementById('results-count');
             const container = document.getElementById('dynamic-container');
@@ -166,7 +166,7 @@
                 return;
             }
 
-            // إعادة ضبط المسار بالترتيب الصحيح تماماً (من اليمين لليسار: الرئيسية > الأقسام > القسم الرئيسي > القسم الفرعي)
+            // توحيد شكل المسار (Breadcrumbs) في كل الصفحات بنفس التنسيق الاحترافي الموحد
             let breadcrumbHTML = `
                 <a href="index.html" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-sm">
                     <span>الرئيسية</span>
@@ -179,16 +179,14 @@
                 <a href="categories.html" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-sm">
                     <span>الأقسام</span>
                 </a>
-
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
             `;
 
-            // الحالة الأولى: لو المستخدم اختار قسم فرعي (نعرض الإعلانات)
+            // الحالة الأولى: لو المستخدم اختار قسم فرعي
             if (subCat) {
-                // القسم الرئيسي يكون رابط، والفرعي هو العنوان الحالي
                 breadcrumbHTML += `
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
                     <a href="section.html?cat=${encodeURIComponent(mainCat)}" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-sm">
                         <span>${mainCat}</span>
                     </a>
@@ -197,7 +195,9 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                     </svg>
 
-                    <h2 id="section-title" class="font-black text-gray-900 text-base md:text-lg">${subCat}</h2>
+                    <span class="inline-flex items-center gap-1 bg-orange-600 text-white border border-orange-600 px-3 py-1 rounded-xl text-xs font-bold shadow-sm">
+                        <span>${subCat}</span>
+                    </span>
                 `;
                 breadcrumbArea.innerHTML = breadcrumbHTML;
                 
@@ -205,10 +205,16 @@
                 container.className = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4";
                 fetchAds(subCat);
             } 
-            // الحالة الثانية: لو المستخدم في القسم الرئيسي فقط (نعرض الأقسام الفرعية ديناميكياً)
+            // الحالة الثانية: لو المستخدم في القسم الرئيسي
             else {
                 breadcrumbHTML += `
-                    <h2 id="section-title" class="font-black text-gray-900 text-base md:text-lg">${mainCat}</h2>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+
+                    <span class="inline-flex items-center gap-1 bg-orange-600 text-white border border-orange-600 px-3 py-1 rounded-xl text-xs font-bold shadow-sm">
+                        <span>${mainCat}</span>
+                    </span>
                 `;
                 breadcrumbArea.innerHTML = breadcrumbHTML;
                 
