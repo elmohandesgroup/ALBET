@@ -133,16 +133,14 @@
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let currentImagesList = [];
-        let allCategoriesCache = [];
         let allSubCategoriesCache = [];
 
-        // 1. جلب الأقسام الرئيسية وتخزينها
+        // 1. جلب الأقسام الرئيسية مباشرة من قاعدة البيانات
         async function loadMainCategories() {
             try {
                 const { data: categories, error } = await supabaseClient.from('categories').select('*');
                 if (error || !categories) return;
 
-                allCategoriesCache = categories;
                 const mainSelect = document.getElementById('compMainCategory');
                 mainSelect.innerHTML = '<option value="">-- اختر القسم الرئيسي --</option>';
 
@@ -157,7 +155,7 @@
             }
         }
 
-        // 2. جلب الأقسام الفرعية ديناميكياً من قاعدة البيانات بناءً على الـ category_id
+        // 2. جلب الأقسام الفرعية ديناميكياً بناءً على القسم الرئيسي المختار
         async function fetchSubCategoriesFromDB(selectedSubId = null) {
             const mainCatId = document.getElementById('compMainCategory').value;
             const subSelect = document.getElementById('compSubCategory');
@@ -166,37 +164,43 @@
             if (!mainCatId) return;
 
             try {
-                let subcategories = allSubCategoriesCache;
-                if (subcategories.length === 0) {
-                    // محاولة جلب البيانات من جدول subcategories أو sub_categories
-                    const res1 = await supabaseClient.from('subcategories').select('*');
-                    if (res1.data && res1.data.length > 0) {
-                        subcategories = res1.data;
+                let subcategories = [];
+                
+                // محاولة جلب الأقسام الفرعية من الجداول المحتملة
+                const { data: d1 } = await supabaseClient.from('subcategories').select('*').eq('category_id', mainCatId);
+                if (d1 && d1.length > 0) {
+                    subcategories = d1;
+                } else {
+                    const { data: d2 } = await supabaseClient.from('sub_categories').select('*').eq('category_id', mainCatId);
+                    if (d2 && d2.length > 0) {
+                        subcategories = d2;
                     } else {
-                        const res2 = await supabaseClient.from('sub_categories').select('*');
-                        if (res2.data) subcategories = res2.data;
+                        // محاولة جلب كل الأقسام الفرعية وفلترتها برمجياً لو حقل الربط باسم مختلف
+                        const { data: d3 } = await supabaseClient.from('subcategories').select('*');
+                        if (d3) {
+                            subcategories = d3.filter(s => String(s.category_id || s.main_category_id || s.cat_id) === String(mainCatId));
+                        } else {
+                            const { data: d4 } = await supabaseClient.from('sub_categories').select('*');
+                            if (d4) {
+                                subcategories = d4.filter(s => String(s.category_id || s.main_category_id || s.cat_id) === String(mainCatId));
+                            }
+                        }
                     }
-                    allSubCategoriesCache = subcategories;
                 }
 
-                const filteredSubs = subcategories.filter(sub => String(sub.category_id) === String(mainCatId));
-                populateSubDropdown(filteredSubs, selectedSubId);
+                allSubCategoriesCache = subcategories;
+                subcategories.forEach(sub => {
+                    let option = document.createElement('option');
+                    option.value = sub.id;
+                    option.textContent = sub.name || sub.title;
+                    if (selectedSubId && String(sub.id) === String(selectedSubId)) {
+                        option.selected = true;
+                    }
+                    subSelect.appendChild(option);
+                });
             } catch (err) {
-                console.log("Subcategories fetch note:", err);
+                console.log("Subcategories fetch error:", err);
             }
-        }
-
-        function populateSubDropdown(subs, selectedSubId = null) {
-            const subSelect = document.getElementById('compSubCategory');
-            subs.forEach(sub => {
-                let option = document.createElement('option');
-                option.value = sub.id;
-                option.textContent = sub.name || sub.title;
-                if (selectedSubId && String(sub.id) === String(selectedSubId)) {
-                    option.selected = true;
-                }
-                subSelect.appendChild(option);
-            });
         }
 
         // إظهار أو إخفاء صندوق اختيار الأقسام
@@ -377,10 +381,9 @@
                     await fetchSubCategoriesFromDB();
                 } else if (ad.page_target.startsWith('subcat_')) {
                     const subId = ad.page_target.replace('subcat_', '');
-                    // محاولة معرفة القسم الرئيسي التابع له القسم الفرعي
-                    let subItem = allSubCategoriesCache.find(s => String(s.id) === String(subId));
-                    if (subItem) {
-                        document.getElementById('compMainCategory').value = subItem.category_id;
+                    const { data: subData } = await supabaseClient.from('subcategories').select('*').eq('id', subId).single();
+                    if (subData) {
+                        document.getElementById('compMainCategory').value = subData.category_id;
                         await fetchSubCategoriesFromDB(subId);
                     }
                 }
@@ -396,7 +399,7 @@
             document.getElementById('submitBtn').innerText = 'تحديث البنر';
             document.getElementById('cancelEditBtn').classList.remove('hidden');
 
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({ top: { top: 0, behavior: 'smooth' } });
         }
 
         function resetForm() {
