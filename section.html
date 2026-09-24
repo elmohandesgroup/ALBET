@@ -82,7 +82,7 @@
     <!-- محتوى الصفحة -->
     <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
         
-        <!-- قسم البانر الدعائي العريض (متحرك Slider لو فيه أكثر من صورة) -->
+        <!-- قسم البانر الدعائي العريض (متحرك Slider) -->
         <div id="featured-banners-container" class="hidden">
             <div id="banners-grid" class="w-full">
                 <!-- سيتم تعبئتها ديناميكياً -->
@@ -178,7 +178,6 @@
                 return;
             }
 
-            // استعلام قاعدة البيانات لمعرفة IDs الخاصة بالقسم الرئيسي والفرعي الحالي بدقة
             try {
                 const { data: allCats } = await db.from('categories').select('*');
                 if (allCats) {
@@ -187,7 +186,7 @@
                         currentMainCatId = mainObj.id;
                     }
                     if (subCat) {
-                        const subObj = allCats.find(c => c.name === subCat && c.parent_id);
+                        const subObj = allCats.find(c => c.name === subCat);
                         if (subObj) {
                             currentSubCatId = subObj.id;
                         }
@@ -197,7 +196,6 @@
                 console.log('Error resolving category IDs:', e);
             }
 
-            // جلب البانرات المخصصة
             fetchFeaturedBanners();
 
             let breadcrumbHTML = `
@@ -255,7 +253,7 @@
             }
         }
 
-        // دالة جلب البانرات (مع دعم السلايدر المتحرك لو فيه أكتر من صورة)
+        // دالة جلب البانرات المتحركة (Slider)
         async function fetchFeaturedBanners() {
             const bannerContainer = document.getElementById('featured-banners-container');
             const bannersGrid = document.getElementById('banners-grid');
@@ -284,7 +282,6 @@
 
                 if (matchedBanners.length === 0) return;
 
-                // تجميع كل الصور من البانرات المطابقة لإنشاء السلايدر المتحرك
                 let allImages = [];
                 matchedBanners.forEach(banner => {
                     if (banner.images && Array.isArray(banner.images)) {
@@ -296,7 +293,6 @@
 
                 if (allImages.length === 0) return;
 
-                // لو الصورة واحدة أو أكتر، نعمل السلايدر المتحرك
                 let sliderHTML = `
                     <div class="w-full bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm relative group mb-4">
                         <div class="w-full h-44 sm:h-56 md:h-64 bg-gray-100 relative overflow-hidden" id="banner-slider-box">
@@ -318,7 +314,6 @@
                 bannersGrid.innerHTML = sliderHTML;
                 bannerContainer.classList.remove('hidden');
 
-                // تفعيل الحركة التلقائية (Slider Interval) لو فيه أكتر من صورة
                 if (allImages.length > 1) {
                     let currentIndex = 0;
                     const slides = bannersGrid.querySelectorAll('.banner-slide');
@@ -393,12 +388,11 @@
             }
         }
 
-        // جلب الإعلانات من قاعدة البيانات (مع إصلاح مطابقة اسم القسم الفرعي)
+        // جلب الإعلانات الخاصة بالقسم المختار مباشرة
         async function fetchAds(categoryName) {
             const container = document.getElementById('dynamic-container');
 
             try {
-                // محاولة البحث بالاسم المباشر (سواء كان قسم فرعي أو رئيسي)
                 const { data: ads, error } = await db
                     .from('ads')
                     .select('*')
@@ -416,7 +410,7 @@
             }
         }
 
-        // دالة عرض كروت الإعلانات
+        // عرض الإعلانات بدون زر "أضف أول إعلان هنا"
         function renderAds(adsArray) {
             const container = document.getElementById('dynamic-container');
             const countEl = document.getElementById('results-count');
@@ -427,13 +421,13 @@
                 container.innerHTML = `
                     <div class="col-span-full text-center py-16 bg-white rounded-2xl border border-gray-100 shadow-sm">
                         <p class="text-gray-400 text-sm font-medium">لا توجد إعلانات مطابقة حالياً في هذا القسم.</p>
-                        <a href="add-ad.html" class="inline-block mt-4 bg-orange-600 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-sm">أضف أول إعلان هنا</a>
                     </div>
                 `;
                 return;
             }
 
             container.innerHTML = '';
+            container.className = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4";
             adsArray.forEach(ad => {
                 const mainImage = (ad.images && ad.images.length > 0) ? ad.images[0] : 'logo192.png';
                 const conditionBadge = ad.condition ? `<span class="absolute top-2 right-2 bg-black/60 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full">${ad.condition}</span>` : '';
@@ -460,7 +454,6 @@
             });
         }
 
-        // دالة الفلترة (جديد / مستعمل / الكل)
         function filterAds(type) {
             const btnAll = document.getElementById('btn-all');
             const btnNew = document.getElementById('btn-new');
