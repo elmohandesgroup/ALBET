@@ -82,9 +82,6 @@
     <!-- محتوى الصفحة -->
     <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
         
-        <!-- بانر الإعلانات العلوي المتحرك -->
-        <div id="topBannerAds" class="w-full"></div>
-
         <!-- مسار التنقل (Breadcrumbs) وعنوان الصفحة -->
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div id="breadcrumb-area" class="flex items-center gap-2 flex-wrap">
@@ -110,6 +107,22 @@
                 <h2 id="section-title" class="font-black text-gray-900 text-base md:text-lg">جاري التحميل...</h2>
             </div>
             <span id="results-count" class="text-xs text-gray-400 font-semibold">جاري التحميل...</span>
+        </div>
+
+        <!-- قسم البانر الدعائي للشركات المميزة (يظهر أعلى النتائج) -->
+        <div id="featured-banners-container" class="hidden mb-6">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="font-black text-gray-900 text-sm md:text-base flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                    </svg>
+                    <span>الشركات والوسائد الإعلانية المميزة</span>
+                </h3>
+            </div>
+            <!-- حاوية كروت الشركات الدعائية (تصميم أفقي أو شبكي يشبه الكاتالوج) -->
+            <div id="banners-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <!-- سيتم تعبئتها ديناميكياً -->
+            </div>
         </div>
 
         <!-- قسم أزرار التبديل (تظهر فقط عند عرض الإعلانات) -->
@@ -158,76 +171,12 @@
 
         let allAdsData = [];
 
-        // دالة الـ Slider للبانرات (بدون نقاط)
-        function setupSlider(containerId, mediaArray) {
-            const container = document.getElementById(containerId);
-            if (!container || mediaArray.length === 0) return;
-
-            let slidesHtml = '';
-            mediaArray.forEach((media, index) => {
-                slidesHtml += `
-                    <div class="absolute inset-0 transition-opacity duration-700 ease-in-out ${index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'} ${containerId}-slide">
-                        <div class="w-full h-40 md:h-56 rounded-2xl overflow-hidden shadow-sm bg-gray-100 relative">
-                            <img src="${media.url}" alt="${media.title || 'إعلان مميز'}" class="w-full h-full object-cover">
-                        </div>
-                    </div>
-                `;
-            });
-
-            container.innerHTML = `
-                <div class="relative w-full h-40 md:h-56 rounded-2xl shadow-sm overflow-hidden">
-                    ${slidesHtml}
-                </div>
-            `;
-
-            if (mediaArray.length > 1) {
-                let currentIdx = 0;
-                const slides = container.querySelectorAll(`.${containerId}-slide`);
-                setInterval(() => {
-                    slides[currentIdx].classList.remove('opacity-100', 'z-10');
-                    slides[currentIdx].classList.add('opacity-0', 'z-0');
-                    currentIdx = (currentIdx + 1) % slides.length;
-                    slides[currentIdx].classList.remove('opacity-0', 'z-0');
-                    slides[currentIdx].classList.add('opacity-100', 'z-10');
-                }, 3500);
-            }
-        }
-
-        // جلب البانرات الخاصة بصفحة السكشن
-        async function fetchBannerAds() {
-            try {
-                const { data: banners, error } = await db
-                    .from('featured_companies')
-                    .select('*')
-                    .eq('position', 'above')
-                    .eq('page_target', 'section.html');
-
-                if (error || !banners) return;
-
-                let allTopMedia = [];
-                banners.forEach(banner => {
-                    if (banner.images && banner.images.length > 0) {
-                        banner.images.forEach(imgUrl => {
-                            allTopMedia.push({ url: imgUrl, title: banner.title });
-                        });
-                    }
-                });
-
-                setupSlider('topBannerAds', allTopMedia);
-            } catch (e) {
-                console.log('خطأ في جلب البانرات:', e);
-            }
-        }
-
-       async function initPage() {
+        async function initPage() {
             const titleEl = document.getElementById('section-title');
             const countEl = document.getElementById('results-count');
             const container = document.getElementById('dynamic-container');
             const filterSection = document.getElementById('ads-filter-section');
             const breadcrumbArea = document.getElementById('breadcrumb-area');
-
-            // جلب البانرات عند تحميل الصفحة
-            fetchBannerAds();
 
             if (!mainCat) {
                 titleEl.innerText = "كل الأقسام والإعلانات";
@@ -235,6 +184,9 @@
                 container.innerHTML = '<div class="col-span-full text-center py-16 text-gray-400">الرجاء اختيار قسم رئيسي.</div>';
                 return;
             }
+
+            // جلب البانرات الدعائية للشركات الخاصة بهذا القسم إن وجدت
+            fetchFeaturedBanners(mainCat, subCat);
 
             let breadcrumbHTML = `
                 <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-sm">
@@ -291,6 +243,53 @@
             }
         }
 
+        // دالة جلب الشركات والبانرات الدعائية من جدول (featured_companies أو banners حسب جدولك)
+        async function fetchFeaturedBanners(categoryName, subCategoryName) {
+            const bannerContainer = document.getElementById('featured-banners-container');
+            const bannersGrid = document.getElementById('banners-grid');
+
+            try {
+                // افترضنا هنا أن اسم الجدول في قاعدة البيانات هو featured_companies أو banners
+                // يمكنك تعديل اسم الجدول لو مختلف عندك (مثلاً 'ads' لو مميزة أو جدول منفصل للشركات)
+                let query = db.from('featured_companies').select('*');
+                
+                if (subCategoryName) {
+                    query = query.or(`category.eq.${categoryName},sub_category.eq.${subCategoryName}`);
+                } else {
+                    query = query.eq('category', categoryName);
+                }
+
+                const { data: banners, error } = await query;
+
+                if (error || !banners || banners.length === 0) {
+                    // لو الجدول غير موجود أو مفيش بيانات، نجرب جدول بديل أو نخفي القسم
+                    return;
+                }
+
+                bannersGrid.innerHTML = '';
+                banners.forEach(banner => {
+                    const bannerCard = `
+                        <a href="${banner.link || '#'}" target="_blank" class="bg-white border border-orange-100 rounded-2xl p-3 flex items-center gap-3 shadow-sm hover:border-orange-500 hover:shadow-md transition-all group">
+                            <div class="w-16 h-16 bg-orange-50 rounded-xl overflow-hidden flex-shrink-0 border border-orange-100">
+                                <img src="${banner.image_url || 'logo192.png'}" alt="${banner.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform">
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <span class="bg-orange-100 text-orange-600 text-[10px] font-bold px-2 py-0.5 rounded-md">شركة مميزة</span>
+                                <h4 class="font-bold text-gray-800 text-sm truncate mt-1 group-hover:text-orange-600 transition-colors">${banner.title}</h4>
+                                <p class="text-xs text-gray-400 truncate">${banner.description || 'تصفح عروض الشركة الآن'}</p>
+                            </div>
+                        </a>
+                    `;
+                    bannersGrid.innerHTML += bannerCard;
+                });
+
+                bannerContainer.classList.remove('hidden');
+            } catch (err) {
+                console.log('لا توجد بانرات دعائية مفعلة لهذا القسم أو الجدول غير موجود:', err.message);
+            }
+        }
+
+        // جلب الأقسام الفرعية ديناميكياً من قاعدة البيانات
         async function fetchSubCategories(parentCategoryName) {
             const container = document.getElementById('dynamic-container');
             const countEl = document.getElementById('results-count');
@@ -347,6 +346,7 @@
             }
         }
 
+        // جلب الإعلانات من قاعدة البيانات
         async function fetchAds(categoryName) {
             const container = document.getElementById('dynamic-container');
             const countEl = document.getElementById('results-count');
@@ -369,6 +369,7 @@
             }
         }
 
+        // دالة عرض كروت الإعلانات
         function renderAds(adsArray) {
             const container = document.getElementById('dynamic-container');
             const countEl = document.getElementById('results-count');
@@ -412,6 +413,7 @@
             });
         }
 
+        // دالة الفلترة (جديد / مستعمل / الكل)
         function filterAds(type) {
             const btnAll = document.getElementById('btn-all');
             const btnNew = document.getElementById('btn-new');
