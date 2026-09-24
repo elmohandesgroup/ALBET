@@ -82,10 +82,10 @@
     <!-- محتوى الصفحة -->
     <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
         
-        <!-- قسم البانر الدعائي العريض (فوق شريط التسلسل مباشرة) -->
+        <!-- قسم البانر الدعائي العريض (متحرك Slider لو فيه أكثر من صورة) -->
         <div id="featured-banners-container" class="hidden">
             <div id="banners-grid" class="w-full">
-                <!-- سيتم تعبئتها ديناميكياً بانر عريض يملي الشاشة -->
+                <!-- سيتم تعبئتها ديناميكياً -->
             </div>
         </div>
 
@@ -197,7 +197,7 @@
                 console.log('Error resolving category IDs:', e);
             }
 
-            // جلب البانرات المخصصة بناءً على الـ IDs أو الصفحة
+            // جلب البانرات المخصصة
             fetchFeaturedBanners();
 
             let breadcrumbHTML = `
@@ -255,7 +255,7 @@
             }
         }
 
-        // دالة جلب البانرات وتصميمها بشكل بانر عريض واحترافي يملأ العرض
+        // دالة جلب البانرات (مع دعم السلايدر المتحرك لو فيه أكتر من صورة)
         async function fetchFeaturedBanners() {
             const bannerContainer = document.getElementById('featured-banners-container');
             const bannersGrid = document.getElementById('banners-grid');
@@ -270,47 +270,69 @@
 
                 let matchedBanners = [];
 
-                // 1. لو في قسم فرعي، نبحث عن بانر القسم الفرعي أولاً
                 if (subCat && currentSubCatId) {
                     matchedBanners = banners.filter(banner => banner.page_target === `subcat_${currentSubCatId}`);
                 }
 
-                // 2. لو مفيش بانر فرعي، أو إحنا في قسم رئيسي فقط، نجيب بانر القسم الرئيسي
                 if (matchedBanners.length === 0 && mainCat && currentMainCatId) {
                     matchedBanners = banners.filter(banner => banner.page_target === `cat_${currentMainCatId}`);
                 }
 
-                // 3. لو لسه مفيش، نجيب بانر الصفحة العامة section.html
                 if (matchedBanners.length === 0) {
                     matchedBanners = banners.filter(banner => banner.page_target === 'section.html');
                 }
 
                 if (matchedBanners.length === 0) return;
 
-                bannersGrid.innerHTML = '';
+                // تجميع كل الصور من البانرات المطابقة لإنشاء السلايدر المتحرك
+                let allImages = [];
                 matchedBanners.forEach(banner => {
-                    let imgSrc = 'logo192.png';
-                    if (banner.images && Array.isArray(banner.images) && banner.images.length > 0) {
-                        imgSrc = banner.images[0];
+                    if (banner.images && Array.isArray(banner.images)) {
+                        allImages.push(...banner.images);
                     } else if (typeof banner.images === 'string') {
-                        imgSrc = banner.images;
+                        allImages.push(banner.images);
                     }
-
-                    // تصميم البانر العريض والاحترافي (بالعرض الكامل مثل بانر التكييف)
-                    const bannerCard = `
-                        <div class="w-full bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all relative group mb-4">
-                            <div class="w-full h-44 sm:h-56 md:h-64 bg-gray-100 relative overflow-hidden">
-                                <img src="${imgSrc}" alt="${banner.title || 'إعلان مميز'}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                                <div class="absolute top-3 right-3 bg-orange-600 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-md">
-                                    إعلان مميز
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    bannersGrid.innerHTML += bannerCard;
                 });
 
+                if (allImages.length === 0) return;
+
+                // لو الصورة واحدة أو أكتر، نعمل السلايدر المتحرك
+                let sliderHTML = `
+                    <div class="w-full bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm relative group mb-4">
+                        <div class="w-full h-44 sm:h-56 md:h-64 bg-gray-100 relative overflow-hidden" id="banner-slider-box">
+                `;
+
+                allImages.forEach((img, idx) => {
+                    let activeClass = idx === 0 ? 'opacity-100' : 'opacity-0 absolute inset-0';
+                    sliderHTML += `<img src="${img}" class="w-full h-full object-cover transition-opacity duration-1000 banner-slide ${activeClass}" data-index="${idx}">`;
+                });
+
+                sliderHTML += `
+                            <div class="absolute top-3 right-3 bg-orange-600 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-md z-10">
+                                إعلان مميز
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                bannersGrid.innerHTML = sliderHTML;
                 bannerContainer.classList.remove('hidden');
+
+                // تفعيل الحركة التلقائية (Slider Interval) لو فيه أكتر من صورة
+                if (allImages.length > 1) {
+                    let currentIndex = 0;
+                    const slides = bannersGrid.querySelectorAll('.banner-slide');
+                    setInterval(() => {
+                        slides[currentIndex].classList.remove('opacity-100');
+                        slides[currentIndex].classList.add('opacity-0', 'absolute', 'inset-0');
+                        
+                        currentIndex = (currentIndex + 1) % slides.length;
+                        
+                        slides[currentIndex].classList.remove('opacity-0', 'absolute', 'inset-0');
+                        slides[currentIndex].classList.add('opacity-100');
+                    }, 3500);
+                }
+
             } catch (err) {
                 console.log('خطأ في جلب البانرات:', err.message);
             }
@@ -371,11 +393,12 @@
             }
         }
 
-        // جلب الإعلانات من قاعدة البيانات
+        // جلب الإعلانات من قاعدة البيانات (مع إصلاح مطابقة اسم القسم الفرعي)
         async function fetchAds(categoryName) {
             const container = document.getElementById('dynamic-container');
 
             try {
+                // محاولة البحث بالاسم المباشر (سواء كان قسم فرعي أو رئيسي)
                 const { data: ads, error } = await db
                     .from('ads')
                     .select('*')
