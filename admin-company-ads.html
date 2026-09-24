@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدارة إعلانات الشركات - متجر البيت (سريع ومنظم)</title>
+    <title>إدارة إعلانات الشركات - متجر البيت</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -15,7 +15,7 @@
         <div class="bg-white rounded-2xl p-6 shadow-xl flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
                 <h2 class="text-xl font-bold text-orange-600">إدارة إعلانات الشركات (متجر البيت)</h2>
-                <p class="text-xs text-gray-500 mt-1">رفع الصور لـ Storage، ربط دقيق بالأقسام الرئيسية والفرعية من قاعدة البيانات.</p>
+                <p class="text-xs text-gray-500 mt-1">رفع الصور لـ Storage، ربط دقيق بالأقسام الرئيسية والفرعية من جدول categories مباشرة.</p>
             </div>
             <div class="flex gap-3">
                 <div class="bg-orange-50 border border-orange-200 px-4 py-2 rounded-xl text-center">
@@ -71,7 +71,7 @@
                     </div>
                 </div>
 
-                <!-- القائمتان المخصوصتان للأقسام الرئيسية والفرعية مجلوبتان من قاعدة البيانات بدقة -->
+                <!-- الأقسام الرئيسية والفرعية من نفس جدول categories -->
                 <div id="departmentSelectionBox" class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-orange-50/50 rounded-2xl border border-orange-100 hidden">
                     <div>
                         <label class="block text-xs font-bold text-orange-800 mb-1">القسم الرئيسي</label>
@@ -80,7 +80,7 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-orange-800 mb-1">القسم الفرعي (اختياري لكل صفحة منفصلة)</label>
+                        <label class="block text-xs font-bold text-orange-800 mb-1">القسم الفرعي (اختياري)</label>
                         <select id="compSubCategory" class="w-full border rounded-xl p-2.5 text-sm outline-none bg-white focus:ring-2 focus:ring-orange-500">
                             <option value="">-- عام لكل القسم الرئيسي --</option>
                         </select>
@@ -90,7 +90,6 @@
                 <div>
                     <label class="block text-xs font-bold text-gray-700 mb-1">رفع الصور (تترفع لـ Storage مباشرة - متعدد)</label>
                     <input type="file" id="compImagesFile" class="w-full border rounded-xl p-2 text-sm outline-none bg-gray-50" accept="image/webp, image/png, image/jpeg" multiple>
-                    <!-- منطقة المعاينة -->
                     <div id="imagePreviewContainer" class="flex gap-3 mt-3 flex-wrap"></div>
                 </div>
 
@@ -105,7 +104,7 @@
             </form>
         </div>
 
-        <!-- جدول المتابعة والعدادات -->
+        <!-- جدول المتابعة -->
         <div class="bg-white rounded-2xl p-6 shadow-xl">
             <h3 class="text-base font-bold text-gray-800 mb-4 border-b pb-2">البنرات النشطة والمتابعة</h3>
             <div class="overflow-x-auto">
@@ -118,9 +117,7 @@
                             <th class="p-3">الإجراء</th>
                         </tr>
                     </thead>
-                    <tbody id="adsTableBody">
-                        <!-- بيانات جدولية -->
-                    </tbody>
+                    <tbody id="adsTableBody"></tbody>
                 </table>
             </div>
         </div>
@@ -133,77 +130,54 @@
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let currentImagesList = [];
-        let allSubCategoriesCache = [];
+        let allCategoriesCache = [];
 
-        // 1. جلب الأقسام الرئيسية مباشرة من قاعدة البيانات
+        // جلب الأقسام الرئيسية فقط (التي يكون parent_id فيها قيمته NULL أو فارغة)
         async function loadMainCategories() {
             try {
-                const { data: categories, error } = await supabaseClient.from('categories').select('*');
-                if (error || !categories) return;
+                const { data, error } = await supabaseClient.from('categories').select('*');
+                if (error || !data) return;
 
+                allCategoriesCache = data;
                 const mainSelect = document.getElementById('compMainCategory');
                 mainSelect.innerHTML = '<option value="">-- اختر القسم الرئيسي --</option>';
 
-                categories.forEach(cat => {
+                // فلترة الأقسام الرئيسية (parent_id is null)
+                const mainCategories = data.filter(cat => !cat.parent_id);
+
+                mainCategories.forEach(cat => {
                     let option = document.createElement('option');
                     option.value = cat.id; 
-                    option.textContent = cat.name || cat.title;
+                    option.textContent = cat.name;
                     mainSelect.appendChild(option);
                 });
             } catch (err) {
-                console.log("Main categories error:", err);
+                console.log("Error loading main categories:", err);
             }
         }
 
-        // 2. جلب الأقسام الفرعية ديناميكياً بناءً على القسم الرئيسي المختار
-        async function fetchSubCategoriesFromDB(selectedSubId = null) {
+        // جلب الأقسام الفرعية بناءً على اختيار القسم الرئيسي (التي يكون parent_id مطابهاً لـ id القسم الرئيسي المختار)
+        function fetchSubCategoriesFromDB(selectedSubId = null) {
             const mainCatId = document.getElementById('compMainCategory').value;
             const subSelect = document.getElementById('compSubCategory');
             
             subSelect.innerHTML = '<option value="">-- عام لكل القسم الرئيسي --</option>';
             if (!mainCatId) return;
 
-            try {
-                let subcategories = [];
-                
-                // محاولة جلب الأقسام الفرعية من الجداول المحتملة
-                const { data: d1 } = await supabaseClient.from('subcategories').select('*').eq('category_id', mainCatId);
-                if (d1 && d1.length > 0) {
-                    subcategories = d1;
-                } else {
-                    const { data: d2 } = await supabaseClient.from('sub_categories').select('*').eq('category_id', mainCatId);
-                    if (d2 && d2.length > 0) {
-                        subcategories = d2;
-                    } else {
-                        // محاولة جلب كل الأقسام الفرعية وفلترتها برمجياً لو حقل الربط باسم مختلف
-                        const { data: d3 } = await supabaseClient.from('subcategories').select('*');
-                        if (d3) {
-                            subcategories = d3.filter(s => String(s.category_id || s.main_category_id || s.cat_id) === String(mainCatId));
-                        } else {
-                            const { data: d4 } = await supabaseClient.from('sub_categories').select('*');
-                            if (d4) {
-                                subcategories = d4.filter(s => String(s.category_id || s.main_category_id || s.cat_id) === String(mainCatId));
-                            }
-                        }
-                    }
-                }
+            // الفلترة من الـ Cache بناءً على تطابق parent_id مع id القسم الرئيسي
+            const subCategories = allCategoriesCache.filter(cat => String(cat.parent_id) === String(mainCatId));
 
-                allSubCategoriesCache = subcategories;
-                subcategories.forEach(sub => {
-                    let option = document.createElement('option');
-                    option.value = sub.id;
-                    option.textContent = sub.name || sub.title;
-                    if (selectedSubId && String(sub.id) === String(selectedSubId)) {
-                        option.selected = true;
-                    }
-                    subSelect.appendChild(option);
-                });
-            } catch (err) {
-                console.log("Subcategories fetch error:", err);
-            }
+            subCategories.forEach(sub => {
+                let option = document.createElement('option');
+                option.value = sub.id;
+                option.textContent = sub.name;
+                if (selectedSubId && String(sub.id) === String(selectedSubId)) {
+                    option.selected = true;
+                }
+                subSelect.appendChild(option);
+            });
         }
 
-        // إظهار أو إخفاء صندوق اختيار الأقسام
         function handlePageSelectionChange() {
             const pageVal = document.getElementById('compPage').value;
             const deptBox = document.getElementById('departmentSelectionBox');
@@ -378,13 +352,14 @@
                 if (ad.page_target.startsWith('cat_')) {
                     const catId = ad.page_target.replace('cat_', '');
                     document.getElementById('compMainCategory').value = catId;
-                    await fetchSubCategoriesFromDB();
+                    fetchSubCategoriesFromDB();
                 } else if (ad.page_target.startsWith('subcat_')) {
                     const subId = ad.page_target.replace('subcat_', '');
-                    const { data: subData } = await supabaseClient.from('subcategories').select('*').eq('id', subId).single();
-                    if (subData) {
-                        document.getElementById('compMainCategory').value = subData.category_id;
-                        await fetchSubCategoriesFromDB(subId);
+                    // العثور على العنصر الفرعي لمعرفة القسم الرئيسي التابع له عبر parent_id
+                    let subItem = allCategoriesCache.find(c => String(c.id) === String(subId));
+                    if (subItem && subItem.parent_id) {
+                        document.getElementById('compMainCategory').value = subItem.parent_id;
+                        fetchSubCategoriesFromDB(subId);
                     }
                 }
             } else {
@@ -399,7 +374,7 @@
             document.getElementById('submitBtn').innerText = 'تحديث البنر';
             document.getElementById('cancelEditBtn').classList.remove('hidden');
 
-            window.scrollTo({ top: { top: 0, behavior: 'smooth' } });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function resetForm() {
@@ -420,7 +395,7 @@
             }
         }
 
-        // تشغيل جلب الأقسام الرئيسية والجدول فور فتح الصفحة
+        // تشغيل التحميل عند فتح الصفحة
         loadMainCategories();
         fetchAds();
     </script>
