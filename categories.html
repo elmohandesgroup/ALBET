@@ -303,15 +303,15 @@
 
                 subCategories.forEach(sub => {
                     const iconSrc = sub.image_url ? sub.image_url : 'logo192.png';
-                    const card = `
-                        <a href="index.html?category=${sub.id}" class="bg-white border border-gray-100 rounded-2xl p-4 flex flex-col items-center justify-center text-center shadow-sm hover:border-orange-500 hover:shadow-md transition-all group">
-                            <div class="w-20 h-20 bg-orange-50/50 rounded-2xl flex items-center justify-center mb-3 overflow-hidden shadow-inner border border-orange-100/50 group-hover:scale-105 transition-transform">
-                                <img src="${iconSrc}" alt="${sub.name}" class="w-full h-full object-cover">
-                            </div>
-                            <h3 class="font-bold text-gray-800 text-sm group-hover:text-orange-600 transition-colors truncate w-full">${sub.name}</h3>
-                            <span class="text-[11px] text-orange-500 mt-1">عرض الإعلانات</span>
-                        </a>
-                    `;
+                   const card = `
+        <a href="section.html?cat=${encodeURIComponent(parentName)}&sub=${encodeURIComponent(sub.name)}" class="bg-white border border-gray-100 rounded-2xl p-4 flex flex-col items-center justify-center text-center shadow-sm hover:border-orange-500 hover:shadow-md transition-all group">
+            <div class="w-20 h-20 bg-orange-50/50 rounded-2xl flex items-center justify-center mb-3 overflow-hidden shadow-inner border border-orange-100/50 group-hover:scale-105 transition-transform">
+                <img src="${iconSrc}" alt="${sub.name}" class="w-full h-full object-cover">
+            </div>
+            <h3 class="font-bold text-gray-800 text-sm group-hover:text-orange-600 transition-colors truncate w-full">${sub.name}</h3>
+            <span class="text-[11px] text-orange-500 mt-1">عرض الإعلانات</span>
+        </a>
+    `;
                     container.innerHTML += card;
                 });
 
