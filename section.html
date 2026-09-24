@@ -235,48 +235,62 @@
         }
 
         // دالة جلب البانرات بناءً على الحقول الفعلية في جدول featured_companies
-        async function fetchFeaturedBanners() {
-            const bannerContainer = document.getElementById('featured-banners-container');
-            const bannersGrid = document.getElementById('banners-grid');
+       async function fetchFeaturedBanners() {
+    const bannerContainer = document.getElementById('featured-banners-container');
+    const bannersGrid = document.getElementById('banners-grid');
+    if (!bannerContainer || !bannersGrid) return;
 
-            try {
-                const { data: banners, error } = await db
-                    .from('featured_companies')
-                    .select('*')
-                    .eq('page_target', 'section.html');
+    try {
+        // جلب كل البانرات النشطة الخاصة بالشركات
+        const { data: banners, error } = await db
+            .from('featured_companies')
+            .select('*');
 
-                if (error || !banners || banners.length === 0) return;
+        if (error || !banners || banners.length === 0) return;
 
-                bannersGrid.innerHTML = '';
-                banners.forEach(banner => {
-                    // استخراج الصورة الأولى من مصفوفة images لو موجودة
-                    let imgSrc = 'logo192.png';
-                    if (banner.images && Array.isArray(banner.images) && banner.images.length > 0) {
-                        imgSrc = banner.images[0];
-                    } else if (typeof banner.images === 'string') {
-                        imgSrc = banner.images;
-                    }
-
-                    const bannerCard = `
-                        <div class="bg-white border border-orange-100 rounded-2xl p-3 flex items-center gap-3 shadow-sm hover:border-orange-500 hover:shadow-md transition-all group">
-                            <div class="w-16 h-16 bg-orange-50 rounded-xl overflow-hidden flex-shrink-0 border border-orange-100">
-                                <img src="${imgSrc}" alt="${banner.title || 'إعلان مميز'}" class="w-full h-full object-cover group-hover:scale-105 transition-transform">
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <span class="bg-orange-100 text-orange-600 text-[10px] font-bold px-2 py-0.5 rounded-md">إعلان مميز</span>
-                                <h4 class="font-bold text-gray-800 text-sm truncate mt-1">${banner.title || ''}</h4>
-                                <p class="text-xs text-gray-400 truncate">نوع العرض: ${banner.display_type || 'slider'}</p>
-                            </div>
-                        </div>
-                    `;
-                    bannersGrid.innerHTML += bannerCard;
-                });
-
-                bannerContainer.classList.remove('hidden');
-            } catch (err) {
-                console.log('خطأ في جلب البانرات:', err.message);
-            }
+        // تحديد الهدف المطلوب للقسم الحالي
+        let targetKeys = ['section.html'];
+        
+        if (subCat && currentSubCatId) {
+            targetKeys.push(`subcat_${currentSubCatId}`);
         }
+        if (mainCat && currentMainCatId) {
+            targetKeys.push(`cat_${currentMainCatId}`);
+        }
+
+        // فلترة البانرات التي تطابق الصفحة الحالية أو القسم الحالي
+        const matchedBanners = banners.filter(banner => targetKeys.includes(banner.page_target));
+
+        if (matchedBanners.length === 0) return;
+
+        bannersGrid.innerHTML = '';
+        matchedBanners.forEach(banner => {
+            let imgSrc = 'logo192.png';
+            if (banner.images && Array.isArray(banner.images) && banner.images.length > 0) {
+                imgSrc = banner.images[0];
+            } else if (typeof banner.images === 'string') {
+                imgSrc = banner.images;
+            }
+
+            const bannerCard = `
+                <div class="bg-white border border-orange-100 rounded-2xl p-3 flex items-center gap-3 shadow-sm hover:border-orange-500 hover:shadow-md transition-all group">
+                    <div class="w-16 h-16 bg-orange-50 rounded-xl overflow-hidden flex-shrink-0 border border-orange-100">
+                        <img src="${imgSrc}" alt="${banner.title || 'إعلان مميز'}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <span class="bg-orange-100 text-orange-600 text-[10px] font-bold px-2 py-0.5 rounded-md">إعلان مميز</span>
+                        <h4 class="font-bold text-gray-800 text-sm truncate mt-1">${banner.title || ''}</h4>
+                    </div>
+                </div>
+            `;
+            bannersGrid.innerHTML += bannerCard;
+        });
+
+        bannerContainer.classList.remove('hidden');
+    } catch (err) {
+        console.log('خطأ في جلب البانرات:', err.message);
+    }
+}
 
         // جلب الأقسام الفرعية ديناميكياً
         async function fetchSubCategories(parentCategoryName) {
