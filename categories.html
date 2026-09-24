@@ -252,7 +252,7 @@
                 categories.forEach(cat => {
                     const iconSrc = cat.image_url ? cat.image_url : 'logo192.png';
                     const card = `
-                        <a href="#" onclick="loadSubCategories('${cat.id}', '${cat.name}'); return false;" class="bg-white border border-gray-100 rounded-2xl p-4 flex flex-col items-center justify-center text-center shadow-sm hover:border-orange-500 hover:shadow-md transition-all group">
+                       <a href="section.html?cat=${encodeURIComponent(cat.name)}" class="bg-white border border-gray-100 rounded-2xl p-4 flex flex-col items-center justify-center text-center shadow-sm hover:border-orange-500 hover:shadow-md transition-all group">
                             <div class="w-20 h-20 bg-orange-50/50 rounded-2xl flex items-center justify-center mb-3 overflow-hidden shadow-inner border border-orange-100/50 group-hover:scale-105 transition-transform">
                                 <img src="${iconSrc}" alt="${cat.name}" class="w-full h-full object-cover">
                             </div>
@@ -276,12 +276,27 @@
             const countLabel = document.getElementById('categories-count');
             const titleLabel = document.getElementById('main-section-title');
 
-            titleLabel.innerHTML = `
-                <div class="flex items-center gap-2">
-                    <button onclick="window.location.href='categories.html'" class="text-orange-600 hover:underline text-xs bg-orange-50 px-2 py-1 rounded-lg">← العودة للأقسام الرئيسية</button>
-                    <span>${parentName}</span>
-                </div>
-            `;
+           titleLabel.innerHTML = `
+            <div class="flex items-center gap-2 flex-wrap">
+                <a href="index.html" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-sm">
+                    <span>الرئيسية</span>
+                </a>
+                
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+
+                <a href="categories.html" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-sm">
+                    <span>الأقسام</span>
+                </a>
+
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+
+                <span class="font-black text-gray-900 text-base md:text-lg">${parentName}</span>
+            </div>
+        `;
             container.innerHTML = '<div class="col-span-full text-center py-12 text-gray-400 text-sm">جاري تحميل الأقسام الفرعية...</div>';
 
             try {
