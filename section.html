@@ -109,17 +109,8 @@
             <span id="results-count" class="text-xs text-gray-400 font-semibold">جاري التحميل...</span>
         </div>
 
-        <!-- قسم البانر الدعائي للشركات المميزة (يظهر أعلى النتائج) -->
+        <!-- قسم البانر الدعائي (يتم جذبه تلقائياً بناءً على جدول featured_companies) -->
         <div id="featured-banners-container" class="hidden mb-6">
-            <div class="flex items-center justify-between mb-3">
-                <h3 class="font-black text-gray-900 text-sm md:text-base flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
-                    </svg>
-                    <span>الشركات والوسائد الإعلانية المميزة</span>
-                </h3>
-            </div>
-            <!-- حاوية كروت الشركات الدعائية (تصميم أفقي أو شبكي يشبه الكاتالوج) -->
             <div id="banners-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 <!-- سيتم تعبئتها ديناميكياً -->
             </div>
@@ -134,7 +125,7 @@
             </div>
         </div>
 
-        <!-- حاوية المحتوى الديناميكي (ستعرض إما أقسام فرعية أو إعلانات) -->
+        <!-- حاوية المحتوى الديناميكي -->
         <div id="dynamic-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             <div class="col-span-full text-center py-16 text-gray-400 text-sm">جاري جلب البيانات...</div>
         </div>
@@ -185,8 +176,8 @@
                 return;
             }
 
-            // جلب البانرات الدعائية للشركات الخاصة بهذا القسم إن وجدت
-            fetchFeaturedBanners(mainCat, subCat);
+            // جلب البانرات المخصصة لصفحة section.html من جدول featured_companies
+            fetchFeaturedBanners();
 
             let breadcrumbHTML = `
                 <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-sm">
@@ -243,53 +234,51 @@
             }
         }
 
-        // دالة جلب الشركات والبانرات الدعائية من جدول (featured_companies أو banners حسب جدولك)
-        async function fetchFeaturedBanners(categoryName, subCategoryName) {
+        // دالة جلب البانرات بناءً على الحقول الفعلية في جدول featured_companies
+        async function fetchFeaturedBanners() {
             const bannerContainer = document.getElementById('featured-banners-container');
             const bannersGrid = document.getElementById('banners-grid');
 
             try {
-                // افترضنا هنا أن اسم الجدول في قاعدة البيانات هو featured_companies أو banners
-                // يمكنك تعديل اسم الجدول لو مختلف عندك (مثلاً 'ads' لو مميزة أو جدول منفصل للشركات)
-                let query = db.from('featured_companies').select('*');
-                
-                if (subCategoryName) {
-                    query = query.or(`category.eq.${categoryName},sub_category.eq.${subCategoryName}`);
-                } else {
-                    query = query.eq('category', categoryName);
-                }
+                const { data: banners, error } = await db
+                    .from('featured_companies')
+                    .select('*')
+                    .eq('page_target', 'section.html');
 
-                const { data: banners, error } = await query;
-
-                if (error || !banners || banners.length === 0) {
-                    // لو الجدول غير موجود أو مفيش بيانات، نجرب جدول بديل أو نخفي القسم
-                    return;
-                }
+                if (error || !banners || banners.length === 0) return;
 
                 bannersGrid.innerHTML = '';
                 banners.forEach(banner => {
+                    // استخراج الصورة الأولى من مصفوفة images لو موجودة
+                    let imgSrc = 'logo192.png';
+                    if (banner.images && Array.isArray(banner.images) && banner.images.length > 0) {
+                        imgSrc = banner.images[0];
+                    } else if (typeof banner.images === 'string') {
+                        imgSrc = banner.images;
+                    }
+
                     const bannerCard = `
-                        <a href="${banner.link || '#'}" target="_blank" class="bg-white border border-orange-100 rounded-2xl p-3 flex items-center gap-3 shadow-sm hover:border-orange-500 hover:shadow-md transition-all group">
+                        <div class="bg-white border border-orange-100 rounded-2xl p-3 flex items-center gap-3 shadow-sm hover:border-orange-500 hover:shadow-md transition-all group">
                             <div class="w-16 h-16 bg-orange-50 rounded-xl overflow-hidden flex-shrink-0 border border-orange-100">
-                                <img src="${banner.image_url || 'logo192.png'}" alt="${banner.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform">
+                                <img src="${imgSrc}" alt="${banner.title || 'إعلان مميز'}" class="w-full h-full object-cover group-hover:scale-105 transition-transform">
                             </div>
                             <div class="flex-1 min-w-0">
-                                <span class="bg-orange-100 text-orange-600 text-[10px] font-bold px-2 py-0.5 rounded-md">شركة مميزة</span>
-                                <h4 class="font-bold text-gray-800 text-sm truncate mt-1 group-hover:text-orange-600 transition-colors">${banner.title}</h4>
-                                <p class="text-xs text-gray-400 truncate">${banner.description || 'تصفح عروض الشركة الآن'}</p>
+                                <span class="bg-orange-100 text-orange-600 text-[10px] font-bold px-2 py-0.5 rounded-md">إعلان مميز</span>
+                                <h4 class="font-bold text-gray-800 text-sm truncate mt-1">${banner.title || ''}</h4>
+                                <p class="text-xs text-gray-400 truncate">نوع العرض: ${banner.display_type || 'slider'}</p>
                             </div>
-                        </a>
+                        </div>
                     `;
                     bannersGrid.innerHTML += bannerCard;
                 });
 
                 bannerContainer.classList.remove('hidden');
             } catch (err) {
-                console.log('لا توجد بانرات دعائية مفعلة لهذا القسم أو الجدول غير موجود:', err.message);
+                console.log('خطأ في جلب البانرات:', err.message);
             }
         }
 
-        // جلب الأقسام الفرعية ديناميكياً من قاعدة البيانات
+        // جلب الأقسام الفرعية ديناميكياً
         async function fetchSubCategories(parentCategoryName) {
             const container = document.getElementById('dynamic-container');
             const countEl = document.getElementById('results-count');
@@ -301,9 +290,7 @@
                     .eq('name', parentCategoryName)
                     .single();
 
-                if (parentError || !parentData) {
-                    throw new Error('القسم غير موجود');
-                }
+                if (parentError || !parentData) throw new Error('القسم غير موجود');
 
                 const { data: subCategories, error: subError } = await db
                     .from('categories')
@@ -349,7 +336,6 @@
         // جلب الإعلانات من قاعدة البيانات
         async function fetchAds(categoryName) {
             const container = document.getElementById('dynamic-container');
-            const countEl = document.getElementById('results-count');
 
             try {
                 const { data: ads, error } = await db
