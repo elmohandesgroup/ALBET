@@ -276,7 +276,7 @@
             const countLabel = document.getElementById('categories-count');
             const titleLabel = document.getElementById('main-section-title');
 
-           titleLabel.innerHTML = `
+          titleLabel.innerHTML = `
             <div class="flex items-center gap-2 flex-wrap">
                 <a href="index.html" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-sm">
                     <span>الرئيسية</span>
@@ -294,7 +294,9 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                 </svg>
 
-                <span class="font-black text-gray-900 text-base md:text-lg">${parentName}</span>
+                <span class="inline-flex items-center gap-1 bg-orange-600 text-white border border-orange-600 px-3 py-1 rounded-xl text-xs font-bold shadow-sm">
+                    <span>${parentName}</span>
+                </span>
             </div>
         `;
             container.innerHTML = '<div class="col-span-full text-center py-12 text-gray-400 text-sm">جاري تحميل الأقسام الفرعية...</div>';
