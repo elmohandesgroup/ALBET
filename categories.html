@@ -230,7 +230,21 @@
             const titleLabel = document.getElementById('main-section-title');
 
             if (!container) return;
-            titleLabel.innerText = 'الأقسام الرئيسية';
+            titleLabel.innerHTML = `
+        <div class="flex items-center gap-2 flex-wrap">
+            <a href="index.html" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-sm">
+                <span>الرئيسية</span>
+            </a>
+            
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+
+            <span class="inline-flex items-center gap-1 bg-orange-600 text-white border border-orange-600 px-3 py-1 rounded-xl text-xs font-bold shadow-sm">
+                <span>الأقسام</span>
+            </span>
+        </div>
+    `;
 
             try {
                 const { data: categories, error } = await db
