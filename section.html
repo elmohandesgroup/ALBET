@@ -34,13 +34,13 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
                 </button>
-                <a href="index.html" class="flex items-center">
+                <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="flex items-center">
                     <img src="logo192.png" alt="متجر البيت" class="w-12 h-12 object-contain rounded-xl shadow-sm border border-gray-100 bg-white p-1">
                 </a>
             </div>
 
             <div class="text-center flex-1 mx-2">
-                <a href="index.html" class="block">
+                <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="block">
                     <h1 class="text-lg md:text-2xl font-black text-orange-600 leading-tight">متجر البيت</h1>
                     <p class="text-[11px] md:text-xs text-gray-500 font-medium">الأفضل دائماً</p>
                 </a>
@@ -71,7 +71,7 @@
                 </div>
                 
                 <nav class="space-y-2">
-                    <a href="index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">الرئيسية</a>
+                    <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">الرئيسية</a>
                     <a href="categories.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">الأقسام</a>
                     <a href="add-ad.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">أضف إعلانك الجديد</a>
                 </nav>
@@ -82,10 +82,20 @@
     <!-- محتوى الصفحة -->
     <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
         
+        <!-- قسم البانر الدعائي العريض (متحرك Slider) -->
+        <div id="featured-banners-container" class="hidden">
+            <div id="banners-grid" class="w-full">
+                <!-- سيتم تعبئتها ديناميكياً -->
+            </div>
+        </div>
+
         <!-- مسار التنقل (Breadcrumbs) وعنوان الصفحة -->
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div id="breadcrumb-area" class="flex items-center gap-2 flex-wrap">
-                <a href="index.html" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-sm">
+                <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
                     <span>الرئيسية</span>
                 </a>
                 
@@ -115,7 +125,7 @@
             </div>
         </div>
 
-        <!-- حاوية المحتوى الديناميكي (ستعرض إما أقسام فرعية أو إعلانات) -->
+        <!-- حاوية المحتوى الديناميكي -->
         <div id="dynamic-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             <div class="col-span-full text-center py-16 text-gray-400 text-sm">جاري جلب البيانات...</div>
         </div>
@@ -146,29 +156,75 @@
         if (closeMenuBtn) closeMenuBtn.addEventListener('click', closeMenu);
         if (menuOverlay) menuOverlay.addEventListener('click', closeMenu);
 
+        // دالة موحدة لتنظيف النصوص وتوحيد الهاء والتاء المربوطة والألفات
+        function normalizeText(str) {
+            if (!str) return '';
+            return str.trim()
+                      .replace(/ه/g, 'ة')
+                      .replace(/أ|إ|آ/g, 'ا');
+        }
+
         const urlParams = new URLSearchParams(window.location.search);
-        const mainCat = urlParams.get('cat');
-        const subCat = urlParams.get('sub');
+        let rawMainCat = urlParams.get('cat');
+        let rawSubCat = urlParams.get('sub');
+
+        let mainCat = rawMainCat ? decodeURIComponent(rawMainCat).trim() : null;
+        let subCat = rawSubCat ? decodeURIComponent(rawSubCat).trim() : null;
 
         let allAdsData = [];
+        let currentMainCatId = null;
+        let currentSubCatId = null;
 
-       async function initPage() {
+        async function initPage() {
             const titleEl = document.getElementById('section-title');
             const countEl = document.getElementById('results-count');
             const container = document.getElementById('dynamic-container');
             const filterSection = document.getElementById('ads-filter-section');
             const breadcrumbArea = document.getElementById('breadcrumb-area');
 
-            if (!mainCat) {
+            try {
+                const { data: allCats } = await db.from('categories').select('*');
+                if (allCats) {
+                    if (subCat) {
+                        const subObj = allCats.find(c => normalizeText(c.name) === normalizeText(subCat));
+                        if (subObj) {
+                            currentSubCatId = subObj.id;
+                            if (subObj.parent_id) {
+                                const parentObj = allCats.find(c => c.id === subObj.parent_id);
+                                if (parentObj) {
+                                    mainCat = parentObj.name;
+                                    currentMainCatId = parentObj.id;
+                                }
+                            }
+                        }
+                    }
+
+                    if (mainCat && !currentMainCatId) {
+                        const mainObj = allCats.find(c => normalizeText(c.name) === normalizeText(mainCat) && !c.parent_id);
+                        if (mainObj) {
+                            currentMainCatId = mainObj.id;
+                        }
+                    }
+                }
+            } catch (e) {
+                console.log('Error resolving category IDs:', e);
+            }
+
+            if (!mainCat && !subCat) {
                 titleEl.innerText = "كل الأقسام والإعلانات";
                 countEl.innerText = "";
-                container.innerHTML = '<div class="col-span-full text-center py-16 text-gray-400">الرجاء اختيار قسم رئيسي.</div>';
+                container.innerHTML = '<div class="col-span-full text-center py-16 text-gray-400">الرجاء اختيار قسم صحيح.</div>';
                 return;
             }
 
-            // توحيد شكل المسار (Breadcrumbs) في كل الصفحات بنفس التنسيق الاحترافي الموحد
+            titleEl.innerText = subCat || mainCat;
+            fetchFeaturedBanners();
+
             let breadcrumbHTML = `
-                <a href="index.html" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-sm">
+                <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
                     <span>الرئيسية</span>
                 </a>
                 
@@ -181,8 +237,7 @@
                 </a>
             `;
 
-            // الحالة الأولى: لو المستخدم اختار قسم فرعي
-            if (subCat) {
+            if (mainCat) {
                 breadcrumbHTML += `
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -190,67 +245,128 @@
                     <a href="section.html?cat=${encodeURIComponent(mainCat)}" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-sm">
                         <span>${mainCat}</span>
                     </a>
+                `;
+            }
 
+            if (subCat) {
+                breadcrumbHTML += `
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                     </svg>
-
                     <span class="inline-flex items-center gap-1 bg-orange-600 text-white border border-orange-600 px-3 py-1 rounded-xl text-xs font-bold shadow-sm">
                         <span>${subCat}</span>
                     </span>
                 `;
                 breadcrumbArea.innerHTML = breadcrumbHTML;
-                
                 filterSection.classList.remove('hidden');
                 container.className = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4";
-                fetchAds(subCat);
-            } 
-            // الحالة الثانية: لو المستخدم في القسم الرئيسي
-            else {
-                breadcrumbHTML += `
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                    </svg>
-
-                    <span class="inline-flex items-center gap-1 bg-orange-600 text-white border border-orange-600 px-3 py-1 rounded-xl text-xs font-bold shadow-sm">
-                        <span>${mainCat}</span>
-                    </span>
-                `;
+                fetchAds(subCat, mainCat);
+            } else {
                 breadcrumbArea.innerHTML = breadcrumbHTML;
-                
                 fetchSubCategories(mainCat);
             }
         }
-        // جلب الأقسام الفرعية ديناميكياً من قاعدة البيانات
+
+        // جلب البانرات المتحركة (Slider)
+        async function fetchFeaturedBanners() {
+            const bannerContainer = document.getElementById('featured-banners-container');
+            const bannersGrid = document.getElementById('banners-grid');
+            if (!bannerContainer || !bannersGrid) return;
+
+            try {
+                const { data: banners, error } = await db
+                    .from('featured_companies')
+                    .select('*');
+
+                if (error || !banners || banners.length === 0) return;
+
+                let matchedBanners = [];
+
+                if (subCat && currentSubCatId) {
+                    matchedBanners = banners.filter(banner => banner.page_target === `subcat_${currentSubCatId}`);
+                }
+
+                if (matchedBanners.length === 0 && mainCat && currentMainCatId) {
+                    matchedBanners = banners.filter(banner => banner.page_target === `cat_${currentMainCatId}`);
+                }
+
+                if (matchedBanners.length === 0) {
+                    matchedBanners = banners.filter(banner => banner.page_target === 'section.html');
+                }
+
+                if (matchedBanners.length === 0) return;
+
+                let allImages = [];
+                matchedBanners.forEach(banner => {
+                    if (banner.images && Array.isArray(banner.images)) {
+                        allImages.push(...banner.images);
+                    } else if (typeof banner.images === 'string') {
+                        allImages.push(banner.images);
+                    }
+                });
+
+                if (allImages.length === 0) return;
+
+                let sliderHTML = `
+                    <div class="w-full bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm relative group mb-4">
+                        <div class="w-full h-44 sm:h-56 md:h-64 bg-gray-100 relative overflow-hidden" id="banner-slider-box">
+                `;
+
+                allImages.forEach((img, idx) => {
+                    let activeClass = idx === 0 ? 'opacity-100' : 'opacity-0 absolute inset-0';
+                    sliderHTML += `<img src="${img}" class="w-full h-full object-cover transition-opacity duration-1000 banner-slide ${activeClass}" data-index="${idx}">`;
+                });
+
+                sliderHTML += `
+                            <div class="absolute top-3 right-3 bg-orange-600 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-md z-10">
+                                إعلان مميز
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                bannersGrid.innerHTML = sliderHTML;
+                bannerContainer.classList.remove('hidden');
+
+                if (allImages.length > 1) {
+                    let currentIndex = 0;
+                    const slides = bannersGrid.querySelectorAll('.banner-slide');
+                    setInterval(() => {
+                        slides[currentIndex].classList.remove('opacity-100');
+                        slides[currentIndex].classList.add('opacity-0', 'absolute', 'inset-0');
+                        
+                        currentIndex = (currentIndex + 1) % slides.length;
+                        
+                        slides[currentIndex].classList.remove('opacity-0', 'absolute', 'inset-0');
+                        slides[currentIndex].classList.add('opacity-100');
+                    }, 3500);
+                }
+
+            } catch (err) {
+                console.log('خطأ في جلب البانرات:', err.message);
+            }
+        }
+
+        // جلب الأقسام الفرعية ديناميكياً
         async function fetchSubCategories(parentCategoryName) {
             const container = document.getElementById('dynamic-container');
             const countEl = document.getElementById('results-count');
 
             try {
-                // أولاً: نحضر الـ ID للقسم الرئيسي من جدول categories
-                const { data: parentData, error: parentError } = await db
-                    .from('categories')
-                    .select('id')
-                    .eq('name', parentCategoryName)
-                    .single();
+                const { data: allCats } = await db.from('categories').select('*');
+                if (!allCats) throw new Error('لا توجد أقسام');
 
-                if (parentError || !parentData) {
-                    // إذا لم نجد القسم بالاسم مباشرة، نحاول جلبه كـ نص عادي أو جلب كل الأقسام الفرعية المرتبطة
-                    throw new Error('القسم غير موجود');
+                const parentData = allCats.find(c => normalizeText(c.name) === normalizeText(parentCategoryName) && !c.parent_id);
+                
+                if (!parentData) {
+                    fetchAds(parentCategoryName);
+                    return;
                 }
 
-                // ثانياً: جلب الأقسام الفرعية التي تتبع هذا الـ parent_id
-                const { data: subCategories, error: subError } = await db
-                    .from('categories')
-                    .select('*')
-                    .eq('parent_id', parentData.id);
-
-                if (subError) throw subError;
+                const subCategories = allCats.filter(c => c.parent_id === parentData.id);
 
                 if (!subCategories || subCategories.length === 0) {
-                    container.innerHTML = '<div class="col-span-full text-center py-16 text-gray-400 text-sm bg-white rounded-2xl border border-gray-100 shadow-sm">لا توجد أقسام فرعية متاحة حالياً، جاري عرض الإعلانات المباشرة...</div>';
                     countEl.innerText = '0 قسم فرعي';
-                    // لو مفيش أقسام فرعية، اعرض إعلانات القسم الرئيسي مباشرة
                     filterSection.classList.remove('hidden');
                     container.className = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4";
                     fetchAds(parentCategoryName);
@@ -276,28 +392,33 @@
 
             } catch (err) {
                 console.error('خطأ في جلب الأقسام الفرعية:', err.message);
-                // كاحتياط: لو حدث خطأ في ربط الـ IDs، نجلب الإعلانات مباشرة للقسم
                 filterSection.classList.remove('hidden');
                 container.className = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4";
                 fetchAds(parentCategoryName);
             }
         }
 
-        // جلب الإعلانات من قاعدة البيانات
-        async function fetchAds(categoryName) {
+        // جلب الإعلانات بالبحث الشامل (يطابق القسم الفرعي أو الرئيسي معاً لضمان عدم ظهور صفحة فارغة)
+        async function fetchAds(subCategoryName, parentCategoryName) {
             const container = document.getElementById('dynamic-container');
-            const countEl = document.getElementById('results-count');
 
             try {
                 const { data: ads, error } = await db
                     .from('ads')
                     .select('*')
-                    .eq('category', categoryName)
                     .order('created_at', { ascending: false });
 
                 if (error) throw error;
 
-                allAdsData = ads || [];
+                const normSub = normalizeText(subCategoryName);
+                const normParent = parentCategoryName ? normalizeText(parentCategoryName) : '';
+
+                allAdsData = (ads || []).filter(ad => {
+                    const adCat = normalizeText(ad.category);
+                    // مطابقة ذكية: لو الإعلان مسجل بالقسم الفرعي أو بالقسم الرئيسي أو الـ subcategory في قاعدة البيانات
+                    return adCat === normSub || adCat === normParent || normalizeText(ad.subcategory) === normSub;
+                });
+
                 renderAds(allAdsData);
 
             } catch (err) {
@@ -306,7 +427,7 @@
             }
         }
 
-        // دالة عرض كروت الإعلانات
+        // عرض الإعلانات
         function renderAds(adsArray) {
             const container = document.getElementById('dynamic-container');
             const countEl = document.getElementById('results-count');
@@ -317,13 +438,13 @@
                 container.innerHTML = `
                     <div class="col-span-full text-center py-16 bg-white rounded-2xl border border-gray-100 shadow-sm">
                         <p class="text-gray-400 text-sm font-medium">لا توجد إعلانات مطابقة حالياً في هذا القسم.</p>
-                        <a href="add-ad.html" class="inline-block mt-4 bg-orange-600 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-sm">أضف أول إعلان هنا</a>
                     </div>
                 `;
                 return;
             }
 
             container.innerHTML = '';
+            container.className = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4";
             adsArray.forEach(ad => {
                 const mainImage = (ad.images && ad.images.length > 0) ? ad.images[0] : 'logo192.png';
                 const conditionBadge = ad.condition ? `<span class="absolute top-2 right-2 bg-black/60 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full">${ad.condition}</span>` : '';
@@ -350,7 +471,6 @@
             });
         }
 
-        // دالة الفلترة (جديد / مستعمل / الكل)
         function filterAds(type) {
             const btnAll = document.getElementById('btn-all');
             const btnNew = document.getElementById('btn-new');
