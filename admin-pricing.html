@@ -45,20 +45,26 @@
             <form id="addCategoryForm" class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                     <label class="block text-xs font-bold text-gray-700 mb-1">اسم القسم *</label>
-                    <input type="text" id="catName" required placeholder="مثال: شقق للبيع" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-orange-500">
+                    <input type="text" id="catName" required placeholder="مثال: مراوح وتكيفات" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-orange-500">
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold text-gray-700 mb-1">نوع القسم (المستوى)</label>
                     <select id="catParent" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-orange-500">
                         <option value="">قسم رئيسي (بدون أب)</option>
-                        <!-- سيتم تعبئة الأقسام الرئيسية ديناميكياً -->
                     </select>
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold text-gray-700 mb-1">صورة القسم</label>
-                    <input type="file" id="catImage" accept="image/*" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-500 file:ml-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100">
+                    <div class="flex items-center gap-2">
+                        <input type="file" id="catImage" accept="image/*" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-500 file:ml-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100">
+                        <button type="button" id="clearImageBtn" class="hidden bg-red-100 hover:bg-red-200 text-red-600 px-2.5 py-2 rounded-xl text-xs font-bold transition-all">حذف</button>
+                    </div>
+                    <!-- معاينة الصورة -->
+                    <div id="imagePreviewContainer" class="mt-2 hidden">
+                        <img id="imagePreview" src="" alt="معاينة الصورة" class="w-14 h-14 object-cover rounded-xl border shadow-sm">
+                    </div>
                 </div>
 
                 <div>
@@ -110,7 +116,6 @@
         </section>
     </main>
 
-    <!-- ربط ملف الجافاسكريبت المنفصل -->
     <script src="admin-pricing.js"></script>
 </body>
 </html>
