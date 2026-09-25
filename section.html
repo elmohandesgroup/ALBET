@@ -82,9 +82,9 @@
     <!-- محتوى الصفحة -->
     <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
         
-        <!-- قسم البانر الدعائي العريض (متحرك Slider) -->
+        <!-- قسم البانر الدعائي (يتم جذبه تلقائياً بناءً على القسم الحالي فوق مسار التسلسل مباشرة) -->
         <div id="featured-banners-container" class="hidden">
-            <div id="banners-grid" class="w-full">
+            <div id="banners-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 <!-- سيتم تعبئتها ديناميكياً -->
             </div>
         </div>
@@ -156,20 +156,9 @@
         if (closeMenuBtn) closeMenuBtn.addEventListener('click', closeMenu);
         if (menuOverlay) menuOverlay.addEventListener('click', closeMenu);
 
-        // دالة موحدة لتنظيف النصوص وتوحيد الهاء والتاء المربوطة والألفات
-        function normalizeText(str) {
-            if (!str) return '';
-            return str.trim()
-                      .replace(/ه/g, 'ة')
-                      .replace(/أ|إ|آ/g, 'ا');
-        }
-
         const urlParams = new URLSearchParams(window.location.search);
-        let rawMainCat = urlParams.get('cat');
-        let rawSubCat = urlParams.get('sub');
-
-        let mainCat = rawMainCat ? decodeURIComponent(rawMainCat).trim() : null;
-        let subCat = rawSubCat ? decodeURIComponent(rawSubCat).trim() : null;
+        const mainCat = urlParams.get('cat');
+        const subCat = urlParams.get('sub');
 
         let allAdsData = [];
         let currentMainCatId = null;
@@ -182,27 +171,25 @@
             const filterSection = document.getElementById('ads-filter-section');
             const breadcrumbArea = document.getElementById('breadcrumb-area');
 
+            if (!mainCat) {
+                titleEl.innerText = "كل الأقسام والإعلانات";
+                countEl.innerText = "";
+                container.innerHTML = '<div class="col-span-full text-center py-16 text-gray-400">الرجاء اختيار قسم رئيسي.</div>';
+                return;
+            }
+
+            // استعلام قاعدة البيانات لمعرفة IDs الخاصة بالقسم الرئيسي والفرعي الحالي بدقة
             try {
                 const { data: allCats } = await db.from('categories').select('*');
                 if (allCats) {
+                    const mainObj = allCats.find(c => c.name === mainCat && !c.parent_id);
+                    if (mainObj) {
+                        currentMainCatId = mainObj.id;
+                    }
                     if (subCat) {
-                        const subObj = allCats.find(c => normalizeText(c.name) === normalizeText(subCat));
+                        const subObj = allCats.find(c => c.name === subCat && c.parent_id);
                         if (subObj) {
                             currentSubCatId = subObj.id;
-                            if (subObj.parent_id) {
-                                const parentObj = allCats.find(c => c.id === subObj.parent_id);
-                                if (parentObj) {
-                                    mainCat = parentObj.name;
-                                    currentMainCatId = parentObj.id;
-                                }
-                            }
-                        }
-                    }
-
-                    if (mainCat && !currentMainCatId) {
-                        const mainObj = allCats.find(c => normalizeText(c.name) === normalizeText(mainCat) && !c.parent_id);
-                        if (mainObj) {
-                            currentMainCatId = mainObj.id;
                         }
                     }
                 }
@@ -210,14 +197,7 @@
                 console.log('Error resolving category IDs:', e);
             }
 
-            if (!mainCat && !subCat) {
-                titleEl.innerText = "كل الأقسام والإعلانات";
-                countEl.innerText = "";
-                container.innerHTML = '<div class="col-span-full text-center py-16 text-gray-400">الرجاء اختيار قسم صحيح.</div>';
-                return;
-            }
-
-            titleEl.innerText = subCat || mainCat;
+            // جلب البانرات المخصصة بناءً على الـ IDs أو الصفحة
             fetchFeaturedBanners();
 
             let breadcrumbHTML = `
@@ -237,7 +217,7 @@
                 </a>
             `;
 
-            if (mainCat) {
+            if (subCat) {
                 breadcrumbHTML += `
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -245,127 +225,119 @@
                     <a href="section.html?cat=${encodeURIComponent(mainCat)}" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-sm">
                         <span>${mainCat}</span>
                     </a>
-                `;
-            }
 
-            if (subCat) {
-                breadcrumbHTML += `
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                     </svg>
+
                     <span class="inline-flex items-center gap-1 bg-orange-600 text-white border border-orange-600 px-3 py-1 rounded-xl text-xs font-bold shadow-sm">
                         <span>${subCat}</span>
                     </span>
                 `;
                 breadcrumbArea.innerHTML = breadcrumbHTML;
+                
                 filterSection.classList.remove('hidden');
                 container.className = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4";
-                fetchAds(subCat, mainCat);
+                fetchAds(subCat);
             } else {
+                breadcrumbHTML += `
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+
+                    <span class="inline-flex items-center gap-1 bg-orange-600 text-white border border-orange-600 px-3 py-1 rounded-xl text-xs font-bold shadow-sm">
+                        <span>${mainCat}</span>
+                    </span>
+                `;
                 breadcrumbArea.innerHTML = breadcrumbHTML;
+                
                 fetchSubCategories(mainCat);
             }
         }
 
-        // جلب البانرات المتحركة (Slider)
-        async function fetchFeaturedBanners() {
-            const bannerContainer = document.getElementById('featured-banners-container');
-            const bannersGrid = document.getElementById('banners-grid');
-            if (!bannerContainer || !bannersGrid) return;
+        // دالة جلب البانرات المطابقة للقسم الحالي
+       async function fetchFeaturedBanners() {
+    const bannerContainer = document.getElementById('featured-banners-container');
+    const bannersGrid = document.getElementById('banners-grid');
+    if (!bannerContainer || !bannersGrid) return;
 
-            try {
-                const { data: banners, error } = await db
-                    .from('featured_companies')
-                    .select('*');
+    try {
+        const { data: banners, error } = await db
+            .from('featured_companies')
+            .select('*');
 
-                if (error || !banners || banners.length === 0) return;
+        if (error || !banners || banners.length === 0) return;
 
-                let matchedBanners = [];
+        let matchedBanners = [];
 
-                if (subCat && currentSubCatId) {
-                    matchedBanners = banners.filter(banner => banner.page_target === `subcat_${currentSubCatId}`);
-                }
-
-                if (matchedBanners.length === 0 && mainCat && currentMainCatId) {
-                    matchedBanners = banners.filter(banner => banner.page_target === `cat_${currentMainCatId}`);
-                }
-
-                if (matchedBanners.length === 0) {
-                    matchedBanners = banners.filter(banner => banner.page_target === 'section.html');
-                }
-
-                if (matchedBanners.length === 0) return;
-
-                let allImages = [];
-                matchedBanners.forEach(banner => {
-                    if (banner.images && Array.isArray(banner.images)) {
-                        allImages.push(...banner.images);
-                    } else if (typeof banner.images === 'string') {
-                        allImages.push(banner.images);
-                    }
-                });
-
-                if (allImages.length === 0) return;
-
-                let sliderHTML = `
-                    <div class="w-full bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm relative group mb-4">
-                        <div class="w-full h-44 sm:h-56 md:h-64 bg-gray-100 relative overflow-hidden" id="banner-slider-box">
-                `;
-
-                allImages.forEach((img, idx) => {
-                    let activeClass = idx === 0 ? 'opacity-100' : 'opacity-0 absolute inset-0';
-                    sliderHTML += `<img src="${img}" class="w-full h-full object-cover transition-opacity duration-1000 banner-slide ${activeClass}" data-index="${idx}">`;
-                });
-
-                sliderHTML += `
-                            <div class="absolute top-3 right-3 bg-orange-600 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-md z-10">
-                                إعلان مميز
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                bannersGrid.innerHTML = sliderHTML;
-                bannerContainer.classList.remove('hidden');
-
-                if (allImages.length > 1) {
-                    let currentIndex = 0;
-                    const slides = bannersGrid.querySelectorAll('.banner-slide');
-                    setInterval(() => {
-                        slides[currentIndex].classList.remove('opacity-100');
-                        slides[currentIndex].classList.add('opacity-0', 'absolute', 'inset-0');
-                        
-                        currentIndex = (currentIndex + 1) % slides.length;
-                        
-                        slides[currentIndex].classList.remove('opacity-0', 'absolute', 'inset-0');
-                        slides[currentIndex].classList.add('opacity-100');
-                    }, 3500);
-                }
-
-            } catch (err) {
-                console.log('خطأ في جلب البانرات:', err.message);
-            }
+        // لو جوا قسم فرعي، ندور الأول على بانر خاص بالقسم الفرعي ده بالذات
+        if (subCat && currentSubCatId) {
+            matchedBanners = banners.filter(banner => banner.page_target === `subcat_${currentSubCatId}`);
         }
 
+        // لو مفيش بانر خاص بالقسم الفرعي، أو إحنا في قسم رئيسي بس، نُظهر بانر القسم الرئيسي
+        if (matchedBanners.length === 0 && mainCat && currentMainCatId) {
+            matchedBanners = banners.filter(banner => banner.page_target === `cat_${currentMainCatId}`);
+        }
+
+        // لو لسه مفيش، نجيب بانرات الصفحة العامة section.html لو متوفرة
+        if (matchedBanners.length === 0) {
+            matchedBanners = banners.filter(banner => banner.page_target === 'section.html');
+        }
+
+        if (matchedBanners.length === 0) return;
+
+        bannersGrid.innerHTML = '';
+        matchedBanners.forEach(banner => {
+            let imgSrc = 'logo192.png';
+            if (banner.images && Array.isArray(banner.images) && banner.images.length > 0) {
+                imgSrc = banner.images[0];
+            } else if (typeof banner.images === 'string') {
+                imgSrc = banner.images;
+            }
+
+            const bannerCard = `
+                <div class="bg-white border border-orange-100 rounded-2xl p-3 flex items-center gap-3 shadow-sm hover:border-orange-500 hover:shadow-md transition-all group">
+                    <div class="w-16 h-16 bg-orange-50 rounded-xl overflow-hidden flex-shrink-0 border border-orange-100">
+                        <img src="${imgSrc}" alt="${banner.title || 'إعلان مميز'}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex1 min-w-0">
+                        <span class="bg-orange-100 text-orange-600 text-[10px] font-bold px-2 py-0.5 rounded-md">إعلان مميز</span>
+                        <h4 class="font-bold text-gray-800 text-sm truncate mt-1">${banner.title || ''}</h4>
+                    </div>
+                </div>
+            `;
+            bannersGrid.innerHTML += bannerCard;
+        });
+
+        bannerContainer.classList.remove('hidden');
+    } catch (err) {
+        console.log('خطأ في جلب البانرات:', err.message);
+    }
+}
         // جلب الأقسام الفرعية ديناميكياً
         async function fetchSubCategories(parentCategoryName) {
             const container = document.getElementById('dynamic-container');
             const countEl = document.getElementById('results-count');
 
             try {
-                const { data: allCats } = await db.from('categories').select('*');
-                if (!allCats) throw new Error('لا توجد أقسام');
+                const { data: parentData, error: parentError } = await db
+                    .from('categories')
+                    .select('id')
+                    .eq('name', parentCategoryName)
+                    .single();
 
-                const parentData = allCats.find(c => normalizeText(c.name) === normalizeText(parentCategoryName) && !c.parent_id);
-                
-                if (!parentData) {
-                    fetchAds(parentCategoryName);
-                    return;
-                }
+                if (parentError || !parentData) throw new Error('القسم غير موجود');
 
-                const subCategories = allCats.filter(c => c.parent_id === parentData.id);
+                const { data: subCategories, error: subError } = await db
+                    .from('categories')
+                    .select('*')
+                    .eq('parent_id', parentData.id);
+
+                if (subError) throw subError;
 
                 if (!subCategories || subCategories.length === 0) {
+                    container.innerHTML = '<div class="col-span-full text-center py-16 text-gray-400 text-sm bg-white rounded-2xl border border-gray-100 shadow-sm">لا توجد أقسام فرعية متاحة حالياً، جاري عرض الإعلانات المباشرة...</div>';
                     countEl.innerText = '0 قسم فرعي';
                     filterSection.classList.remove('hidden');
                     container.className = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4";
@@ -398,27 +370,20 @@
             }
         }
 
-        // جلب الإعلانات بالبحث الشامل (يطابق القسم الفرعي أو الرئيسي معاً لضمان عدم ظهور صفحة فارغة)
-        async function fetchAds(subCategoryName, parentCategoryName) {
+        // جلب الإعلانات من قاعدة البيانات
+        async function fetchAds(categoryName) {
             const container = document.getElementById('dynamic-container');
 
             try {
                 const { data: ads, error } = await db
                     .from('ads')
                     .select('*')
+                    .eq('category', categoryName)
                     .order('created_at', { ascending: false });
 
                 if (error) throw error;
 
-                const normSub = normalizeText(subCategoryName);
-                const normParent = parentCategoryName ? normalizeText(parentCategoryName) : '';
-
-                allAdsData = (ads || []).filter(ad => {
-                    const adCat = normalizeText(ad.category);
-                    // مطابقة ذكية: لو الإعلان مسجل بالقسم الفرعي أو بالقسم الرئيسي أو الـ subcategory في قاعدة البيانات
-                    return adCat === normSub || adCat === normParent || normalizeText(ad.subcategory) === normSub;
-                });
-
+                allAdsData = ads || [];
                 renderAds(allAdsData);
 
             } catch (err) {
@@ -427,7 +392,7 @@
             }
         }
 
-        // عرض الإعلانات
+        // دالة عرض كروت الإعلانات
         function renderAds(adsArray) {
             const container = document.getElementById('dynamic-container');
             const countEl = document.getElementById('results-count');
@@ -438,13 +403,13 @@
                 container.innerHTML = `
                     <div class="col-span-full text-center py-16 bg-white rounded-2xl border border-gray-100 shadow-sm">
                         <p class="text-gray-400 text-sm font-medium">لا توجد إعلانات مطابقة حالياً في هذا القسم.</p>
+                        <a href="add-ad.html" class="inline-block mt-4 bg-orange-600 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-sm">أضف أول إعلان هنا</a>
                     </div>
                 `;
                 return;
             }
 
             container.innerHTML = '';
-            container.className = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4";
             adsArray.forEach(ad => {
                 const mainImage = (ad.images && ad.images.length > 0) ? ad.images[0] : 'logo192.png';
                 const conditionBadge = ad.condition ? `<span class="absolute top-2 right-2 bg-black/60 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full">${ad.condition}</span>` : '';
@@ -471,6 +436,7 @@
             });
         }
 
+        // دالة الفلترة (جديد / مستعمل / الكل)
         function filterAds(type) {
             const btnAll = document.getElementById('btn-all');
             const btnNew = document.getElementById('btn-new');
