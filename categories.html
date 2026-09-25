@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>جميع الأقسام - متجر البيت</title>
+    <title>أقسام متجر البيت</title>
+    <link rel="icon" type="image/png" href="favicon-round.png">
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -11,7 +12,12 @@
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <!-- Google Fonts (Cairo) -->
+    <!-- PWA Settings -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ea580c">
+    <link rel="apple-touch-icon" href="logo192.png">
+
+    <!-- Google Fonts & Custom CSS -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
         body {
@@ -19,11 +25,13 @@
             background-color: #f8f9fa;
             -webkit-tap-highlight-color: transparent;
         }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 pb-20">
 
-    <!-- الهيدر الرئيسي -->
+    <!-- الهيدر الرئيسي (متطابق تماماً) -->
     <header class="bg-white shadow-sm sticky top-0 z-50 px-4 py-3.5">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -32,19 +40,18 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
                 </button>
-                <!-- زر الرئيسية المعدل لمنع الكاش -->
-                <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="flex items-center cursor-pointer">
+               <a href="index.html" class="flex items-center">
                     <img src="logo192.png" alt="متجر البيت" class="w-12 h-12 object-contain rounded-xl shadow-sm border border-gray-100 bg-white p-1">
                 </a>
             </div>
 
             <div class="text-center flex-1 mx-2">
-                <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="block cursor-pointer">
+                <a href="index.html" class="block">
                     <h1 class="text-lg md:text-2xl font-black text-orange-600 leading-tight">متجر البيت</h1>
-                    <p class="text-[11px] md:text-xs text-gray-500 font-medium">الأفضل دائماً</p>
+                    <p class="text-[11px] md:text-xs text-gray-500 font-medium">الأقسام الرئيسية</p>
                 </a>
             </div>
-
+            
             <div class="flex items-center">
                 <a href="add-ad.html" class="bg-orange-600 hover:bg-orange-700 text-white px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition-all shadow-sm flex items-center gap-1.5 whitespace-nowrap">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -56,7 +63,7 @@
         </div>
     </header>
 
-    <!-- القائمة الجانبية (Drawer Menu) -->
+    <!-- القائمة الجانبية (متطابقة تماماً) -->
     <div id="side-menu" class="fixed inset-0 z-50 hidden">
         <div id="menu-overlay" class="absolute inset-0 bg-black/50 transition-opacity"></div>
         <div class="absolute right-0 top-0 bottom-0 w-80 bg-white shadow-2xl p-5 flex flex-col justify-between transform transition-transform duration-300 translate-x-full overflow-y-auto" id="menu-content">
@@ -70,17 +77,9 @@
                 </div>
                 
                 <nav class="space-y-2">
-                    <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors cursor-pointer">الرئيسية</a>
+                    <a href="index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">الرئيسية</a>
                     <a href="categories.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-orange-600 bg-orange-50 transition-colors">الأقسام</a>
                     <a href="add-ad.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">أضف إعلانك الجديد</a>
-                    
-                    <button id="menuInstallBtn" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition-colors text-right">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                        </svg>
-                        <span>تثبيت التطبيق على جهازك</span>
-                    </button>
-
                     <div class="pt-2 pb-1 text-xs font-bold text-gray-400 px-3">سياسات المتجر</div>
                     <a href="privacy.html" class="block px-3 py-2 rounded-xl text-xs font-medium text-gray-600 hover:bg-gray-100">سياسة الاستخدام والخصوصية</a>
                     <a href="terms.html" class="block px-3 py-2 rounded-xl text-xs font-medium text-gray-600 hover:bg-gray-100">الشروط والأحكام</a>
@@ -92,27 +91,26 @@
         </div>
     </div>
 
-    <!-- محتوى الأقسام والبانرات -->
+    <!-- المحتوى الرئيسي (عرض الأقسام بشبكة منظمة مرتبة) -->
     <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
-        <!-- بانر الإعلانات العلوي -->
-        <div id="topBannerAds" class="w-full"></div>
-        <div class="categories-header-area bg-white p-4 rounded-2xl shadow-sm border border-gray-100 mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <h2 id="main-section-title" class="font-black text-gray-900 text-base md:text-lg">الأقسام</h2>
-            <span id="categories-count" class="text-xs text-gray-400 font-semibold">جاري التحميل...</span>
+        <div class="flex items-center justify-between">
+            <h2 class="font-black text-gray-800 text-xl">كافة أقسام المتجر</h2>
+            <a href="index.html" class="text-xs font-bold text-orange-600 hover:underline flex items-center gap-1">
+                <span>العودة للرئيسية</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+            </a>
         </div>
-        <!-- شبكة الأقسام -->
-        <div id="all-categories-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            <div class="col-span-full text-center py-12 text-gray-400 text-sm">جاري تحميل الأقسام...</div>
+
+        <div id="all-categories-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            <div class="text-xs text-gray-400 col-span-full text-center py-10">جاري تحميل الأقسام...</div>
         </div>
     </main>
 
-    <!-- السكريبتات البرمجية الأساسية -->
+    <!-- البرمجة والسكربتات -->
     <script>
-        const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
-        const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        // تشغيل القائمة الجانبية (Drawer Menu)
+        // تفعيل القائمة الجانبية
         const openMenuBtn = document.getElementById('open-menu-btn');
         const closeMenuBtn = document.getElementById('close-menu-btn');
         const sideMenu = document.getElementById('side-menu');
@@ -123,228 +121,51 @@
             sideMenu.classList.remove('hidden');
             setTimeout(() => { menuContent.classList.remove('translate-x-full'); }, 10);
         }
-
         function closeMenu() {
             menuContent.classList.add('translate-x-full');
             setTimeout(() => { sideMenu.classList.add('hidden'); }, 300);
         }
+        openMenuBtn.addEventListener('click', openMenu);
+        closeMenuBtn.addEventListener('click', closeMenu);
+        menuOverlay.addEventListener('click', closeMenu);
 
-        if (openMenuBtn) openMenuBtn.addEventListener('click', openMenu);
-        if (closeMenuBtn) closeMenuBtn.addEventListener('click', closeMenu);
-        if (menuOverlay) menuOverlay.addEventListener('click', closeMenu);
+        // Supabase
+        const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
+        const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        let deferredPrompt = null;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-        });
-
-        const menuInstallBtn = document.getElementById('menuInstallBtn');
-        if (menuInstallBtn) {
-            menuInstallBtn.addEventListener('click', async () => {
-                closeMenu();
-                if (deferredPrompt) {
-                    deferredPrompt.prompt();
-                    const { outcome } = await deferredPrompt.userChoice;
-                    deferredPrompt = null;
-                }
-            });
-        }
-
-        // دالة الـ Slider للبانرات
-        function setupSlider(containerId, mediaArray) {
-            const container = document.getElementById(containerId);
-            if (!container || mediaArray.length === 0) return;
-
-            let slidesHtml = '';
-            mediaArray.forEach((media, index) => {
-                slidesHtml += `
-                    <div class="absolute inset-0 transition-opacity duration-700 ease-in-out ${index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'} ${containerId}-slide">
-                        <div class="w-full h-40 md:h-56 rounded-2xl overflow-hidden shadow-sm bg-gray-100 relative">
-                            <img src="${media.url}" alt="${media.title || 'إعلان مميز'}" class="w-full h-full object-cover">
-                        </div>
-                    </div>
-                `;
-            });
-
-            container.innerHTML = `
-                <div class="relative w-full h-40 md:h-56 rounded-2xl shadow-sm overflow-hidden">
-                    ${slidesHtml}
-                </div>
-            `;
-
-            if (mediaArray.length > 1) {
-                let currentIdx = 0;
-                const slides = container.querySelectorAll(`.${containerId}-slide`);
-                setInterval(() => {
-                    slides[currentIdx].classList.remove('opacity-100', 'z-10');
-                    slides[currentIdx].classList.add('opacity-0', 'z-0');
-                    currentIdx = (currentIdx + 1) % slides.length;
-                    slides[currentIdx].classList.remove('opacity-0', 'z-0');
-                    slides[currentIdx].classList.add('opacity-100', 'z-10');
-                }, 3500);
-            }
-        }
-
-        // جلب البانرات الخاصة بصفحة الأقسام
-        async function fetchBannerAds() {
+        async function fetchAllCategoriesPage() {
+            const container = document.getElementById('all-categories-grid');
             try {
-                const { data: banners, error } = await db
-                    .from('featured_companies')
-                    .select('*')
-                    .eq('position', 'above')
-                    .eq('page_target', 'categories.html');
-
-                if (error || !banners) return;
-
-                let allTopMedia = [];
-                banners.forEach(banner => {
-                    if (banner.images && banner.images.length > 0) {
-                        banner.images.forEach(imgUrl => {
-                            allTopMedia.push({ url: imgUrl, title: banner.title });
-                        });
-                    }
-                });
-
-                setupSlider('topBannerAds', allTopMedia);
-            } catch (e) {
-                console.log('خطأ في جلب البانرات:', e);
-            }
-        }
-
-        // جلب الأقسام الرئيسية
-        async function fetchAllCategories() {
-            const container = document.getElementById('all-categories-container');
-            const countLabel = document.getElementById('categories-count');
-            const titleLabel = document.getElementById('main-section-title');
-
-            if (!container) return;
-            titleLabel.innerHTML = `<div class="flex items-center gap-2 flex-wrap"><a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer"><span>الرئيسية</span></a><svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg><span class="inline-flex items-center gap-1 bg-orange-600 text-white border border-orange-600 px-3 py-1 rounded-xl text-xs font-bold shadow-sm"><span>الأقسام</span></span></div>`;
-
-            try {
-                const { data: categories, error } = await db
-                    .from('categories')
-                    .select('*')
-                    .is('parent_id', null);
-
+                const { data: categories, error } = await db.from('categories').select('*');
                 if (error) throw error;
 
-                if (!categories || categories.length === 0) {
-                    container.innerHTML = '<div class="col-span-full text-center py-12 text-gray-400 text-sm">لا توجد أقسام رئيسية مضافة حالياً.</div>';
-                    countLabel.innerText = '0 قسم';
+                const mainCategories = categories.filter(c => !c.parent_id);
+
+                if (!mainCategories || mainCategories.length === 0) {
+                    container.innerHTML = '<div class="text-xs text-gray-400 col-span-full text-center">لا توجد أقسام متاحة حالياً.</div>';
                     return;
                 }
 
-                countLabel.innerText = `${categories.length} قسم رئيسي متاحة`;
                 container.innerHTML = '';
-
-                categories.forEach(cat => {
+                mainCategories.forEach(cat => {
                     const iconSrc = cat.image_url ? cat.image_url : 'logo192.png';
-                    const card = `
-                       <a href="section.html?cat=${encodeURIComponent(cat.name)}" class="bg-white border border-gray-100 rounded-2xl p-4 flex flex-col items-center justify-center text-center shadow-sm hover:border-orange-500 hover:shadow-md transition-all group">
-                            <div class="w-20 h-20 bg-orange-50/50 rounded-2xl flex items-center justify-center mb-3 overflow-hidden shadow-inner border border-orange-100/50 group-hover:scale-105 transition-transform">
-                                <img src="${iconSrc}" alt="${cat.name}" class="w-full h-full object-cover">
+                    container.innerHTML += `
+                        <a href="section.html?cat=${encodeURIComponent(cat.name)}" class="bg-white border border-gray-100 rounded-2xl p-4 flex flex-col items-center text-center shadow-sm hover:border-orange-500 hover:shadow-md transition-all group">
+                            <div class="w-20 h-20 bg-orange-50/40 rounded-full flex items-center justify-center mb-3 overflow-hidden shadow-inner group-hover:scale-105 transition-transform">
+                                <img src="${iconSrc}" alt="${cat.name}" class="w-full h-full object-cover rounded-full">
                             </div>
-                            <h3 class="font-bold text-gray-800 text-sm group-hover:text-orange-600 transition-colors truncate w-full">${cat.name}</h3>
-                            <span class="text-[11px] text-gray-400 mt-1">تصفح الأقسام</span>
+                            <span class="font-bold text-gray-800 text-sm group-hover:text-orange-600 transition-colors">${cat.name}</span>
                         </a>
                     `;
-                    container.innerHTML += card;
                 });
-
             } catch (err) {
-                console.error('خطأ في جلب الأقسام:', err.message);
-                container.innerHTML = '<div class="col-span-full text-center py-12 text-red-400 text-sm">تعذر تحميل الأقسام، حاول مرة أخرى.</div>';
-                countLabel.innerText = 'خطأ';
-            }
-        } 
-
-        // جلب الأقسام الفرعية داخلياً
-        async function loadSubCategories(parentId, parentName) {
-            const container = document.getElementById('all-categories-container');
-            const countLabel = document.getElementById('categories-count');
-            const titleLabel = document.getElementById('main-section-title');
-
-          titleLabel.innerHTML = `
-            <div class="flex items-center gap-2 flex-wrap">
-                <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer">
-                    <span>الرئيسية</span>
-                </a>
-                
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-
-                <a href="categories.html" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-sm">
-                    <span>الأقسام</span>
-                </a>
-
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-
-                <span class="inline-flex items-center gap-1 bg-orange-600 text-white border border-orange-600 px-3 py-1 rounded-xl text-xs font-bold shadow-sm">
-                    <span>${parentName}</span>
-                </span>
-            </div>
-        `;
-            container.innerHTML = '<div class="col-span-full text-center py-12 text-gray-400 text-sm">جاري تحميل الأقسام الفرعية...</div>';
-
-            try {
-                const { data: subCategories, error } = await db
-                    .from('categories')
-                    .select('*')
-                    .eq('parent_id', parentId);
-
-                if (error) throw error;
-
-                if (!subCategories || subCategories.length === 0) {
-                    container.innerHTML = '<div class="col-span-full text-center py-12 text-gray-400 text-sm">لا توجد أقسام فرعية متاحة تحت هذا القسم حالياً.</div>';
-                    countLabel.innerText = '0 قسم فرعي';
-                    return;
-                }
-
-                countLabel.innerText = `${subCategories.length} قسم فرعي`;
-                container.innerHTML = '';
-
-                subCategories.forEach(sub => {
-                    const iconSrc = sub.image_url ? sub.image_url : 'logo192.png';
-                   const card = `
-        <a href="section.html?cat=${encodeURIComponent(parentName)}&sub=${encodeURIComponent(sub.name)}" class="bg-white border border-gray-100 rounded-2xl p-4 flex flex-col items-center justify-center text-center shadow-sm hover:border-orange-500 hover:shadow-md transition-all group">
-            <div class="w-20 h-20 bg-orange-50/50 rounded-2xl flex items-center justify-center mb-3 overflow-hidden shadow-inner border border-orange-100/50 group-hover:scale-105 transition-transform">
-                <img src="${iconSrc}" alt="${sub.name}" class="w-full h-full object-cover">
-            </div>
-            <h3 class="font-bold text-gray-800 text-sm group-hover:text-orange-600 transition-colors truncate w-full">${sub.name}</h3>
-            <span class="text-[11px] text-orange-500 mt-1">عرض الإعلانات</span>
-        </a>
-    `;
-                    container.innerHTML += card;
-                });
-
-            } catch (err) {
-                console.error('خطأ في جلب الأقسام الفرعية:', err.message);
-                container.innerHTML = '<div class="col-span-full text-center py-12 text-red-400 text-sm">تعذر تحميل الأقسام الفرعية، حاول مرة أخرى.</div>';
-                countLabel.innerText = 'خطأ';
+                console.error(err);
+                container.innerHTML = '<div class="text-xs text-red-400 col-span-full text-center">حدث خطأ أثناء تحميل الأقسام.</div>';
             }
         }
 
-        // فحص البارامتر لو جاي من الصفحة الرئيسية مباشر (categories.html?category=ID)
-        window.addEventListener('DOMContentLoaded', async () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const catIdFromUrl = urlParams.get('category');
-
-            if (catIdFromUrl) {
-                try {
-                    const { data: parentCat } = await db.from('categories').select('*').eq('id', catIdFromUrl).single();
-                    if (parentCat) {
-                        loadSubCategories(parentCat.id, parentCat.name);
-                        return;
-                    }
-                } catch (e) {}
-            }
-            fetchAllCategories();
-            fetchBannerAds();
-        });
+        fetchAllCategoriesPage();
     </script>
 </body>
 </html>
