@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>متجر البيت - الأفضل دائماً</title>
     
-    
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-34S913WKK2"></script>
     <script>
@@ -84,18 +83,18 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
                 </button>
-                <!-- توجيه مباشر وصريح لـ index.html -->
-               <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="flex items-center">
-        <img src="logo192.png" alt="متجر البيت" class="w-12 h-12 object-contain rounded-xl shadow-sm border border-gray-100 bg-white p-1">
-    </a>
-</div>
+                <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="flex items-center">
+                    <img src="logo192.png" alt="متجر البيت" class="w-12 h-12 object-contain rounded-xl shadow-sm border border-gray-100 bg-white p-1">
+                </a>
+            </div>
 
-<div class="text-center flex-1 mx-2">
-    <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="block">
-        <h1 class="text-lg md:text-2xl font-black text-orange-600 leading-tight">متجر البيت</h1>
-        <p class="text-[11px] md:text-xs text-gray-500 font-medium">الأفضل دائماً</p>
-    </a>
-</div>
+            <div class="text-center flex-1 mx-2">
+                <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="block">
+                    <h1 class="text-lg md:text-2xl font-black text-orange-600 leading-tight">متجر البيت</h1>
+                    <p class="text-[11px] md:text-xs text-gray-500 font-medium">الأفضل دائماً</p>
+                </a>
+            </div>
+            
             <div class="flex items-center">
                 <a href="add-ad.html" class="bg-orange-600 hover:bg-orange-700 text-white px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition-all shadow-sm flex items-center gap-1.5 whitespace-nowrap">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -234,7 +233,6 @@
             });
         }
 
-        // تنظيف الكاش القديم وتحديث سيرفر ووركر فوراً
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js').then(reg => {
@@ -248,7 +246,6 @@
             if (!container) return;
 
             try {
-                // جلب الأقسام الرئيسية فقط التي ليس لها قسم أب (parent_id is null)
                 const { data: categories, error } = await db
                     .from('categories')
                     .select('*')
@@ -265,8 +262,9 @@
                 categories.forEach((cat, index) => {
                     const iconSrc = cat.image_url ? cat.image_url : 'logo192.png';
                     const hintClass = index === 0 ? 'scroll-hint' : '';
+                    // تم تعديل الرابط هنا ليوجه المستخدم مباشرة إلى صفحة section.html بـ cat الصحيح
                     const catCard = `
-                       <a href="#" onclick="loadSubCategories('${cat.id}', '${cat.name}'); return false;" class="flex flex-col items-center justify-center bg-white border border-gray-100 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:border-orange-500 hover:shadow-md transition-all text-center ${hintClass}">
+                        <a href="section.html?cat=${encodeURIComponent(cat.name)}" class="flex flex-col items-center justify-center bg-white border border-gray-100 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:border-orange-500 hover:shadow-md transition-all text-center ${hintClass}">
                             <div class="w-16 h-16 bg-orange-50/30 rounded-full flex items-center justify-center mb-2 overflow-hidden shadow-inner">
                                 <img src="${iconSrc}" alt="${cat.name}" class="w-full h-full object-cover rounded-full">
                             </div>
@@ -300,20 +298,25 @@
 
                 container.innerHTML = ''; 
                 ads.forEach(ad => {
+                    const mainImage = (ad.images && ad.images.length > 0) ? ad.images[0] : (ad.image_url || 'logo192.png');
                     const adCard = `
-                        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
-                            <div class="relative rounded-xl overflow-hidden mb-3 bg-gray-100 h-48 md:h-64">
-                                <span class="absolute top-2 right-2 bg-emerald-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow z-10">جديد</span>
-                                <img src="${ad.image_url}" alt="${ad.title}" class="w-full h-full object-cover">
-                            </div>
-                            <div class="space-y-2">
-                                <div class="flex justify-between items-start">
-                                    <h4 class="font-bold text-gray-800 text-sm md:text-base">${ad.title}</h4>
-                                    <span class="text-orange-600 font-black text-sm md:text-base">${ad.price ? ad.price.toLocaleString() : 0} ج.م</span>
+                        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex flex-col justify-between">
+                            <div>
+                                <div class="relative rounded-xl overflow-hidden mb-3 bg-gray-100 h-48 md:h-64">
+                                    <span class="absolute top-2 right-2 bg-emerald-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow z-10">${ad.condition || 'جديد'}</span>
+                                    <img src="${mainImage}" alt="${ad.title}" class="w-full h-full object-cover">
                                 </div>
-                                <p class="text-xs text-gray-500 line-clamp-2">${ad.description || ''}</p>
-                                <a href="https://wa.me/${ad.phone}?text=${encodeURIComponent('مرحباً، أريد الاستفسار عن إعلانك: ' + ad.title)}" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm">
-                                    <span>تواصل مع البائع عبر واتساب</span>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between items-start">
+                                        <h4 class="font-bold text-gray-800 text-sm md:text-base line-clamp-1">${ad.title}</h4>
+                                        <span class="text-orange-600 font-black text-sm md:text-base whitespace-nowrap">${ad.price ? ad.price + ' جنيه' : 'السعر عند الاتصال'}</span>
+                                    </div>
+                                    <p class="text-xs text-gray-500 line-clamp-2">${ad.description || ''}</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 pt-3 border-t border-gray-50">
+                                <a href="ad-details.html?id=${ad.id}" class="w-full bg-orange-600 hover:bg-orange-700 text-white py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm">
+                                    <span>عرض تفاصيل الإعلان</span>
                                 </a>
                             </div>
                         </div>
@@ -335,12 +338,11 @@
             return `<img src="${url}" alt="${title || 'إعلان مميز'}" class="w-full h-full object-cover">`;
         }
 
-       function setupSlider(containerId, mediaArray) {
+        function setupSlider(containerId, mediaArray) {
             const container = document.getElementById(containerId);
             if (!container || mediaArray.length === 0) return;
 
             let slidesHtml = '';
-
             mediaArray.forEach((media, index) => {
                 slidesHtml += `
                     <div class="absolute inset-0 transition-opacity duration-700 ease-in-out ${index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'} ${containerId}-slide">
@@ -360,13 +362,10 @@
             if (mediaArray.length > 1) {
                 let currentIdx = 0;
                 const slides = container.querySelectorAll(`.${containerId}-slide`);
-
                 setInterval(() => {
                     slides[currentIdx].classList.remove('opacity-100', 'z-10');
                     slides[currentIdx].classList.add('opacity-0', 'z-0');
-
                     currentIdx = (currentIdx + 1) % slides.length;
-
                     slides[currentIdx].classList.remove('opacity-0', 'z-0');
                     slides[currentIdx].classList.add('opacity-100', 'z-10');
                 }, 3500);
@@ -395,7 +394,7 @@
 
                 const bottomBanners = banners.filter(b => b.position === 'below');
                 let allBottomMedia = [];
-                bottomBanners.forEach(banner => {
+                bottomBanners.filter(b => b.position === 'below').forEach(banner => {
                     if (banner.images && banner.images.length > 0) {
                         banner.images.forEach(imgUrl => {
                             allBottomMedia.push({ url: imgUrl, title: banner.title });
@@ -415,7 +414,6 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-            
             if (!isStandalone) {
                 setTimeout(() => {
                     const installModal = document.getElementById('pwa-guide-modal');
@@ -426,7 +424,6 @@
             }
         });
     </script>
-    <script src="categories-handler.js"></script>
     <script src="location-filter.js"></script>
     <script>
       window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
