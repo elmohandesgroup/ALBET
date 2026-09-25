@@ -185,34 +185,24 @@
             try {
                 const { data: allCats } = await db.from('categories').select('*');
                 if (allCats) {
-                    // حل ذكي: لو الزائر دخل وجاب sub بس من غير cat أو الـ cat مش مظبوط
-                    if (!mainCat && subCat) {
-                        const matchedSub = allCats.find(c => normalizeText(c.name) === normalizeText(subCat));
-                        if (matchedSub && matchedSub.parent_id) {
-                            currentSubCatId = matchedSub.id;
-                            const parentObj = allCats.find(c => c.id === matchedSub.parent_id);
-                            if (parentObj) {
-                                mainCat = parentObj.name;
-                                currentMainCatId = parentObj.id;
-                            }
-                        }
-                    }
-
-                    if (mainCat) {
-                        const mainObj = allCats.find(c => normalizeText(c.name) === normalizeText(mainCat) && !c.parent_id);
-                        if (mainObj) {
-                            currentMainCatId = mainObj.id;
-                        }
-                    }
-
                     if (subCat) {
                         const subObj = allCats.find(c => normalizeText(c.name) === normalizeText(subCat));
                         if (subObj) {
                             currentSubCatId = subObj.id;
-                            if (!mainCat && subObj.parent_id) {
+                            if (subObj.parent_id) {
                                 const parentObj = allCats.find(c => c.id === subObj.parent_id);
-                                if (parentObj) mainCat = parentObj.name;
+                                if (parentObj) {
+                                    mainCat = parentObj.name;
+                                    currentMainCatId = parentObj.id;
+                                }
                             }
+                        }
+                    }
+
+                    if (mainCat && !currentMainCatId) {
+                        const mainObj = allCats.find(c => normalizeText(c.name) === normalizeText(mainCat) && !c.parent_id);
+                        if (mainObj) {
+                            currentMainCatId = mainObj.id;
                         }
                     }
                 }
@@ -270,7 +260,7 @@
                 breadcrumbArea.innerHTML = breadcrumbHTML;
                 filterSection.classList.remove('hidden');
                 container.className = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4";
-                fetchAds(subCat);
+                fetchAds(subCat, mainCat);
             } else {
                 breadcrumbArea.innerHTML = breadcrumbHTML;
                 fetchSubCategories(mainCat);
@@ -368,7 +358,6 @@
 
                 const parentData = allCats.find(c => normalizeText(c.name) === normalizeText(parentCategoryName) && !c.parent_id);
                 
-                // لو القسم الرئيسي ملوش أقسام فرعية مسجلة، اعرض إعلاناته المباشرة فوراً
                 if (!parentData) {
                     fetchAds(parentCategoryName);
                     return;
@@ -409,8 +398,8 @@
             }
         }
 
-        // جلب الإعلانات بمرونة مطابقة تامة
-        async function fetchAds(categoryName) {
+        // جلب الإعلانات بالبحث الشامل (يطابق القسم الفرعي أو الرئيسي معاً لضمان عدم ظهور صفحة فارغة)
+        async function fetchAds(subCategoryName, parentCategoryName) {
             const container = document.getElementById('dynamic-container');
 
             try {
@@ -421,8 +410,14 @@
 
                 if (error) throw error;
 
-                const normalizedTarget = normalizeText(categoryName);
-                allAdsData = (ads || []).filter(ad => normalizeText(ad.category) === normalizedTarget);
+                const normSub = normalizeText(subCategoryName);
+                const normParent = parentCategoryName ? normalizeText(parentCategoryName) : '';
+
+                allAdsData = (ads || []).filter(ad => {
+                    const adCat = normalizeText(ad.category);
+                    // مطابقة ذكية: لو الإعلان مسجل بالقسم الفرعي أو بالقسم الرئيسي أو الـ subcategory في قاعدة البيانات
+                    return adCat === normSub || adCat === normParent || normalizeText(ad.subcategory) === normSub;
+                });
 
                 renderAds(allAdsData);
 
