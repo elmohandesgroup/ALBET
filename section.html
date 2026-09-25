@@ -156,7 +156,7 @@
         if (closeMenuBtn) closeMenuBtn.addEventListener('click', closeMenu);
         if (menuOverlay) menuOverlay.addEventListener('click', closeMenu);
 
-        // دالة موحدة لتنظيف النصوص وتوحيد الهاء والتاء المربوطة لتفادي أي اختلاف
+        // دالة موحدة لتنظيف النصوص وتوحيد الهاء والتاء المربوطة والألفات
         function normalizeText(str) {
             if (!str) return '';
             return str.trim()
@@ -165,11 +165,11 @@
         }
 
         const urlParams = new URLSearchParams(window.location.search);
-        const rawMainCat = urlParams.get('cat');
-        const rawSubCat = urlParams.get('sub');
+        let rawMainCat = urlParams.get('cat');
+        let rawSubCat = urlParams.get('sub');
 
-        const mainCat = rawMainCat ? decodeURIComponent(rawMainCat).trim() : null;
-        const subCat = rawSubCat ? decodeURIComponent(rawSubCat).trim() : null;
+        let mainCat = rawMainCat ? decodeURIComponent(rawMainCat).trim() : null;
+        let subCat = rawSubCat ? decodeURIComponent(rawSubCat).trim() : null;
 
         let allAdsData = [];
         let currentMainCatId = null;
@@ -182,24 +182,37 @@
             const filterSection = document.getElementById('ads-filter-section');
             const breadcrumbArea = document.getElementById('breadcrumb-area');
 
-            if (!mainCat) {
-                titleEl.innerText = "كل الأقسام والإعلانات";
-                countEl.innerText = "";
-                container.innerHTML = '<div class="col-span-full text-center py-16 text-gray-400">الرجاء اختيار قسم رئيسي.</div>';
-                return;
-            }
-
             try {
                 const { data: allCats } = await db.from('categories').select('*');
                 if (allCats) {
-                    const mainObj = allCats.find(c => normalizeText(c.name) === normalizeText(mainCat) && !c.parent_id);
-                    if (mainObj) {
-                        currentMainCatId = mainObj.id;
+                    // حل ذكي: لو الزائر دخل وجاب sub بس من غير cat أو الـ cat مش مظبوط
+                    if (!mainCat && subCat) {
+                        const matchedSub = allCats.find(c => normalizeText(c.name) === normalizeText(subCat));
+                        if (matchedSub && matchedSub.parent_id) {
+                            currentSubCatId = matchedSub.id;
+                            const parentObj = allCats.find(c => c.id === matchedSub.parent_id);
+                            if (parentObj) {
+                                mainCat = parentObj.name;
+                                currentMainCatId = parentObj.id;
+                            }
+                        }
                     }
+
+                    if (mainCat) {
+                        const mainObj = allCats.find(c => normalizeText(c.name) === normalizeText(mainCat) && !c.parent_id);
+                        if (mainObj) {
+                            currentMainCatId = mainObj.id;
+                        }
+                    }
+
                     if (subCat) {
                         const subObj = allCats.find(c => normalizeText(c.name) === normalizeText(subCat));
                         if (subObj) {
                             currentSubCatId = subObj.id;
+                            if (!mainCat && subObj.parent_id) {
+                                const parentObj = allCats.find(c => c.id === subObj.parent_id);
+                                if (parentObj) mainCat = parentObj.name;
+                            }
                         }
                     }
                 }
@@ -207,6 +220,14 @@
                 console.log('Error resolving category IDs:', e);
             }
 
+            if (!mainCat && !subCat) {
+                titleEl.innerText = "كل الأقسام والإعلانات";
+                countEl.innerText = "";
+                container.innerHTML = '<div class="col-span-full text-center py-16 text-gray-400">الرجاء اختيار قسم صحيح.</div>';
+                return;
+            }
+
+            titleEl.innerText = subCat || mainCat;
             fetchFeaturedBanners();
 
             let breadcrumbHTML = `
@@ -226,7 +247,7 @@
                 </a>
             `;
 
-            if (subCat) {
+            if (mainCat) {
                 breadcrumbHTML += `
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -234,32 +255,24 @@
                     <a href="section.html?cat=${encodeURIComponent(mainCat)}" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-sm">
                         <span>${mainCat}</span>
                     </a>
+                `;
+            }
 
+            if (subCat) {
+                breadcrumbHTML += `
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                     </svg>
-
                     <span class="inline-flex items-center gap-1 bg-orange-600 text-white border border-orange-600 px-3 py-1 rounded-xl text-xs font-bold shadow-sm">
                         <span>${subCat}</span>
                     </span>
                 `;
                 breadcrumbArea.innerHTML = breadcrumbHTML;
-                
                 filterSection.classList.remove('hidden');
                 container.className = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4";
                 fetchAds(subCat);
             } else {
-                breadcrumbHTML += `
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                    </svg>
-
-                    <span class="inline-flex items-center gap-1 bg-orange-600 text-white border border-orange-600 px-3 py-1 rounded-xl text-xs font-bold shadow-sm">
-                        <span>${mainCat}</span>
-                    </span>
-                `;
                 breadcrumbArea.innerHTML = breadcrumbHTML;
-                
                 fetchSubCategories(mainCat);
             }
         }
@@ -354,12 +367,16 @@
                 if (!allCats) throw new Error('لا توجد أقسام');
 
                 const parentData = allCats.find(c => normalizeText(c.name) === normalizeText(parentCategoryName) && !c.parent_id);
-                if (!parentData) throw new Error('القسم غير موجود');
+                
+                // لو القسم الرئيسي ملوش أقسام فرعية مسجلة، اعرض إعلاناته المباشرة فوراً
+                if (!parentData) {
+                    fetchAds(parentCategoryName);
+                    return;
+                }
 
                 const subCategories = allCats.filter(c => c.parent_id === parentData.id);
 
                 if (!subCategories || subCategories.length === 0) {
-                    container.innerHTML = '<div class="col-span-full text-center py-16 text-gray-400 text-sm bg-white rounded-2xl border border-gray-100 shadow-sm">لا توجد أقسام فرعية متاحة حالياً، جاري عرض الإعلانات المباشرة...</div>';
                     countEl.innerText = '0 قسم فرعي';
                     filterSection.classList.remove('hidden');
                     container.className = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4";
@@ -392,12 +409,11 @@
             }
         }
 
-        // جلب الإعلانات وتصفيتها بمرونة لتطابق الأسماء بصرف النظر عن اختلاف التاء المربوطة
+        // جلب الإعلانات بمرونة مطابقة تامة
         async function fetchAds(categoryName) {
             const container = document.getElementById('dynamic-container');
 
             try {
-                // جلب كل الإعلانات ثم مطابقتها بمرونة تامة في الجافاسكريفت لتفادي قيود الحروف العربية في قاعدة البيانات
                 const { data: ads, error } = await db
                     .from('ads')
                     .select('*')
