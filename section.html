@@ -82,13 +82,6 @@
     <!-- محتوى الصفحة -->
     <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
         
-        <!-- قسم البانر الدعائي (يتم جذبه تلقائياً بناءً على القسم الحالي فوق مسار التسلسل مباشرة) -->
-        <div id="featured-banners-container" class="hidden">
-            <div id="banners-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                <!-- سيتم تعبئتها ديناميكياً -->
-            </div>
-        </div>
-
         <!-- مسار التنقل (Breadcrumbs) وعنوان الصفحة -->
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div id="breadcrumb-area" class="flex items-center gap-2 flex-wrap">
@@ -125,7 +118,7 @@
             </div>
         </div>
 
-        <!-- حاوية المحتوى الديناميكي -->
+        <!-- حاوية المحتوى الديناميكي (ستعرض إما أقسام فرعية أو إعلانات) -->
         <div id="dynamic-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             <div class="col-span-full text-center py-16 text-gray-400 text-sm">جاري جلب البيانات...</div>
         </div>
@@ -161,10 +154,8 @@
         const subCat = urlParams.get('sub');
 
         let allAdsData = [];
-        let currentMainCatId = null;
-        let currentSubCatId = null;
 
-        async function initPage() {
+       async function initPage() {
             const titleEl = document.getElementById('section-title');
             const countEl = document.getElementById('results-count');
             const container = document.getElementById('dynamic-container');
@@ -178,28 +169,7 @@
                 return;
             }
 
-            // استعلام قاعدة البيانات لمعرفة IDs الخاصة بالقسم الرئيسي والفرعي الحالي بدقة
-            try {
-                const { data: allCats } = await db.from('categories').select('*');
-                if (allCats) {
-                    const mainObj = allCats.find(c => c.name === mainCat && !c.parent_id);
-                    if (mainObj) {
-                        currentMainCatId = mainObj.id;
-                    }
-                    if (subCat) {
-                        const subObj = allCats.find(c => c.name === subCat && c.parent_id);
-                        if (subObj) {
-                            currentSubCatId = subObj.id;
-                        }
-                    }
-                }
-            } catch (e) {
-                console.log('Error resolving category IDs:', e);
-            }
-
-            // جلب البانرات المخصصة بناءً على الـ IDs أو الصفحة
-            fetchFeaturedBanners();
-
+            // توحيد شكل المسار (Breadcrumbs) في كل الصفحات بنفس التنسيق الاحترافي الموحد
             let breadcrumbHTML = `
                 <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="inline-flex items-center gap-1 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -217,6 +187,7 @@
                 </a>
             `;
 
+            // الحالة الأولى: لو المستخدم اختار قسم فرعي
             if (subCat) {
                 breadcrumbHTML += `
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -239,7 +210,9 @@
                 filterSection.classList.remove('hidden');
                 container.className = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4";
                 fetchAds(subCat);
-            } else {
+            } 
+            // الحالة الثانية: لو المستخدم في القسم الرئيسي
+            else {
                 breadcrumbHTML += `
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -254,81 +227,25 @@
                 fetchSubCategories(mainCat);
             }
         }
-
-        // دالة جلب البانرات المطابقة للقسم الحالي
-       async function fetchFeaturedBanners() {
-    const bannerContainer = document.getElementById('featured-banners-container');
-    const bannersGrid = document.getElementById('banners-grid');
-    if (!bannerContainer || !bannersGrid) return;
-
-    try {
-        const { data: banners, error } = await db
-            .from('featured_companies')
-            .select('*');
-
-        if (error || !banners || banners.length === 0) return;
-
-        let matchedBanners = [];
-
-        // لو جوا قسم فرعي، ندور الأول على بانر خاص بالقسم الفرعي ده بالذات
-        if (subCat && currentSubCatId) {
-            matchedBanners = banners.filter(banner => banner.page_target === `subcat_${currentSubCatId}`);
-        }
-
-        // لو مفيش بانر خاص بالقسم الفرعي، أو إحنا في قسم رئيسي بس، نُظهر بانر القسم الرئيسي
-        if (matchedBanners.length === 0 && mainCat && currentMainCatId) {
-            matchedBanners = banners.filter(banner => banner.page_target === `cat_${currentMainCatId}`);
-        }
-
-        // لو لسه مفيش، نجيب بانرات الصفحة العامة section.html لو متوفرة
-        if (matchedBanners.length === 0) {
-            matchedBanners = banners.filter(banner => banner.page_target === 'section.html');
-        }
-
-        if (matchedBanners.length === 0) return;
-
-        bannersGrid.innerHTML = '';
-        matchedBanners.forEach(banner => {
-            let imgSrc = 'logo192.png';
-            if (banner.images && Array.isArray(banner.images) && banner.images.length > 0) {
-                imgSrc = banner.images[0];
-            } else if (typeof banner.images === 'string') {
-                imgSrc = banner.images;
-            }
-
-            const bannerCard = `
-                <div class="bg-white border border-orange-100 rounded-2xl p-3 flex items-center gap-3 shadow-sm hover:border-orange-500 hover:shadow-md transition-all group">
-                    <div class="w-16 h-16 bg-orange-50 rounded-xl overflow-hidden flex-shrink-0 border border-orange-100">
-                        <img src="${imgSrc}" alt="${banner.title || 'إعلان مميز'}" class="w-full h-full object-cover">
-                    </div>
-                    <div class="flex1 min-w-0">
-                        <span class="bg-orange-100 text-orange-600 text-[10px] font-bold px-2 py-0.5 rounded-md">إعلان مميز</span>
-                        <h4 class="font-bold text-gray-800 text-sm truncate mt-1">${banner.title || ''}</h4>
-                    </div>
-                </div>
-            `;
-            bannersGrid.innerHTML += bannerCard;
-        });
-
-        bannerContainer.classList.remove('hidden');
-    } catch (err) {
-        console.log('خطأ في جلب البانرات:', err.message);
-    }
-}
-        // جلب الأقسام الفرعية ديناميكياً
+        // جلب الأقسام الفرعية ديناميكياً من قاعدة البيانات
         async function fetchSubCategories(parentCategoryName) {
             const container = document.getElementById('dynamic-container');
             const countEl = document.getElementById('results-count');
 
             try {
+                // أولاً: نحضر الـ ID للقسم الرئيسي من جدول categories
                 const { data: parentData, error: parentError } = await db
                     .from('categories')
                     .select('id')
                     .eq('name', parentCategoryName)
                     .single();
 
-                if (parentError || !parentData) throw new Error('القسم غير موجود');
+                if (parentError || !parentData) {
+                    // إذا لم نجد القسم بالاسم مباشرة، نحاول جلبه كـ نص عادي أو جلب كل الأقسام الفرعية المرتبطة
+                    throw new Error('القسم غير موجود');
+                }
 
+                // ثانياً: جلب الأقسام الفرعية التي تتبع هذا الـ parent_id
                 const { data: subCategories, error: subError } = await db
                     .from('categories')
                     .select('*')
@@ -339,6 +256,7 @@
                 if (!subCategories || subCategories.length === 0) {
                     container.innerHTML = '<div class="col-span-full text-center py-16 text-gray-400 text-sm bg-white rounded-2xl border border-gray-100 shadow-sm">لا توجد أقسام فرعية متاحة حالياً، جاري عرض الإعلانات المباشرة...</div>';
                     countEl.innerText = '0 قسم فرعي';
+                    // لو مفيش أقسام فرعية، اعرض إعلانات القسم الرئيسي مباشرة
                     filterSection.classList.remove('hidden');
                     container.className = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4";
                     fetchAds(parentCategoryName);
@@ -364,6 +282,7 @@
 
             } catch (err) {
                 console.error('خطأ في جلب الأقسام الفرعية:', err.message);
+                // كاحتياط: لو حدث خطأ في ربط الـ IDs، نجلب الإعلانات مباشرة للقسم
                 filterSection.classList.remove('hidden');
                 container.className = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4";
                 fetchAds(parentCategoryName);
@@ -373,6 +292,7 @@
         // جلب الإعلانات من قاعدة البيانات
         async function fetchAds(categoryName) {
             const container = document.getElementById('dynamic-container');
+            const countEl = document.getElementById('results-count');
 
             try {
                 const { data: ads, error } = await db
