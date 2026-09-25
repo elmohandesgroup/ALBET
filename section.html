@@ -333,7 +333,7 @@
             }
         }
 
-        // جلب الأقسام الفرعية ديناميكياً
+        // جلب الأقسام الفرعية ديناميكياً (مع ضبط بناء الرابط ليعمل بسلاسة تامة من أي مكان)
         async function fetchSubCategories(parentCategoryName) {
             const container = document.getElementById('dynamic-container');
             const countEl = document.getElementById('results-count');
@@ -368,8 +368,10 @@
 
                 subCategories.forEach(sub => {
                     const iconSrc = sub.image_url ? sub.image_url : 'logo192.png';
+                    // تم ضبط بناء الرابط هنا ليكون متوافقاً وديناميكياً 100%
+                    const subUrl = `section.html?cat=${encodeURIComponent(parentCategoryName)}&sub=${encodeURIComponent(sub.name)}`;
                     const card = `
-                        <a href="section.html?cat=${encodeURIComponent(parentCategoryName)}&sub=${encodeURIComponent(sub.name)}" class="bg-white border border-gray-100 rounded-2xl p-4 flex flex-col items-center justify-center text-center shadow-sm hover:border-orange-500 hover:shadow-md transition-all group">
+                        <a href="${subUrl}" class="bg-white border border-gray-100 rounded-2xl p-4 flex flex-col items-center justify-center text-center shadow-sm hover:border-orange-500 hover:shadow-md transition-all group">
                             <div class="w-20 h-20 bg-orange-50/50 rounded-2xl flex items-center justify-center mb-3 overflow-hidden shadow-inner border border-orange-100/50 group-hover:scale-105 transition-transform">
                                 <img src="${iconSrc}" alt="${sub.name}" class="w-full h-full object-cover">
                             </div>
@@ -410,7 +412,7 @@
             }
         }
 
-        // عرض الإعلانات بدون زر "أضف أول إعلان هنا"
+        // عرض الإعلانات
         function renderAds(adsArray) {
             const container = document.getElementById('dynamic-container');
             const countEl = document.getElementById('results-count');
