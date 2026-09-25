@@ -44,29 +44,6 @@
 </head>
 <body class="bg-gray-50 text-gray-800 pb-20">
 
-    <!-- نافذة تثبيت التطبيق -->
-    <div id="pwa-guide-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[99999] p-4 hidden">
-        <div class="bg-gray-900 border border-gray-800 rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl space-y-4">
-            <div class="w-20 h-20 bg-gray-800 rounded-2xl mx-auto flex items-center justify-center shadow-inner border border-gray-700 p-2">
-                <img src="logo192.png" alt="متجر البيت" class="w-full h-full object-contain">
-            </div>
-            <div>
-                <h3 class="font-black text-white text-xl">حمل تطبيق "متجر البيت" الآن</h3>
-                <p class="text-xs text-gray-300 mt-1 leading-relaxed">
-                    استمتع بتجربة تصفح أسرع وأسهل بتثبيت التطبيق على جهازك الكمبيوتر أو هاتفك.
-                </p>
-            </div>
-            <div class="space-y-2 pt-1">
-                <button id="modalInstallActionBtn" class="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 rounded-xl text-sm font-bold transition-all shadow-sm">
-                    تثبيت التطبيق الآن
-                </button>
-                <button onclick="closeInstallGuideModal()" class="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 py-2.5 rounded-xl text-xs font-bold transition-all">
-                    تخطي
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- الهيدر الرئيسي -->
     <header class="bg-white shadow-sm sticky top-0 z-50 px-4 py-3.5">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
@@ -116,13 +93,6 @@
                     <a href="index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">الرئيسية</a>
                     <a href="categories.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">الأقسام</a>
                     <a href="add-ad.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-orange-600 bg-orange-50 transition-colors">أضف إعلانك الجديد</a>
-                    
-                    <button id="menuInstallBtn" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition-colors text-right">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                        </svg>
-                        <span>تثبيت التطبيق على جهازك</span>
-                    </button>
 
                     <div class="pt-2 pb-1 text-xs font-bold text-gray-400 px-3">سياسات المتجر</div>
                     <a href="privacy.html" class="block px-3 py-2 rounded-xl text-xs font-medium text-gray-600 hover:bg-gray-100">سياسة الاستخدام والخصوصية</a>
@@ -144,7 +114,7 @@
                 <h3 class="font-bold text-gray-800 text-base">الأقسام</h3>
                 <a href="categories.html" class="text-xs text-orange-600 font-semibold hover:underline">عرض الكل</a>
             </div>
-            <!-- شريط الأقسام التفاعلي -->
+            <!-- شريط الأقسام -->
             <div id="categories-container" class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
                 <div class="text-xs text-gray-400">جاري تحميل الأقسام...</div>
             </div>
@@ -155,7 +125,7 @@
         <section class="space-y-3">
             <div class="flex justify-between items-center">
                 <h3 class="font-bold text-gray-800 text-base">أحدث الإعلانات</h3>
-                <span id="current-section-label" class="text-xs text-gray-400">متجدد باستمرار</span>
+                <span class="text-xs text-gray-400">متجدد باستمرار</span>
             </div>
             <div id="ads-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div class="text-xs text-gray-400 p-4">جاري تحميل الإعلانات...</div>
@@ -187,50 +157,6 @@
         const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
         const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        let deferredPrompt = null;
-        const installModal = document.getElementById('pwa-guide-modal');
-        const modalInstallActionBtn = document.getElementById('modalInstallActionBtn');
-        const menuInstallBtn = document.getElementById('menuInstallBtn');
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-            if (!isStandalone && installModal) {
-                installModal.classList.remove('hidden');
-            }
-        });
-
-        function closeInstallGuideModal() {
-            if (installModal) installModal.classList.add('hidden');
-        }
-
-        function openInstallGuideModal() {
-            if (installModal) {
-                installModal.classList.remove('hidden');
-            }
-        }
-
-        async function triggerInstall() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                deferredPrompt = null;
-                closeInstallGuideModal();
-            } else {
-                alert('لتثبيت التطبيق على الكمبيوتر، اذهب إلى إعدادات المتصفح (النقاط الثلاث أعلى اليد اليمنى) واضغط على "تثبيت متجر البيت" أو "Install App".');
-                closeInstallGuideModal();
-            }
-        }
-
-        if (modalInstallActionBtn) modalInstallActionBtn.addEventListener('click', triggerInstall);
-        if (menuInstallBtn) {
-            menuInstallBtn.addEventListener('click', () => {
-                closeMenu();
-                openInstallGuideModal();
-            });
-        }
-
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js').then(reg => {
@@ -239,7 +165,7 @@
             });
         }
 
-        // 1. جلب الأقسام الرئيسية في الشريط
+        // جلب الأقسام الرئيسية وتوجيهها مباشرة لصفحة section.html
         async function fetchCategories() {
             const container = document.getElementById('categories-container');
             if (!container) return;
@@ -262,12 +188,12 @@
                     const iconSrc = cat.image_url ? cat.image_url : 'logo192.png';
                     const hintClass = index === 0 ? 'scroll-hint' : '';
                     const catCard = `
-                        <button onclick="loadSubCategories('${cat.id}', '${cat.name}')" class="flex flex-col items-center justify-center bg-white border border-gray-100 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:border-orange-500 hover:shadow-md transition-all text-center cursor-pointer ${hintClass}">
+                        <a href="section.html?cat=${encodeURIComponent(cat.name)}" class="flex flex-col items-center justify-center bg-white border border-gray-100 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:border-orange-500 hover:shadow-md transition-all text-center ${hintClass}">
                             <div class="w-16 h-16 bg-orange-50/30 rounded-full flex items-center justify-center mb-2 overflow-hidden shadow-inner">
                                 <img src="${iconSrc}" alt="${cat.name}" class="w-full h-full object-cover rounded-full">
                             </div>
                             <span class="text-xs font-bold text-gray-700 truncate w-full">${cat.name}</span>
-                        </button>
+                        </a>
                     `;
                     container.innerHTML += catCard;
                 });
@@ -277,93 +203,25 @@
             }
         }
 
-        // 2. تحميل الأقسام الفرعية في نفس الشريط عند الضغط على قسم رئيسي
-        async function loadSubCategories(parentId, parentName) {
-            const container = document.getElementById('categories-container');
-            if (!container) return;
-
-            container.innerHTML = '<div class="text-xs text-gray-400 p-2">جاري التحميل...</div>';
-
-            try {
-                const { data: subCategories, error } = await db
-                    .from('categories')
-                    .select('*')
-                    .eq('parent_id', parentId);
-
-                if (error) throw error;
-
-                // لو مفيش أقسام فرعية، اعرض إعلانات القسم الرئيسي مباشرة
-                if (!subCategories || subCategories.length === 0) {
-                    fetchAdsByCategoryName(parentName);
-                    container.innerHTML = `
-                        <button onclick="fetchCategories()" class="flex flex-col items-center justify-center bg-orange-50 border border-orange-200 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:bg-orange-100 transition-all text-center">
-                            <div class="w-16 h-16 bg-orange-600 text-white rounded-full flex items-center justify-center mb-2 shadow-inner text-xl font-black">
-                                ↺
-                            </div>
-                            <span class="text-xs font-bold text-orange-700 truncate w-full">الرئيسية</span>
-                        </button>
-                        <div class="text-xs text-gray-500 flex items-center px-2">عرض إعلانات: ${parentName}</div>
-                    `;
-                    return;
-                }
-
-                let html = `
-                    <button onclick="fetchCategories()" class="flex flex-col items-center justify-center bg-orange-50 border border-orange-200 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:bg-orange-100 transition-all text-center">
-                        <div class="w-16 h-16 bg-orange-600 text-white rounded-full flex items-center justify-center mb-2 shadow-inner text-xl font-black">
-                            ↺
-                        </div>
-                        <span class="text-xs font-bold text-orange-700 truncate w-full">الرئيسية</span>
-                    </button>
-                `;
-
-                subCategories.forEach(sub => {
-                    const iconSrc = sub.image_url ? sub.image_url : 'logo192.png';
-                    html += `
-                        <button onclick="fetchAdsByCategoryName('${sub.name}')" class="flex flex-col items-center justify-center bg-white border border-gray-100 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:border-orange-500 hover:shadow-md transition-all text-center cursor-pointer">
-                            <div class="w-16 h-16 bg-orange-50/30 rounded-full flex items-center justify-center mb-2 overflow-hidden shadow-inner">
-                                <img src="${iconSrc}" alt="${sub.name}" class="w-full h-full object-cover rounded-full">
-                            </div>
-                            <span class="text-xs font-bold text-gray-700 truncate w-full">${sub.name}</span>
-                        </button>
-                    `;
-                });
-
-                container.innerHTML = html;
-                fetchAdsByCategoryName(parentName);
-
-            } catch (err) {
-                console.error('خطأ في جلب الأقسام الفرعية:', err.message);
-                container.innerHTML = '<div class="text-xs text-red-400 p-2">تعذر التحميل.</div>';
-            }
-        }
-
-        // 3. جلب كل الإعلانات أو تصفيتها حسب القسم
-        async function fetchAds(categoryFilter = null) {
+        async function fetchAds() {
             const container = document.getElementById('ads-container');
-            const labelEl = document.getElementById('current-section-label');
             if (!container) return;
             
             try {
-                let query = db.from('ads').select('*').order('created_at', { ascending: false });
-                
-                const { data: ads, error } = await query;
+                const { data: ads, error } = await db
+                    .from('ads')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
                 if (error) throw error;
 
-                let filteredAds = ads || [];
-                if (categoryFilter) {
-                    filteredAds = ads.filter(ad => ad.category === categoryFilter || ad.subcategory === categoryFilter);
-                    if (labelEl) labelEl.innerText = `قسم: ${categoryFilter}`;
-                } else {
-                    if (labelEl) labelEl.innerText = 'متجدد باستمرار';
-                }
-
-                if (!filteredAds || filteredAds.length === 0) {
-                    container.innerHTML = '<div class="text-xs text-gray-400 p-4 col-span-full text-center">لا توجد إعلانات مضافة حالياً في هذا القسم.</div>';
+                if (!ads || ads.length === 0) {
+                    container.innerHTML = '<div class="text-xs text-gray-400 p-4 col-span-full text-center">لا توجد إعلانات مضافة حالياً.</div>';
                     return;
                 }
 
                 container.innerHTML = ''; 
-                filteredAds.forEach(ad => {
+                ads.forEach(ad => {
                     const mainImage = (ad.images && ad.images.length > 0) ? ad.images[0] : (ad.image_url || 'logo192.png');
                     const adCard = `
                         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex flex-col justify-between">
@@ -393,10 +251,6 @@
                 console.error('خطأ في جلب الإعلانات:', err.message);
                 container.innerHTML = '<div class="text-xs text-red-400 p-4 col-span-full text-center">تعذر تحميل الإعلانات.</div>';
             }
-        }
-
-        function fetchAdsByCategoryName(catName) {
-            fetchAds(catName);
         }
 
         function renderMediaElement(url, title) {
@@ -481,18 +335,6 @@
         fetchCategories();
         fetchAds();
         fetchBannerAds();
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-            if (!isStandalone) {
-                setTimeout(() => {
-                    const installModal = document.getElementById('pwa-guide-modal');
-                    if (installModal) {
-                        installModal.classList.remove('hidden');
-                    }
-                }, 1000);
-            }
-        });
     </script>
     <script src="location-filter.js"></script>
     <script>
