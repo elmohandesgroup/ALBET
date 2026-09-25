@@ -69,7 +69,7 @@
         </div>
     </header>
 
-    <!-- القائمة الجانبية (Drawer Menu المطابقة تماماً لموقعك) -->
+    <!-- القائمة الجانبية (Drawer Menu) -->
     <div id="side-menu" class="fixed inset-0 z-50 hidden">
         <!-- الخلفية المعتمة -->
         <div id="menu-overlay" class="absolute inset-0 bg-black/50 transition-opacity"></div>
@@ -109,22 +109,33 @@
     </a>
 
     <!-- 3. إضافة موظف -->
-           <a href="staff-management.html" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors border border-gray-100 shadow-xs">
-                    <span class="flex items-center gap-2">
-                   <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-              إضافة موظف
-           </span>
-         </a>
+    <a href="staff-management.html" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors border border-gray-100 shadow-xs">
+        <span class="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            إضافة موظف
+        </span>
+    </a>
 
     <!-- 4. إضافة قسم -->
-        <a href="categories.html" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors border border-gray-100 shadow-xs">
-    <span class="flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
-        إضافة قسم
-    </span>
-</a>
+    <a href="categories.html" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors border border-gray-100 shadow-xs">
+        <span class="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+            إضافة قسم
+        </span>
+    </a>
 
-    <!-- 5. تقرير اليوم -->
+    <!-- 5. إدارة تسعير الإعلانات (الجديد) -->
+    <a href="admin-pricing.html" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors border border-gray-100 shadow-xs">
+        <span class="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            إدارة التسعير
+        </span>
+        <span class="bg-orange-100 text-orange-700 text-[10px] px-2 py-0.5 rounded-full font-bold">جديد</span>
+    </a>
+
+    <!-- 6. تقرير اليوم -->
     <a href="admin-daily-report.html" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors border border-gray-100 shadow-xs">
         <span class="flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -134,7 +145,7 @@
         </span>
     </a>
 
-    <!-- 6. الأرباح والخسائر -->
+    <!-- 7. الأرباح والخسائر -->
     <a href="admin-profits.html" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors border border-gray-100 shadow-xs">
         <span class="flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -144,7 +155,7 @@
         </span>
     </a>
 
-    <!-- 7. المرتبات -->
+    <!-- 8. المرتبات -->
     <a href="admin-salaries.html" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors border border-gray-100 shadow-xs">
         <span class="flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -154,7 +165,7 @@
         </span>
     </a>
 
-    <!-- 8. المصروفات -->
+    <!-- 9. المصروفات -->
     <a href="admin-expenses.html" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors border border-gray-100 shadow-xs">
         <span class="flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -181,9 +192,8 @@
         </div>
     </div>
 
-    <!-- المحتوى الرئيسي (يبدأ مباشرة بشاشة مراجعة الإعلانات) -->
+    <!-- المحتوى الرئيسي -->
     <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
-        
         <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-6 space-y-4">
             <div class="flex justify-between items-center border-b pb-4">
                 <div>
@@ -217,12 +227,9 @@
                 </table>
             </div>
         </section>
-
     </main>
 
-    <!-- السكريبتات والبرمجيات -->
     <script>
-        // إعدادات القائمة الجانبية (Drawer Menu) المطابقة للـ Index
         const openMenuBtn = document.getElementById('open-menu-btn');
         const closeMenuBtn = document.getElementById('close-menu-btn');
         const sideMenu = document.getElementById('side-menu');
@@ -247,7 +254,6 @@
         closeMenuBtn.addEventListener('click', closeMenu);
         menuOverlay.addEventListener('click', closeMenu);
 
-        // وظيفة تسجيل الخروج
         function logoutAdmin() {
             localStorage.removeItem('isAdminLoggedIn');
             window.location.href = 'admin-login.html';
@@ -255,7 +261,6 @@
     </script>
 
     <script>
-        // ربط قاعدة البيانات Supabase وجلب الإعلانات
         const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxq0VLujbtAXcUg_K5qf1rSB';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -311,7 +316,6 @@
         }
 
         async function approveAd(id) {
-            // أضف كود الاعتماد الخاص بك هنا (مثل تحديث حالة الإعلان في Supabase إلى فعال)
             alert('تم اعتماد الإعلان بنجاح (معرف: ' + id + ')');
             loadPendingAds();
         }
