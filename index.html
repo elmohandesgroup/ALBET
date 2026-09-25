@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+    <!-- ==================== 1. قسم الإعدادات ورأس الصفحة (Head & Meta) ==================== -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>متجر البيت - الأفضل دائماً</title>
@@ -26,7 +27,7 @@
     <meta name="theme-color" content="#ea580c">
     <link rel="apple-touch-icon" href="logo192.png">
 
-    <!-- Google Fonts (Cairo) & Animations -->
+    <!-- Google Fonts & Custom CSS Styles -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
         body {
@@ -34,25 +35,18 @@
             background-color: #f8f9fa;
             -webkit-tap-highlight-color: transparent;
         }
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         @keyframes hintScroll {
             0%, 100% { transform: translateX(0); }
             50% { transform: translateX(-8px); }
         }
-        .scroll-hint {
-            animation: hintScroll 2s infinite ease-in-out;
-        }
+        .scroll-hint { animation: hintScroll 2s infinite ease-in-out; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 pb-20">
 
-    <!-- نافذة تثبيت التطبيق -->
+    <!-- ==================== 2. نافذة تثبيت التطبيق (PWA Modal) ==================== -->
     <div id="pwa-guide-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[99999] p-4 hidden">
         <div class="bg-gray-900 border border-gray-800 rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl space-y-4 animate-in fade-in zoom-in duration-200">
             <div class="w-20 h-20 bg-gray-800 rounded-2xl mx-auto flex items-center justify-center shadow-inner border border-gray-700 p-2">
@@ -75,7 +69,7 @@
         </div>
     </div>
 
-    <!-- الهيدر الرئيسي -->
+    <!-- ==================== 3. الهيدر الرئيسي (Main Header) ==================== -->
     <header class="bg-white shadow-sm sticky top-0 z-50 px-4 py-3.5">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -107,7 +101,7 @@
         </div>
     </header>
 
-    <!-- القائمة الجانبية -->
+    <!-- ==================== 4. القائمة الجانبية المنسدلة (Sidebar Menu) ==================== -->
     <div id="side-menu" class="fixed inset-0 z-50 hidden">
         <div id="menu-overlay" class="absolute inset-0 bg-black/50 transition-opacity"></div>
         <div class="absolute right-0 top-0 bottom-0 w-80 bg-white shadow-2xl p-5 flex flex-col justify-between transform transition-transform duration-300 translate-x-full overflow-y-auto" id="menu-content">
@@ -143,10 +137,11 @@
         </div>
     </div>
 
-    <!-- محتوى المتجر الرئيسي -->
+    <!-- ==================== 5. محتوى المتجر الرئيسي (Main Content Area) ==================== -->
     <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
         <div id="topBannerAds" class="w-full"></div>
 
+        <!-- شريط الأقسام -->
         <section class="space-y-3">
             <div class="flex justify-between items-center">
                 <h3 class="font-bold text-gray-800 text-base">الأقسام</h3>
@@ -159,6 +154,7 @@
 
         <div id="bottomBannerAds" class="w-full"></div>
 
+        <!-- قسم الإعلانات -->
         <section class="space-y-3">
             <div class="flex justify-between items-center">
                 <h3 class="font-bold text-gray-800 text-base">أحدث الإعلانات</h3>
@@ -170,7 +166,9 @@
         </section>
     </main>
 
+    <!-- ==================== 6. السكربتات والبرمجة (Scripts & Logic) ==================== -->
     <script>
+        // تفعيل القائمة الجانبية (فتح وإغلاق)
         const openMenuBtn = document.getElementById('open-menu-btn');
         const closeMenuBtn = document.getElementById('close-menu-btn');
         const sideMenu = document.getElementById('side-menu');
@@ -191,10 +189,12 @@
         closeMenuBtn.addEventListener('click', closeMenu);
         menuOverlay.addEventListener('click', closeMenu);
 
+        // ربط قاعدة بيانات Supabase
         const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
         const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+        // إعدادات PWA وتثبيت التطبيق
         let deferredPrompt = null;
         const installModal = document.getElementById('pwa-guide-modal');
         const modalInstallActionBtn = document.getElementById('modalInstallActionBtn');
@@ -234,7 +234,7 @@
             });
         }
 
-        // تنظيف الكاش القديم وتحديث سيرفر ووركر فوراً
+        // تسجيل Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js').then(reg => {
@@ -245,6 +245,7 @@
 
         let allCategoriesCache = [];
 
+        // جلب وعرض الأقسام
         async function fetchCategories() {
             const container = document.getElementById('categories-container');
             if (!container) return;
@@ -257,7 +258,6 @@
                 if (error) throw error;
                 allCategoriesCache = categories || [];
 
-                // جلب الأقسام الرئيسية فقط التي ليس لها قسم أب
                 const mainCategories = allCategoriesCache.filter(c => !c.parent_id);
 
                 if (!mainCategories || mainCategories.length === 0) {
@@ -285,7 +285,7 @@
             }
         }
 
-        // دالة لعرض الأقسام الفرعية مع زر الرجوع المطابق للتصميم المطلوب تماماً
+        // عرض الأقسام الفرعية وزر الرجوع المطابق للصورة
         function loadSubCategories(parentId, parentName) {
             const container = document.getElementById('categories-container');
             if (!container) return;
@@ -297,7 +297,6 @@
                 return;
             }
 
-            // تصميم الزر مطابق للصورة تماماً (خلفية برتقالية دافئة، سهم، كلمة رجوع و BACK)
             let html = `
                 <a href="#" onclick="fetchCategories(); return false;" class="flex flex-col items-center justify-center bg-orange-400 hover:bg-orange-500 rounded-2xl p-3 w-28 flex-shrink-0 shadow-md hover:shadow-lg transition-all text-center text-white group cursor-pointer border border-orange-500/30">
                     <div class="mb-1 transform group-hover:-translate-x-1 transition-transform">
@@ -325,6 +324,7 @@
             container.innerHTML = html;
         }
 
+        // جلب الإعلانات وعرضها
         async function fetchAds() {
             const container = document.getElementById('ads-container');
             if (!container) return;
@@ -384,12 +384,12 @@
             return `<img src="${url}" alt="${title || 'إعلان مميز'}" class="w-full h-full object-cover">`;
         }
 
-       function setupSlider(containerId, mediaArray) {
+        // السلايدر والبانرات الإعلانية
+        function setupSlider(containerId, mediaArray) {
             const container = document.getElementById(containerId);
             if (!container || mediaArray.length === 0) return;
 
             let slidesHtml = '';
-
             mediaArray.forEach((media, index) => {
                 slidesHtml += `
                     <div class="absolute inset-0 transition-opacity duration-700 ease-in-out ${index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'} ${containerId}-slide">
@@ -409,13 +409,10 @@
             if (mediaArray.length > 1) {
                 let currentIdx = 0;
                 const slides = container.querySelectorAll(`.${containerId}-slide`);
-
                 setInterval(() => {
                     slides[currentIdx].classList.remove('opacity-100', 'z-10');
                     slides[currentIdx].classList.add('opacity-0', 'z-0');
-
                     currentIdx = (currentIdx + 1) % slides.length;
-
                     slides[currentIdx].classList.remove('opacity-0', 'z-0');
                     slides[currentIdx].classList.add('opacity-100', 'z-10');
                 }, 3500);
@@ -458,13 +455,13 @@
             }
         }
 
+        // تشغيل الوظائف عند تحميل الصفحة
         fetchCategories();
         fetchAds();
         fetchBannerAds();
 
         window.addEventListener('DOMContentLoaded', () => {
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-            
             if (!isStandalone) {
                 setTimeout(() => {
                     const installModal = document.getElementById('pwa-guide-modal');
