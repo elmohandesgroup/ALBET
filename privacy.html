@@ -3,71 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>متجر البيت - سياسة الخصوصية</title>
+    <title>سياسة الخصوصية - متجر البيت</title>
     <link rel="icon" type="image/png" href="favicon.png">
+    
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Google Fonts (Cairo) -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
-        body { 
-            font-family: 'Cairo', sans-serif; 
+        body {
+            font-family: 'Cairo', sans-serif;
             background-color: #f3efe9; /* نفس درجة لون خلفية اللوجو الدايري */
+            -webkit-tap-highlight-color: transparent;
         }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="text-gray-800 pb-20">
 
-    <!-- الهيدر الرئيسي المعتمد للمنصة -->
-    <header class="bg-white shadow-sm sticky top-0 z-50 px-4 py-3">
+    <!-- الهيدر الرئيسي -->
+    <header class="bg-white shadow-sm sticky top-0 z-50 px-4 py-4 md:py-5">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
-            
-            <!-- زر القائمة الجانبية (الشمال) -->
             <div class="flex items-center gap-3">
-                <button id="menuBtn" class="p-2 text-gray-700 hover:bg-gray-100 rounded-xl transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <button id="open-menu-btn" class="p-2 text-gray-700 hover:text-orange-600 transition-colors focus:outline-none" aria-label="فتح القائمة">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
                 </button>
-                <a href="index.html" class="hidden md:flex items-center gap-2 bg-orange-50 px-3 py-1.5 rounded-xl text-orange-600 font-bold text-sm hover:bg-orange-100 transition-colors">
-                    <span>الرئيسية</span>
+                <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="flex items-center cursor-pointer">
+                    <img src="logo192.png" alt="متجر البيت" class="w-16 h-16 object-contain rounded-2xl shadow-sm border border-gray-100 bg-white p-1.5">
+                </a>
+            </div>
+            
+            <div class="text-center flex-1 mx-2">
+                <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="block cursor-pointer">
+                    <h1 class="text-xl md:text-3xl font-black text-orange-600 leading-tight">متجر البيت</h1>
+                    <p class="text-xs md:text-sm text-gray-500 font-medium mt-0.5">الأفضل دائماً</p>
                 </a>
             </div>
 
-            <!-- الشعار والاسم في المنتصف -->
-            <a href="index.html" class="flex items-center gap-2">
-                <div class="w-10 h-10 rounded-full overflow-hidden border border-orange-200 shadow-sm">
-                    <img src="logo512.png" alt="متجر البيت" class="w-full h-full object-cover">
-                </div>
-                <div class="text-center">
-                    <h1 class="font-black text-gray-900 text-base leading-tight">متجر البيت</h1>
-                    <span class="text-[10px] text-orange-600 font-bold tracking-wider">الأفضل دائماً</span>
-                </div>
-            </a>
-
-            <!-- زر أضف إعلانك (اليمين) -->
-            <div class="flex items-center gap-2">
-                <a href="add-ad.html" class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-xl font-bold text-xs md:text-sm shadow-sm flex items-center gap-1.5 transition-all">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div class="flex items-center">
+                <a href="add-ad.html" class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold transition-all shadow-sm flex items-center gap-1.5 whitespace-nowrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                     </svg>
                     <span>أضف إعلانك</span>
                 </a>
             </div>
-
         </div>
     </header>
 
+    <!-- القائمة الجانبية (Drawer Menu) -->
+    <div id="side-menu" class="fixed inset-0 z-50 hidden">
+        <div id="menu-overlay" class="absolute inset-0 bg-black/50 transition-opacity"></div>
+        <div class="absolute right-0 top-0 bottom-0 w-80 bg-white shadow-2xl p-5 flex flex-col justify-between transform transition-transform duration-300 translate-x-full overflow-y-auto" id="menu-content">
+            <div>
+                <div class="flex items-center justify-between pb-4 border-b mb-4">
+                    <div class="flex items-center gap-3">
+                        <img src="logo192.png" alt="متجر البيت" class="w-12 h-12 object-contain rounded-xl bg-white p-1 border border-gray-100">
+                        <span class="font-black text-orange-600 text-lg">متجر البيت</span>
+                    </div>
+                    <button id="close-menu-btn" class="text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
+                </div>
+                
+                <nav class="space-y-2">
+                    <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors cursor-pointer">الرئيسية</a>
+                    <a href="categories.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">الأقسام</a>
+                    <a href="add-ad.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">أضف إعلانك الجديد</a>
+                    
+                    <button id="menuInstallBtn" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition-colors text-right">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                        <span>تثبيت التطبيق على جهازك</span>
+                    </button>
+
+                    <div class="pt-2 pb-1 text-xs font-bold text-gray-400 px-3">سياسات المتجر</div>
+                    <a href="privacy.html" class="block px-3 py-2 rounded-xl text-xs font-medium text-orange-600 bg-orange-50 font-bold">سياسة الاستخدام والخصوصية</a>
+                    <a href="terms.html" class="block px-3 py-2 rounded-xl text-xs font-medium text-gray-600 hover:bg-gray-100">الشروط والأحكام</a>
+                </nav>
+            </div>
+            <div class="text-center text-[11px] text-gray-400 pt-4 border-t">
+                جميع الحقوق محفوظة &copy; متجر البيت 2026
+            </div>
+        </div>
+    </div>
+
+    <!-- المحتوى -->
     <main class="max-w-3xl mx-auto px-4 py-8">
         
         <!-- اللوجو الدائري الكبير في منتصف الصفحة بالاعلى -->
         <div class="flex flex-col items-center justify-center mb-8">
             <div class="w-32 h-32 md:w-36 md:h-36 rounded-full p-1 bg-white shadow-md border border-stone-200 flex items-center justify-center overflow-hidden">
-                <img src="logo512.png" alt="متجر البيت" class="w-full h-full object-cover rounded-full">
+                <img src="logo192.png" alt="متجر البيت" class="w-full h-full object-cover rounded-full">
             </div>
             <h2 class="text-xl font-black text-gray-800 mt-3">متجر البيت</h2>
             <p class="text-xs text-stone-500">الأفضل دائماً</p>
         </div>
 
-        <!-- إطار السياسات الأبيض الجميل -->
+        <!-- إطار السياسات الأبيض -->
         <div class="bg-white rounded-3xl shadow-sm border border-stone-200/60 p-6 md:p-8 space-y-6 text-sm leading-relaxed">
             <div class="border-b border-stone-100 pb-4">
                 <h3 class="text-xl font-black text-orange-600 mb-1">سياسة الخصوصية لمنصة متجر البيت</h3>
@@ -107,5 +146,31 @@
         </div>
     </main>
 
+    <!-- سكريبت القائمة الجانبية -->
+    <script>
+        const sideMenu = document.getElementById('side-menu');
+        const menuContent = document.getElementById('menu-content');
+        const openMenuBtn = document.getElementById('open-menu-btn');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
+        const menuOverlay = document.getElementById('menu-overlay');
+
+        function openMenu() {
+            sideMenu.classList.remove('hidden');
+            setTimeout(() => {
+                menuContent.classList.remove('translate-x-full');
+            }, 10);
+        }
+
+        function closeMenu() {
+            menuContent.classList.add('translate-x-full');
+            setTimeout(() => {
+                sideMenu.classList.add('hidden');
+            }, 300);
+        }
+
+        openMenuBtn.addEventListener('click', openMenu);
+        closeMenuBtn.addEventListener('click', closeMenu);
+        menuOverlay.addEventListener('click', closeMenu);
+    </script>
 </body>
 </html>
