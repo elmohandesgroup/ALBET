@@ -156,7 +156,14 @@
         if (closeMenuBtn) closeMenuBtn.addEventListener('click', closeMenu);
         if (menuOverlay) menuOverlay.addEventListener('click', closeMenu);
 
-        // التقاط الـ URL parameters وفك ترميزها بدقة تامة لتجنب أخطاء ترميز الحروف العربية
+        // دالة موحدة لتنظيف النصوص وتوحيد الهاء والتاء المربوطة لتفادي أي اختلاف
+        function normalizeText(str) {
+            if (!str) return '';
+            return str.trim()
+                      .replace(/ه/g, 'ة')
+                      .replace(/أ|إ|آ/g, 'ا');
+        }
+
         const urlParams = new URLSearchParams(window.location.search);
         const rawMainCat = urlParams.get('cat');
         const rawSubCat = urlParams.get('sub');
@@ -185,12 +192,12 @@
             try {
                 const { data: allCats } = await db.from('categories').select('*');
                 if (allCats) {
-                    const mainObj = allCats.find(c => c.name.trim() === mainCat && !c.parent_id);
+                    const mainObj = allCats.find(c => normalizeText(c.name) === normalizeText(mainCat) && !c.parent_id);
                     if (mainObj) {
                         currentMainCatId = mainObj.id;
                     }
                     if (subCat) {
-                        const subObj = allCats.find(c => c.name.trim() === subCat);
+                        const subObj = allCats.find(c => normalizeText(c.name) === normalizeText(subCat));
                         if (subObj) {
                             currentSubCatId = subObj.id;
                         }
@@ -257,7 +264,7 @@
             }
         }
 
-        // دالة جلب البانرات المتحركة (Slider)
+        // جلب البانرات المتحركة (Slider)
         async function fetchFeaturedBanners() {
             const bannerContainer = document.getElementById('featured-banners-container');
             const bannersGrid = document.getElementById('banners-grid');
@@ -343,20 +350,13 @@
             const countEl = document.getElementById('results-count');
 
             try {
-                const { data: parentData, error: parentError } = await db
-                    .from('categories')
-                    .select('id')
-                    .eq('name', parentCategoryName)
-                    .single();
+                const { data: allCats } = await db.from('categories').select('*');
+                if (!allCats) throw new Error('لا توجد أقسام');
 
-                if (parentError || !parentData) throw new Error('القسم غير موجود');
+                const parentData = allCats.find(c => normalizeText(c.name) === normalizeText(parentCategoryName) && !c.parent_id);
+                if (!parentData) throw new Error('القسم غير موجود');
 
-                const { data: subCategories, error: subError } = await db
-                    .from('categories')
-                    .select('*')
-                    .eq('parent_id', parentData.id);
-
-                if (subError) throw subError;
+                const subCategories = allCats.filter(c => c.parent_id === parentData.id);
 
                 if (!subCategories || subCategories.length === 0) {
                     container.innerHTML = '<div class="col-span-full text-center py-16 text-gray-400 text-sm bg-white rounded-2xl border border-gray-100 shadow-sm">لا توجد أقسام فرعية متاحة حالياً، جاري عرض الإعلانات المباشرة...</div>';
@@ -392,20 +392,22 @@
             }
         }
 
-        // جلب الإعلانات الخاصة بالقسم المختار مباشرة
+        // جلب الإعلانات وتصفيتها بمرونة لتطابق الأسماء بصرف النظر عن اختلاف التاء المربوطة
         async function fetchAds(categoryName) {
             const container = document.getElementById('dynamic-container');
 
             try {
+                // جلب كل الإعلانات ثم مطابقتها بمرونة تامة في الجافاسكريفت لتفادي قيود الحروف العربية في قاعدة البيانات
                 const { data: ads, error } = await db
                     .from('ads')
                     .select('*')
-                    .eq('category', categoryName)
                     .order('created_at', { ascending: false });
 
                 if (error) throw error;
 
-                allAdsData = ads || [];
+                const normalizedTarget = normalizeText(categoryName);
+                allAdsData = (ads || []).filter(ad => normalizeText(ad.category) === normalizedTarget);
+
                 renderAds(allAdsData);
 
             } catch (err) {
