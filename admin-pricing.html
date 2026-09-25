@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>إدارة تسعير الإعلانات - متجر البيت</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+        body { font-family: 'Cairo', sans-serif; background-color: #f8f9fa; -webkit-tap-highlight-color: transparent; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 pb-20">
+
+    <header class="bg-white shadow-sm sticky top-0 z-40 px-4 py-3.5">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <a href="admin-dashboard.html" class="bg-gray-100 hover:bg-orange-50 text-gray-700 px-3.5 py-2 rounded-xl text-xs font-bold transition-all">الرجوع للوحة التحكم</a>
+            <h1 class="text-base md:text-xl font-black text-orange-600">إدارة تسعير الأقسام والإعلانات</h1>
+            <div class="w-20"></div>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 py-6 space-y-6">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-4">
+            <div class="border-b pb-3">
+                <h2 class="font-black text-gray-800 text-base">تسعير الإعلانات حسب الأقسام (جديد / مستعمل / مجاناً)</h2>
+                <p class="text-xs text-gray-500 mt-1">حدد السعر المناسب لكل قسم، أو قم بتفعيل علامة "مجاناً" ليظهر الإعلان للعملاء مجاناً تماماً.</p>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-right border-collapse text-sm">
+                    <thead>
+                        <tr class="border-b bg-gray-50 text-xs text-gray-500">
+                            <th class="p-3">القسم</th>
+                            <th class="p-3">سعر (جديد) ج.م</th>
+                            <th class="p-3">سعر (مستعمل) ج.م</th>
+                            <th class="p-3 text-center">مجاناً بالكامل؟</th>
+                            <th class="p-3 text-center">الإجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pricingTableBody">
+                        <tr><td colspan="5" class="text-center text-gray-400 py-10">جاري تحميل الأقسام...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- ربط ملف الجافاسكريبت الخارجي -->
+    <script src="admin-pricing.js"></script>
+</body>
+</html>
