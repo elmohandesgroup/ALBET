@@ -33,16 +33,46 @@
             background-color: #f8f9fa;
             -webkit-tap-highlight-color: transparent;
         }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
         @keyframes hintScroll {
             0%, 100% { transform: translateX(0); }
             50% { transform: translateX(-8px); }
         }
-        .scroll-hint { animation: hintScroll 2s infinite ease-in-out; }
+        .scroll-hint {
+            animation: hintScroll 2s infinite ease-in-out;
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 pb-20">
+
+    <!-- نافذة تثبيت التطبيق -->
+    <div id="pwa-guide-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[99999] p-4 hidden">
+        <div class="bg-gray-900 border border-gray-800 rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl space-y-4 animate-in fade-in zoom-in duration-200">
+            <div class="w-20 h-20 bg-gray-800 rounded-2xl mx-auto flex items-center justify-center shadow-inner border border-gray-700 p-2">
+                <img src="logo192.png" alt="متجر البيت" class="w-full h-full object-contain">
+            </div>
+            <div>
+                <h3 class="font-black text-white text-xl">حمل تطبيق "متجر البيت" الآن</h3>
+                <p class="text-xs text-gray-300 mt-1 leading-relaxed">
+                    استمتع بتجربة تصفح أسرع وأسهل بتثبيت التطبيق على شاشة هاتفك أو جهازك.
+                </p>
+            </div>
+            <div class="space-y-2 pt-1">
+                <button id="modalInstallActionBtn" class="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 rounded-xl text-sm font-bold transition-all shadow-sm">
+                    تثبيت التطبيق الآن
+                </button>
+                <button onclick="closeInstallGuideModal()" class="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 py-2.5 rounded-xl text-xs font-bold transition-all">
+                    تخطي
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- الهيدر الرئيسي -->
     <header class="bg-white shadow-sm sticky top-0 z-50 px-4 py-3.5">
@@ -53,18 +83,18 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
                 </button>
-                <a href="index.html" class="flex items-center">
-                    <img src="logo192.png" alt="متجر البيت" class="w-12 h-12 object-contain rounded-xl shadow-sm border border-gray-100 bg-white p-1">
-                </a>
-            </div>
+                <!-- توجيه مباشر وصريح لـ index.html -->
+               <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="flex items-center">
+        <img src="logo192.png" alt="متجر البيت" class="w-12 h-12 object-contain rounded-xl shadow-sm border border-gray-100 bg-white p-1">
+    </a>
+</div>
 
-            <div class="text-center flex-1 mx-2">
-                <a href="index.html" class="block">
-                    <h1 class="text-lg md:text-2xl font-black text-orange-600 leading-tight">متجر البيت</h1>
-                    <p class="text-[11px] md:text-xs text-gray-500 font-medium">الأفضل دائماً</p>
-                </a>
-            </div>
-            
+<div class="text-center flex-1 mx-2">
+    <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="block">
+        <h1 class="text-lg md:text-2xl font-black text-orange-600 leading-tight">متجر البيت</h1>
+        <p class="text-[11px] md:text-xs text-gray-500 font-medium">الأفضل دائماً</p>
+    </a>
+</div>
             <div class="flex items-center">
                 <a href="add-ad.html" class="bg-orange-600 hover:bg-orange-700 text-white px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition-all shadow-sm flex items-center gap-1.5 whitespace-nowrap">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -93,6 +123,13 @@
                     <a href="index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">الرئيسية</a>
                     <a href="categories.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">الأقسام</a>
                     <a href="add-ad.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-orange-600 bg-orange-50 transition-colors">أضف إعلانك الجديد</a>
+                    
+                    <button id="menuInstallBtn" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition-colors text-right">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                        <span>تثبيت التطبيق على جهازك</span>
+                    </button>
 
                     <div class="pt-2 pb-1 text-xs font-bold text-gray-400 px-3">سياسات المتجر</div>
                     <a href="privacy.html" class="block px-3 py-2 rounded-xl text-xs font-medium text-gray-600 hover:bg-gray-100">سياسة الاستخدام والخصوصية</a>
@@ -111,10 +148,9 @@
 
         <section class="space-y-3">
             <div class="flex justify-between items-center">
-                <h3 id="section-bar-title" class="font-bold text-gray-800 text-base">الأقسام</h3>
+                <h3 class="font-bold text-gray-800 text-base">الأقسام</h3>
                 <a href="categories.html" class="text-xs text-orange-600 font-semibold hover:underline">عرض الكل</a>
             </div>
-            <!-- شريط الأقسام التفاعلي (التسلسل السلس) -->
             <div id="categories-container" class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
                 <div class="text-xs text-gray-400">جاري تحميل الأقسام...</div>
             </div>
@@ -125,7 +161,7 @@
         <section class="space-y-3">
             <div class="flex justify-between items-center">
                 <h3 class="font-bold text-gray-800 text-base">أحدث الإعلانات</h3>
-                <span id="ads-section-title" class="text-xs text-gray-400">متجدد باستمرار</span>
+                <span class="text-xs text-gray-400">متجدد باستمرار</span>
             </div>
             <div id="ads-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div class="text-xs text-gray-400 p-4">جاري تحميل الإعلانات...</div>
@@ -144,19 +180,60 @@
             sideMenu.classList.remove('hidden');
             setTimeout(() => { menuContent.classList.remove('translate-x-full'); }, 10);
         }
+
         function closeMenu() {
             menuContent.classList.add('translate-x-full');
             setTimeout(() => { sideMenu.classList.add('hidden'); }, 300);
         }
 
-        if (openMenuBtn) openMenuBtn.addEventListener('click', openMenu);
-        if (closeMenuBtn) closeMenuBtn.addEventListener('click', closeMenu);
-        if (menuOverlay) menuOverlay.addEventListener('click', closeMenu);
+        openMenuBtn.addEventListener('click', openMenu);
+        closeMenuBtn.addEventListener('click', closeMenu);
+        menuOverlay.addEventListener('click', closeMenu);
 
         const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
         const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+        let deferredPrompt = null;
+        const installModal = document.getElementById('pwa-guide-modal');
+        const modalInstallActionBtn = document.getElementById('modalInstallActionBtn');
+        const menuInstallBtn = document.getElementById('menuInstallBtn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+            if(!isStandalone && installModal) installModal.classList.remove('hidden');
+        });
+
+        function closeInstallGuideModal() {
+            if (installModal) installModal.classList.add('hidden');
+        }
+
+        function openInstallGuideModal() {
+            if (installModal) installModal.classList.remove('hidden');
+        }
+
+        async function triggerInstall() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                closeInstallGuideModal();
+            } else {
+                closeInstallGuideModal();
+            }
+        }
+
+        if (modalInstallActionBtn) modalInstallActionBtn.addEventListener('click', triggerInstall);
+        if (menuInstallBtn) {
+            menuInstallBtn.addEventListener('click', () => {
+                closeMenu();
+                openInstallGuideModal();
+            });
+        }
+
+        // تنظيف الكاش القديم وتحديث سيرفر ووركر فوراً
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js').then(reg => {
@@ -165,15 +242,11 @@
             });
         }
 
-        let allCategoriesData = [];
+        let allCategoriesCache = [];
 
-        // 1. جلب الأقسام الرئيسية وعرضها في الشريط
         async function fetchCategories() {
             const container = document.getElementById('categories-container');
-            const titleEl = document.getElementById('section-bar-title');
             if (!container) return;
-
-            if (titleEl) titleEl.innerText = "الأقسام";
 
             try {
                 const { data: categories, error } = await db
@@ -181,11 +254,12 @@
                     .select('*');
 
                 if (error) throw error;
-                allCategoriesData = categories || [];
+                allCategoriesCache = categories || [];
 
-                const mainCategories = allCategoriesData.filter(c => !c.parent_id);
+                // جلب الأقسام الرئيسية فقط التي ليس لها قسم أب
+                const mainCategories = allCategoriesCache.filter(c => !c.parent_id);
 
-                if (mainCategories.length === 0) {
+                if (!mainCategories || mainCategories.length === 0) {
                     container.innerHTML = '<div class="text-xs text-gray-400 p-2">لا توجد أقسام مضافة حالياً.</div>';
                     return;
                 }
@@ -195,12 +269,12 @@
                     const iconSrc = cat.image_url ? cat.image_url : 'logo192.png';
                     const hintClass = index === 0 ? 'scroll-hint' : '';
                     const catCard = `
-                        <button onclick="handleMainCategoryClick('${cat.id}', '${cat.name}')" class="flex flex-col items-center justify-center bg-white border border-gray-100 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:border-orange-500 hover:shadow-md transition-all text-center cursor-pointer ${hintClass}">
+                       <a href="#" onclick="loadSubCategories('${cat.id}', '${cat.name}'); return false;" class="flex flex-col items-center justify-center bg-white border border-gray-100 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:border-orange-500 hover:shadow-md transition-all text-center ${hintClass}">
                             <div class="w-16 h-16 bg-orange-50/30 rounded-full flex items-center justify-center mb-2 overflow-hidden shadow-inner">
                                 <img src="${iconSrc}" alt="${cat.name}" class="w-full h-full object-cover rounded-full">
                             </div>
                             <span class="text-xs font-bold text-gray-700 truncate w-full">${cat.name}</span>
-                        </button>
+                        </a>
                     `;
                     container.innerHTML += catCard;
                 });
@@ -210,37 +284,31 @@
             }
         }
 
-        // 2. عند الضغط على قسم رئيسي: تحديث الشريط بعرض أقسامه الفرعية بسلاسة
-        function handleMainCategoryClick(catId, catName) {
+        // دالة لعرض الأقسام الفرعية في الشريط بسلاسة، ولو مفيش يفتح صفحة section.html مباشرة
+        function loadSubCategories(parentId, parentName) {
             const container = document.getElementById('categories-container');
-            const titleEl = document.getElementById('section-bar-title');
             if (!container) return;
 
-            if (titleEl) titleEl.innerText = `أقسام: ${catName}`;
+            const subCategories = allCategoriesCache.filter(c => c.parent_id == parentId);
 
-            const subCategories = allCategoriesData.filter(c => c.parent_id == catId);
-
-            // زر الرجوع للقائمة الرئيسية
-            let html = `
-                <button onclick="fetchCategories(); fetchAds();" class="flex flex-col items-center justify-center bg-orange-50 border border-orange-200 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:bg-orange-100 transition-all text-center cursor-pointer">
-                    <div class="w-16 h-16 bg-orange-600 text-white rounded-full flex items-center justify-center mb-2 shadow-inner text-xl font-black">
-                        ↺
-                    </div>
-                    <span class="text-xs font-bold text-orange-700 truncate w-full">الرئيسية</span>
-                </button>
-            `;
-
-            if (subCategories.length === 0) {
-                // لو مفيش أقسام فرعية، فتح صفحة القسم مباشرة
-                window.location.href = `section.html?cat=${encodeURIComponent(catName)}`;
+            if (!subCategories || subCategories.length === 0) {
+                window.location.href = `section.html?cat=${encodeURIComponent(parentName)}`;
                 return;
             }
 
+            let html = `
+                <a href="#" onclick="fetchCategories(); return false;" class="flex flex-col items-center justify-center bg-orange-50 border border-orange-200 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:bg-orange-100 transition-all text-center">
+                    <div class="w-16 h-16 bg-orange-600 text-white rounded-full flex items-center justify-center mb-2 shadow-inner text-xl font-bold">
+                        ↺
+                    </div>
+                    <span class="text-xs font-bold text-orange-700 truncate w-full">الرئيسية</span>
+                </a>
+            `;
+
             subCategories.forEach(sub => {
                 const iconSrc = sub.image_url ? sub.image_url : 'logo192.png';
-                // الضغط على القسم الفرعي الأخير يفتح صفحة section.html المخصصة له
                 html += `
-                    <a href="section.html?cat=${encodeURIComponent(catName)}&sub=${encodeURIComponent(sub.name)}" class="flex flex-col items-center justify-center bg-white border border-gray-100 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:border-orange-500 hover:shadow-md transition-all text-center">
+                    <a href="section.html?cat=${encodeURIComponent(parentName)}&sub=${encodeURIComponent(sub.name)}" class="flex flex-col items-center justify-center bg-white border border-gray-100 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:border-orange-500 hover:shadow-md transition-all text-center">
                         <div class="w-16 h-16 bg-orange-50/30 rounded-full flex items-center justify-center mb-2 overflow-hidden shadow-inner">
                             <img src="${iconSrc}" alt="${sub.name}" class="w-full h-full object-cover rounded-full">
                         </div>
@@ -250,13 +318,10 @@
             });
 
             container.innerHTML = html;
-            // عرض إعلانات القسم الرئيسي مؤقتاً في الأسفل حتى يضغط على القسم الفرعي النهائي
-            fetchAdsByCategory(catName);
         }
 
-        async function fetchAds(categoryFilter = null) {
+        async function fetchAds() {
             const container = document.getElementById('ads-container');
-            const adsTitle = document.getElementById('ads-section-title');
             if (!container) return;
             
             try {
@@ -267,21 +332,13 @@
 
                 if (error) throw error;
 
-                let filteredAds = ads || [];
-                if (categoryFilter) {
-                    filteredAds = ads.filter(ad => ad.category === categoryFilter || ad.subcategory === categoryFilter);
-                    if (adsTitle) adsTitle.innerText = `إعلانات قسم: ${categoryFilter}`;
-                } else {
-                    if (adsTitle) adsTitle.innerText = 'متجدد باستمرار';
-                }
-
-                if (!filteredAds || filteredAds.length === 0) {
-                    container.innerHTML = '<div class="text-xs text-gray-400 p-4 col-span-full text-center">لا توجد إعلانات مضافة حالياً في هذا القسم.</div>';
+                if (!ads || ads.length === 0) {
+                    container.innerHTML = '<div class="text-xs text-gray-400 p-4 col-span-full text-center">لا توجد إعلانات مضافة حالياً.</div>';
                     return;
                 }
 
                 container.innerHTML = ''; 
-                filteredAds.forEach(ad => {
+                ads.forEach(ad => {
                     const mainImage = (ad.images && ad.images.length > 0) ? ad.images[0] : (ad.image_url || 'logo192.png');
                     const adCard = `
                         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex flex-col justify-between">
@@ -313,10 +370,6 @@
             }
         }
 
-        function fetchAdsByCategory(catName) {
-            fetchAds(catName);
-        }
-
         function renderMediaElement(url, title) {
             if (!url) return '';
             const lower = url.toLowerCase();
@@ -326,11 +379,12 @@
             return `<img src="${url}" alt="${title || 'إعلان مميز'}" class="w-full h-full object-cover">`;
         }
 
-        function setupSlider(containerId, mediaArray) {
+       function setupSlider(containerId, mediaArray) {
             const container = document.getElementById(containerId);
             if (!container || mediaArray.length === 0) return;
 
             let slidesHtml = '';
+
             mediaArray.forEach((media, index) => {
                 slidesHtml += `
                     <div class="absolute inset-0 transition-opacity duration-700 ease-in-out ${index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'} ${containerId}-slide">
@@ -350,10 +404,13 @@
             if (mediaArray.length > 1) {
                 let currentIdx = 0;
                 const slides = container.querySelectorAll(`.${containerId}-slide`);
+
                 setInterval(() => {
                     slides[currentIdx].classList.remove('opacity-100', 'z-10');
                     slides[currentIdx].classList.add('opacity-0', 'z-0');
+
                     currentIdx = (currentIdx + 1) % slides.length;
+
                     slides[currentIdx].classList.remove('opacity-0', 'z-0');
                     slides[currentIdx].classList.add('opacity-100', 'z-10');
                 }, 3500);
@@ -399,6 +456,19 @@
         fetchCategories();
         fetchAds();
         fetchBannerAds();
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+            
+            if (!isStandalone) {
+                setTimeout(() => {
+                    const installModal = document.getElementById('pwa-guide-modal');
+                    if (installModal) {
+                        installModal.classList.remove('hidden');
+                    }
+                }, 800);
+            }
+        });
     </script>
     <script src="location-filter.js"></script>
     <script>
