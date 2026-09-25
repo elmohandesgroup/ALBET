@@ -64,13 +64,14 @@
         <div id="menu-overlay" class="absolute inset-0 bg-black/50 transition-opacity"></div>
         <div class="absolute right-0 top-0 bottom-0 w-80 bg-white shadow-2xl p-5 flex flex-col justify-between transform transition-transform duration-300 translate-x-full overflow-y-auto" id="menu-content">
             <div>
-                <div class="flex items-center justify-between pb-4 border-b mb-4">
-                    <div class="flex items-center gap-2">
-                        <img src="logo192.png" alt="متجر البيت" class="w-10 h-10 object-contain">
-                        <span class="font-black text-orange-600 text-lg">متجر البيت</span>
-                    </div>
-                    <button id="close-menu-btn" class="text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
-                </div>
+               <div class="flex items-center justify-between pb-4 border-b mb-4">
+    <div class="flex items-center gap-3">
+        <!-- تكبير لوجو القائمة الجانبية من w-10 h-10 إلى w-12 h-12 -->
+        <img src="logo192.png" alt="متجر البيت" class="w-12 h-12 object-contain rounded-xl bg-white p-1 border border-gray-100">
+        <span class="font-black text-orange-600 text-lg">متجر البيت</span>
+    </div>
+    <button id="close-menu-btn" class="text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
+</div>
                 
                 <nav class="space-y-2">
                     <a href="index.html" onclick="event.preventDefault(); localStorage.clear(); sessionStorage.clear(); window.location.replace('index.html?v=' + Date.now());" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors cursor-pointer">الرئيسية</a>
