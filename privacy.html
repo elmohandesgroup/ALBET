@@ -10,23 +10,49 @@
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
         body { 
             font-family: 'Cairo', sans-serif; 
-            background-color: #f3efe9; /* نفس درجة لون خلفية اللوجو الدايري بالضبط */
+            background-color: #f3efe9; /* نفس درجة لون خلفية اللوجو الدايري */
         }
     </style>
 </head>
 <body class="text-gray-800 pb-20">
 
-    <!-- هيدر علوي بسيط مع زر الرئيسية -->
-    <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50 px-4 py-3">
-        <div class="max-w-4xl mx-auto flex items-center justify-between">
-           <a href="index.html" class="...">الرئيسية</a>
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                </svg>
-                <span>الرئيسية</span>
+    <!-- الهيدر الرئيسي المعتمد للمنصة -->
+    <header class="bg-white shadow-sm sticky top-0 z-50 px-4 py-3">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            
+            <!-- زر القائمة الجانبية (الشمال) -->
+            <div class="flex items-center gap-3">
+                <button id="menuBtn" class="p-2 text-gray-700 hover:bg-gray-100 rounded-xl transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+                <a href="index.html" class="hidden md:flex items-center gap-2 bg-orange-50 px-3 py-1.5 rounded-xl text-orange-600 font-bold text-sm hover:bg-orange-100 transition-colors">
+                    <span>الرئيسية</span>
+                </a>
+            </div>
+
+            <!-- الشعار والاسم في المنتصف -->
+            <a href="index.html" class="flex items-center gap-2">
+                <div class="w-10 h-10 rounded-full overflow-hidden border border-orange-200 shadow-sm">
+                    <img src="logo512.png" alt="متجر البيت" class="w-full h-full object-cover">
+                </div>
+                <div class="text-center">
+                    <h1 class="font-black text-gray-900 text-base leading-tight">متجر البيت</h1>
+                    <span class="text-[10px] text-orange-600 font-bold tracking-wider">الأفضل دائماً</span>
+                </div>
             </a>
-            <h1 class="font-black text-gray-900 text-sm">سياسة الخصوصية</h1>
-            <div class="w-16"></div>
+
+            <!-- زر أضف إعلانك (اليمين) -->
+            <div class="flex items-center gap-2">
+                <a href="add-ad.html" class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-xl font-bold text-xs md:text-sm shadow-sm flex items-center gap-1.5 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    <span>أضف إعلانك</span>
+                </a>
+            </div>
+
         </div>
     </header>
 
