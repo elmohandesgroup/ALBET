@@ -111,10 +111,10 @@
 
         <section class="space-y-3">
             <div class="flex justify-between items-center">
-                <h3 class="font-bold text-gray-800 text-base">الأقسام</h3>
+                <h3 id="section-bar-title" class="font-bold text-gray-800 text-base">الأقسام</h3>
                 <a href="categories.html" class="text-xs text-orange-600 font-semibold hover:underline">عرض الكل</a>
             </div>
-            <!-- شريط الأقسام -->
+            <!-- شريط الأقسام التفاعلي (التسلسل السلس) -->
             <div id="categories-container" class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
                 <div class="text-xs text-gray-400">جاري تحميل الأقسام...</div>
             </div>
@@ -125,7 +125,7 @@
         <section class="space-y-3">
             <div class="flex justify-between items-center">
                 <h3 class="font-bold text-gray-800 text-base">أحدث الإعلانات</h3>
-                <span class="text-xs text-gray-400">متجدد باستمرار</span>
+                <span id="ads-section-title" class="text-xs text-gray-400">متجدد باستمرار</span>
             </div>
             <div id="ads-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div class="text-xs text-gray-400 p-4">جاري تحميل الإعلانات...</div>
@@ -165,35 +165,42 @@
             });
         }
 
-        // جلب الأقسام الرئيسية وتوجيهها مباشرة لصفحة section.html
+        let allCategoriesData = [];
+
+        // 1. جلب الأقسام الرئيسية وعرضها في الشريط
         async function fetchCategories() {
             const container = document.getElementById('categories-container');
+            const titleEl = document.getElementById('section-bar-title');
             if (!container) return;
+
+            if (titleEl) titleEl.innerText = "الأقسام";
 
             try {
                 const { data: categories, error } = await db
                     .from('categories')
-                    .select('*')
-                    .is('parent_id', null);
+                    .select('*');
 
                 if (error) throw error;
+                allCategoriesData = categories || [];
 
-                if (!categories || categories.length === 0) {
+                const mainCategories = allCategoriesData.filter(c => !c.parent_id);
+
+                if (mainCategories.length === 0) {
                     container.innerHTML = '<div class="text-xs text-gray-400 p-2">لا توجد أقسام مضافة حالياً.</div>';
                     return;
                 }
 
                 container.innerHTML = '';
-                categories.forEach((cat, index) => {
+                mainCategories.forEach((cat, index) => {
                     const iconSrc = cat.image_url ? cat.image_url : 'logo192.png';
                     const hintClass = index === 0 ? 'scroll-hint' : '';
                     const catCard = `
-                        <a href="section.html?cat=${encodeURIComponent(cat.name)}" class="flex flex-col items-center justify-center bg-white border border-gray-100 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:border-orange-500 hover:shadow-md transition-all text-center ${hintClass}">
+                        <button onclick="handleMainCategoryClick('${cat.id}', '${cat.name}')" class="flex flex-col items-center justify-center bg-white border border-gray-100 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:border-orange-500 hover:shadow-md transition-all text-center cursor-pointer ${hintClass}">
                             <div class="w-16 h-16 bg-orange-50/30 rounded-full flex items-center justify-center mb-2 overflow-hidden shadow-inner">
                                 <img src="${iconSrc}" alt="${cat.name}" class="w-full h-full object-cover rounded-full">
                             </div>
                             <span class="text-xs font-bold text-gray-700 truncate w-full">${cat.name}</span>
-                        </a>
+                        </button>
                     `;
                     container.innerHTML += catCard;
                 });
@@ -203,8 +210,53 @@
             }
         }
 
-        async function fetchAds() {
+        // 2. عند الضغط على قسم رئيسي: تحديث الشريط بعرض أقسامه الفرعية بسلاسة
+        function handleMainCategoryClick(catId, catName) {
+            const container = document.getElementById('categories-container');
+            const titleEl = document.getElementById('section-bar-title');
+            if (!container) return;
+
+            if (titleEl) titleEl.innerText = `أقسام: ${catName}`;
+
+            const subCategories = allCategoriesData.filter(c => c.parent_id == catId);
+
+            // زر الرجوع للقائمة الرئيسية
+            let html = `
+                <button onclick="fetchCategories(); fetchAds();" class="flex flex-col items-center justify-center bg-orange-50 border border-orange-200 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:bg-orange-100 transition-all text-center cursor-pointer">
+                    <div class="w-16 h-16 bg-orange-600 text-white rounded-full flex items-center justify-center mb-2 shadow-inner text-xl font-black">
+                        ↺
+                    </div>
+                    <span class="text-xs font-bold text-orange-700 truncate w-full">الرئيسية</span>
+                </button>
+            `;
+
+            if (subCategories.length === 0) {
+                // لو مفيش أقسام فرعية، فتح صفحة القسم مباشرة
+                window.location.href = `section.html?cat=${encodeURIComponent(catName)}`;
+                return;
+            }
+
+            subCategories.forEach(sub => {
+                const iconSrc = sub.image_url ? sub.image_url : 'logo192.png';
+                // الضغط على القسم الفرعي الأخير يفتح صفحة section.html المخصصة له
+                html += `
+                    <a href="section.html?cat=${encodeURIComponent(catName)}&sub=${encodeURIComponent(sub.name)}" class="flex flex-col items-center justify-center bg-white border border-gray-100 rounded-2xl p-3 w-28 flex-shrink-0 shadow-sm hover:border-orange-500 hover:shadow-md transition-all text-center">
+                        <div class="w-16 h-16 bg-orange-50/30 rounded-full flex items-center justify-center mb-2 overflow-hidden shadow-inner">
+                            <img src="${iconSrc}" alt="${sub.name}" class="w-full h-full object-cover rounded-full">
+                        </div>
+                        <span class="text-xs font-bold text-gray-700 truncate w-full">${sub.name}</span>
+                    </a>
+                `;
+            });
+
+            container.innerHTML = html;
+            // عرض إعلانات القسم الرئيسي مؤقتاً في الأسفل حتى يضغط على القسم الفرعي النهائي
+            fetchAdsByCategory(catName);
+        }
+
+        async function fetchAds(categoryFilter = null) {
             const container = document.getElementById('ads-container');
+            const adsTitle = document.getElementById('ads-section-title');
             if (!container) return;
             
             try {
@@ -215,13 +267,21 @@
 
                 if (error) throw error;
 
-                if (!ads || ads.length === 0) {
-                    container.innerHTML = '<div class="text-xs text-gray-400 p-4 col-span-full text-center">لا توجد إعلانات مضافة حالياً.</div>';
+                let filteredAds = ads || [];
+                if (categoryFilter) {
+                    filteredAds = ads.filter(ad => ad.category === categoryFilter || ad.subcategory === categoryFilter);
+                    if (adsTitle) adsTitle.innerText = `إعلانات قسم: ${categoryFilter}`;
+                } else {
+                    if (adsTitle) adsTitle.innerText = 'متجدد باستمرار';
+                }
+
+                if (!filteredAds || filteredAds.length === 0) {
+                    container.innerHTML = '<div class="text-xs text-gray-400 p-4 col-span-full text-center">لا توجد إعلانات مضافة حالياً في هذا القسم.</div>';
                     return;
                 }
 
                 container.innerHTML = ''; 
-                ads.forEach(ad => {
+                filteredAds.forEach(ad => {
                     const mainImage = (ad.images && ad.images.length > 0) ? ad.images[0] : (ad.image_url || 'logo192.png');
                     const adCard = `
                         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex flex-col justify-between">
@@ -251,6 +311,10 @@
                 console.error('خطأ في جلب الإعلانات:', err.message);
                 container.innerHTML = '<div class="text-xs text-red-400 p-4 col-span-full text-center">تعذر تحميل الإعلانات.</div>';
             }
+        }
+
+        function fetchAdsByCategory(catName) {
+            fetchAds(catName);
         }
 
         function renderMediaElement(url, title) {
