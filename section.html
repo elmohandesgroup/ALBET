@@ -156,9 +156,13 @@
         if (closeMenuBtn) closeMenuBtn.addEventListener('click', closeMenu);
         if (menuOverlay) menuOverlay.addEventListener('click', closeMenu);
 
+        // التقاط الـ URL parameters وفك ترميزها بدقة تامة لتجنب أخطاء ترميز الحروف العربية
         const urlParams = new URLSearchParams(window.location.search);
-        const mainCat = urlParams.get('cat');
-        const subCat = urlParams.get('sub');
+        const rawMainCat = urlParams.get('cat');
+        const rawSubCat = urlParams.get('sub');
+
+        const mainCat = rawMainCat ? decodeURIComponent(rawMainCat).trim() : null;
+        const subCat = rawSubCat ? decodeURIComponent(rawSubCat).trim() : null;
 
         let allAdsData = [];
         let currentMainCatId = null;
@@ -181,12 +185,12 @@
             try {
                 const { data: allCats } = await db.from('categories').select('*');
                 if (allCats) {
-                    const mainObj = allCats.find(c => c.name === mainCat && !c.parent_id);
+                    const mainObj = allCats.find(c => c.name.trim() === mainCat && !c.parent_id);
                     if (mainObj) {
                         currentMainCatId = mainObj.id;
                     }
                     if (subCat) {
-                        const subObj = allCats.find(c => c.name === subCat);
+                        const subObj = allCats.find(c => c.name.trim() === subCat);
                         if (subObj) {
                             currentSubCatId = subObj.id;
                         }
@@ -333,7 +337,7 @@
             }
         }
 
-        // جلب الأقسام الفرعية ديناميكياً مع بناء روابط صحيحة تماماً لفتح الصفحة من أي مكان
+        // جلب الأقسام الفرعية ديناميكياً
         async function fetchSubCategories(parentCategoryName) {
             const container = document.getElementById('dynamic-container');
             const countEl = document.getElementById('results-count');
