@@ -282,7 +282,7 @@ document.getElementById('addAdForm').addEventListener('submit', async function(e
     submitBtn.disabled = true;
     submitBtn.textContent = 'جاري إرسال الإعلان...';
 
-    try {
+   try {
         const response = await fetch(`${SUPABASE_URL}/rest/v1/ads`, {
             method: 'POST',
             headers: {
@@ -298,7 +298,6 @@ document.getElementById('addAdForm').addEventListener('submit', async function(e
                 category: subCategory, 
                 main_category: category, 
                 phone: document.getElementById('adPhone').value,
-                governorate: document.getElementById('adGovernorate').value,
                 description: document.getElementById('adDescription').value,
                 image_url: selectedAdImages.map(img => img.webp).join('||'),
                 receipt_url: receiptImageWebp || null,
