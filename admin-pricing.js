@@ -5,7 +5,25 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 document.addEventListener('DOMContentLoaded', () => {
     loadCategoriesForAdmin();
     setupImagePreview();
+    setupLevelToggle();
 });
+
+// التحكم في إظهار قائمة الأقسام الرئيسية لو اختار قسم فرعي
+function setupLevelToggle() {
+    const typeLevelSelect = document.getElementById('catTypeLevel');
+    const parentWrapper = document.getElementById('parentCategoryWrapper');
+
+    typeLevelSelect.addEventListener('change', (e) => {
+        if (e.target.value === 'sub') {
+            parentWrapper.classList.remove('hidden');
+            document.getElementById('catParent').setAttribute('required', 'true');
+        } else {
+            parentWrapper.classList.add('hidden');
+            document.getElementById('catParent').removeAttribute('required');
+            document.getElementById('catParent').value = '';
+        }
+    });
+}
 
 // معاينة الصورة وحذفها قبل الرفع
 function setupImagePreview() {
@@ -60,15 +78,17 @@ async function loadCategoriesForAdmin() {
 
         if (!categories || categories.length === 0) {
             tbody.innerHTML = `<tr><td colspan="7" class="text-center text-gray-400 py-6">لا توجد أقسام مسجلة حالياً.</td></tr>`;
-            parentSelect.innerHTML = `<option value="">قسم رئيسي (بدون أب)</option>`;
+            if (parentSelect) parentSelect.innerHTML = `<option value="">اختر القسم الرئيسي</option>`;
             return;
         }
 
-        // تعبئة قائمة الأقسام الرئيسية للأبناء
-        parentSelect.innerHTML = `<option value="">قسم رئيسي (بدون أب)</option>`;
-        categories.filter(c => !c.parent_id).forEach(cat => {
-            parentSelect.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
-        });
+        // تعبئة قائمة الأقسام الرئيسية فقط للأبناء
+        if (parentSelect) {
+            parentSelect.innerHTML = `<option value="">اختر القسم الرئيسي</option>`;
+            categories.filter(c => !c.parent_id).forEach(cat => {
+                parentSelect.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
+            });
+        }
 
         tbody.innerHTML = '';
         categories.forEach(cat => {
@@ -101,7 +121,8 @@ async function loadCategoriesForAdmin() {
 document.getElementById('addCategoryForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const name = document.getElementById('catName').value.trim();
-    const parent_id = document.getElementById('catParent').value || null;
+    const typeLevel = document.getElementById('catTypeLevel').value;
+    const parent_id = typeLevel === 'sub' ? document.getElementById('catParent').value : null;
     const new_price = parseFloat(document.getElementById('catNewPrice').value) || 0;
     const used_price = parseFloat(document.getElementById('catUsedPrice').value) || 0;
     const is_free = document.getElementById('catIsFree').checked;
@@ -135,6 +156,7 @@ document.getElementById('addCategoryForm').addEventListener('submit', async (e) 
 
         alert('تم إضافة القسم بنجاح!');
         document.getElementById('addCategoryForm').reset();
+        document.getElementById('parentCategoryWrapper').classList.add('hidden');
         clearImageInput();
         loadCategoriesForAdmin();
 
