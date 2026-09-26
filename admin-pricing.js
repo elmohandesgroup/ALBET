@@ -1,4 +1,4 @@
-const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
+        const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -199,7 +199,7 @@ document.getElementById('addCategoryForm').addEventListener('submit', async (e) 
         if (imageFile) {
             const fileName = `cat_${Date.now()}.webp`;
             const { error: uploadError } = await supabaseClient.storage
-                .from('ads-images')
+                .from('categories')
                 .upload(fileName, imageFile);
 
             if (uploadError) throw uploadError;
