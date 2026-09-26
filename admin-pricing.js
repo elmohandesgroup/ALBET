@@ -4,7 +4,45 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 document.addEventListener('DOMContentLoaded', () => {
     loadCategoriesForAdmin();
+    setupImagePreview();
 });
+
+// معاينة الصورة وحذفها قبل الرفع
+function setupImagePreview() {
+    const fileInput = document.getElementById('catImage');
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    const previewImg = document.getElementById('imagePreview');
+    const clearBtn = document.getElementById('clearImageBtn');
+
+    fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                previewImg.src = event.target.result;
+                previewContainer.classList.remove('hidden');
+                clearBtn.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        } else {
+            clearImageInput();
+        }
+    });
+
+    clearBtn.addEventListener('click', () => {
+        clearImageInput();
+    });
+}
+
+function clearImageInput() {
+    const fileInput = document.getElementById('catImage');
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    const clearBtn = document.getElementById('clearImageBtn');
+    
+    fileInput.value = '';
+    previewContainer.classList.add('hidden');
+    clearBtn.classList.add('hidden');
+}
 
 // تحميل الأقسام في الجدول والقائمة المنسدلة للـ Parent
 async function loadCategoriesForAdmin() {
@@ -46,8 +84,8 @@ async function loadCategoriesForAdmin() {
                     <td class="p-3 font-bold text-gray-700">${cat.new_price || 0} ج.م</td>
                     <td class="p-3 font-bold text-gray-700">${cat.used_price || 0} ج.م</td>
                     <td class="p-3">${statusLabel}</td>
-                    <td class="p-3 text-center space-x-1 space-x-reverse">
-                        <button onclick="deleteCategory('${cat.id}')" class="bg-red-500 hover:bg-red-600 text-white px-2.5 py-1.5 rounded-xl text-xs font-bold">حذف</button>
+                    <td class="p-3 text-center">
+                        <button onclick="deleteCategory('${cat.id}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-all">حذف</button>
                     </td>
                 </tr>
             `;
@@ -55,7 +93,7 @@ async function loadCategoriesForAdmin() {
 
     } catch (err) {
         console.error(err);
-        tbody.innerHTML = `<tr><td colspan="7" class="text-center text-red-500 py-6">خطأ في تحميل الأقسام</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center text-red-500 py-6">خطأ في تحميل الأقسام (تأكد من وجود أعمدة التسعير في الجدول)</td></tr>`;
     }
 }
 
@@ -74,9 +112,8 @@ document.getElementById('addCategoryForm').addEventListener('submit', async (e) 
     try {
         if (imageFile) {
             const fileName = `cat_${Date.now()}.webp`;
-            // رفع الصورة (يفضل تحويلها لـ WebP أو رفعها مباشرة)
             const { data: uploadData, error: uploadError } = await supabaseClient.storage
-                .from('ads-images') // استبدل باسم البكت لديك إن وجد
+                .from('ads-images')
                 .upload(fileName, imageFile);
 
             if (!uploadError) {
@@ -98,6 +135,7 @@ document.getElementById('addCategoryForm').addEventListener('submit', async (e) 
 
         alert('تم إضافة القسم بنجاح!');
         document.getElementById('addCategoryForm').reset();
+        clearImageInput();
         loadCategoriesForAdmin();
 
     } catch (err) {
@@ -113,7 +151,7 @@ async function deleteCategory(id) {
             alert('تم الحذف بنجاح');
             loadCategoriesForAdmin();
         } else {
-            alert('خطأ أثناء الحذف');
+            alert('خطأ أثناء الحذف: ' + error.message);
         }
     }
 }
