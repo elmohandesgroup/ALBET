@@ -17,63 +17,35 @@ function closeCustomModal() {
     if (customModal) customModal.classList.add('hidden');
 }
 
-// جلب الأقسام من Supabase
 async function fetchCategories() {
     try {
         const response = await fetch(`${SUPABASE_URL}/rest/v1/categories?select=*`, {
             method: 'GET',
-            headers: {
-                'apikey': SUPABASE_ANON_KEY,
-                'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
-            }
+            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY }
         });
-
         if (!response.ok) throw new Error('فشل في جلب الأقسام');
-
         categoriesData = await response.json();
         const mainCategorySelect = document.getElementById('adCategory');
-        
         if (!mainCategorySelect) return;
         mainCategorySelect.innerHTML = '<option value="">اختر القسم الرئيسي</option>';
-
         const mainCategories = categoriesData.filter(cat => !cat.parent_id || cat.parent_id === "");
-
-        if (mainCategories.length > 0) {
-            mainCategories.forEach(cat => {
-                const option = document.createElement('option');
-                option.value = cat.name; 
-                option.textContent = cat.name;
-                mainCategorySelect.appendChild(option);
-            });
-        } else {
-            categoriesData.forEach(cat => {
-                const option = document.createElement('option');
-                option.value = cat.name; 
-                option.textContent = cat.name;
-                mainCategorySelect.appendChild(option);
-            });
-        }
-    } catch (err) {
-        console.error('خطأ في تحميل الأقسام:', err);
-    }
+        mainCategories.forEach(cat => {
+            const option = document.createElement('option');
+            option.value = cat.name; 
+            option.textContent = cat.name;
+            mainCategorySelect.appendChild(option);
+        });
+    } catch (err) { console.error(err); }
 }
 
-// تسلسل الأقسام الفرعية وتحديث التسعير الديناميكي
 function handleMainCategoryChange() {
     const mainCategoryName = document.getElementById('adCategory').value;
     const subCategorySelect = document.getElementById('adSubCategory');
-    
     if (!subCategorySelect) return;
     subCategorySelect.innerHTML = '<option value="">اختر القسم الفرعي</option>';
-
-    if (!mainCategoryName) {
-        updateDynamicPricing();
-        return;
-    }
-
+    if (!mainCategoryName) { updateDynamicPricing(); return; }
     const parentCat = categoriesData.find(c => c.name === mainCategoryName);
     const subCategories = categoriesData.filter(c => parentCat && c.parent_id === parentCat.id);
-
     if (subCategories.length > 0) {
         subCategories.forEach(sub => {
             const option = document.createElement('option');
@@ -87,25 +59,16 @@ function handleMainCategoryChange() {
         option.textContent = mainCategoryName + ' (رئيسي مباشر)';
         subCategorySelect.appendChild(option);
     }
-
     updateDynamicPricing();
 }
 
 async function fetchGovernorates() {
     try {
         const response = await fetch(`${SUPABASE_URL}/rest/v1/governorates?select=*`, {
-            method: 'GET',
-            headers: {
-                'apikey': SUPABASE_ANON_KEY,
-                'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
-            }
+            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY }
         });
-
-        if (!response.ok) throw new Error('فشل في جلب المحافظات');
-
         const governorates = await response.json();
         const govSelect = document.getElementById('adGovernorate');
-        
         if (govSelect) {
             govSelect.innerHTML = '<option value="">اختر المحافظة</option>';
             governorates.forEach(gov => {
@@ -115,81 +78,52 @@ async function fetchGovernorates() {
                 govSelect.appendChild(option);
             });
         }
-    } catch (err) {
-        console.error('خطأ في تحميل المحافظات:', err);
-    }
+    } catch (err) { console.error(err); }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     fetchCategories();
     fetchGovernorates();
-    
-    const catSelect = document.getElementById('adCategory');
-    const subCatSelect = document.getElementById('adSubCategory');
-    const conditionSelect = document.getElementById('adCondition');
-
-    if (catSelect) catSelect.addEventListener('change', handleMainCategoryChange);
-    if (subCatSelect) subCatSelect.addEventListener('change', updateDynamicPricing);
-    if (conditionSelect) conditionSelect.addEventListener('change', updateDynamicPricing);
+    document.getElementById('adCategory')?.addEventListener('change', handleMainCategoryChange);
+    document.getElementById('adSubCategory')?.addEventListener('change', updateDynamicPricing);
+    document.getElementById('adCondition')?.addEventListener('change', updateDynamicPricing);
 });
 
-// تحديث الأسعار وإخفاء صندوق الدفع تماماً لو القسم مجاني أو سعره صفر
 function updateDynamicPricing() {
-    const mainCategoryName = document.getElementById('adCategory') ? document.getElementById('adCategory').value : '';
-    const subCategoryName = document.getElementById('adSubCategory') ? document.getElementById('adSubCategory').value : '';
-    const condition = document.getElementById('adCondition') ? document.getElementById('adCondition').value : 'جديد';
+    const mainCategoryName = document.getElementById('adCategory')?.value || '';
+    const subCategoryName = document.getElementById('adSubCategory')?.value || '';
+    const condition = document.getElementById('adCondition')?.value || 'جديد';
     const paymentSection = document.getElementById('paymentSectionWrapper');
-    const displayFee = document.getElementById('displayFeeAmount');
-    const feeText = document.getElementById('feeTextSpan');
-
     if (!paymentSection) return;
-
     let targetCatName = subCategoryName || mainCategoryName;
-    if (!targetCatName) {
-        paymentSection.classList.add('hidden');
-        return;
-    }
-
+    if (!targetCatName) { paymentSection.classList.add('hidden'); return; }
     const category = categoriesData.find(c => c.name === targetCatName) || categoriesData.find(c => c.name === mainCategoryName);
-    
-    if (!category) {
-        paymentSection.classList.add('hidden');
-        return;
-    }
-
+    if (!category) { paymentSection.classList.add('hidden'); return; }
     let currentPrice = condition === 'جديد' ? Number(category.new_price || 0) : Number(category.used_price || 0);
-
     if (category.is_free === true || currentPrice === 0) {
         paymentSection.classList.add('hidden');
         receiptImageWebp = '';
     } else {
         paymentSection.classList.remove('hidden');
-        if (displayFee) displayFee.textContent = currentPrice;
-        if (feeText) feeText.textContent = currentPrice + ' ج.م';
+        document.getElementById('displayFeeAmount').textContent = currentPrice;
+        document.getElementById('feeTextSpan').textContent = currentPrice + ' ج.م';
     }
 }
 
-// تحويل الصور إلى WebP
-function convertImageToWebp(file) {
+// تحويل الصورة إلى WebP File object لرفعها للـ Storage
+function convertFileToWebpBlob(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = function(e) {
             const img = new Image();
             img.onload = function() {
                 const canvas = document.createElement('canvas');
-                let width = img.width;
-                let height = img.height;
+                let width = img.width, height = img.height;
                 const MAX_WIDTH = 1000;
-                
-                if (width > MAX_WIDTH) {
-                    height = Math.round((height * MAX_WIDTH) / width);
-                    width = MAX_WIDTH;
-                }
-                
-                canvas.width = width;
-                canvas.height = height;
+                if (width > MAX_WIDTH) { height = Math.round((height * MAX_WIDTH) / width); width = MAX_WIDTH; }
+                canvas.width = width; canvas.height = height;
                 canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-                resolve(canvas.toDataURL('image/webp', 0.8));
+                canvas.toBlob((blob) => { resolve(blob); }, 'image/webp', 0.8);
             };
             img.onerror = reject;
             img.src = e.target.result;
@@ -199,18 +133,17 @@ function convertImageToWebp(file) {
     });
 }
 
+let rawImageFiles = [];
 async function handleAdImages(event) {
     const files = Array.from(event.target.files);
-    if (selectedAdImages.length + files.length > 8) {
+    if (rawImageFiles.length + files.length > 8) {
         showCustomModal('عذراً، الحد الأقصى المسموح به هو 8 صور فقط.');
         return;
     }
-
     for (let file of files) {
-        try {
-            const webpUrl = await convertImageToWebp(file);
-            selectedAdImages.push({ uniqueId: 'img_' + Math.random().toString(36).substr(2, 9), webp: webpUrl });
-        } catch(err) { console.error(err); }
+        rawImageFiles.push(file);
+        const previewUrl = URL.createObjectURL(file);
+        selectedAdImages.push({ uniqueId: 'img_' + Math.random().toString(36).substr(2, 9), preview: previewUrl, file: file });
     }
     event.target.value = '';
     renderAdImagesPreviews();
@@ -225,7 +158,7 @@ function renderAdImagesPreviews() {
         selectedAdImages.forEach((imgObj) => {
             const div = document.createElement('div');
             div.className = 'relative w-20 h-20 border rounded-lg overflow-hidden shadow-sm bg-white';
-            div.innerHTML = `<img src="${imgObj.webp}" class="w-full h-full object-cover"><button type="button" onclick="removeAdImage('${imgObj.uniqueId}')" class="absolute top-1 left-1 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">✕</button>`;
+            div.innerHTML = `<img src="${imgObj.preview}" class="w-full h-full object-cover"><button type="button" onclick="removeAdImage('${imgObj.uniqueId}')" class="absolute top-1 left-1 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">✕</button>`;
             container.appendChild(div);
         });
     } else { container.classList.add('hidden'); }
@@ -236,60 +169,76 @@ function removeAdImage(uniqueId) {
     renderAdImagesPreviews();
 }
 
+let rawReceiptFile = null;
 async function handleReceiptImage(event) {
     const file = event.target.files[0];
     if (file) {
-        receiptImageWebp = await convertImageToWebp(file);
+        rawReceiptFile = file;
         const preview = document.getElementById('receiptImagePreview');
         const container = document.getElementById('receiptImagePreviewContainer');
-        const labelText = document.getElementById('receiptLabelText');
-        if (preview) preview.src = receiptImageWebp;
+        if (preview) preview.src = URL.createObjectURL(file);
         if (container) container.classList.remove('hidden');
-        if (labelText) labelText.textContent = 'تم اختيار الإيصال';
+        document.getElementById('receiptLabelText').textContent = 'تم اختيار الإيصال';
         event.target.value = '';
     }
 }
 
 function removeReceiptImage() {
-    receiptImageWebp = '';
-    const container = document.getElementById('receiptImagePreviewContainer');
-    const labelText = document.getElementById('receiptLabelText');
-    if (container) container.classList.add('hidden');
-    if (labelText) labelText.textContent = 'اختر صورة الإيصال';
+    rawReceiptFile = null;
+    document.getElementById('receiptImagePreviewContainer')?.classList.add('hidden');
+    document.getElementById('receiptLabelText').textContent = 'اختر صورة الإيصال';
 }
 
-// إرسال الإعلان بالأعمدة المتوافقة تماماً مع جدول Supabase الموجود لديك
+// رفع الصور إلى Supabase Storage Bucket والحصول على روابط حقيقية
+async function uploadImageToSupabase(file, folder = 'ads') {
+    const webpBlob = await convertFileToWebpBlob(file);
+    const fileName = `${folder}/${Date.now()}_${Math.random().toString(36.substring(2, 9))}.webp`;
+    
+    const response = await fetch(`${SUPABASE_URL}/storage/v1/object/ads-images/${fileName}`, {
+        method: 'POST',
+        headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+            'Content-Type': 'image/webp'
+        },
+        body: webpBlob
+    });
+
+    if (!response.ok) throw new Error('فشل رفع إحدى الصور إلى التخزين');
+    return `${SUPABASE_URL}/storage/v1/object/public/ads-images/${fileName}`;
+}
+
 const addAdFormElement = document.getElementById('addAdForm');
 if (addAdFormElement) {
     addAdFormElement.addEventListener('submit', async function(e) {
         e.preventDefault();
-
         if (selectedAdImages.length === 0) {
             showCustomModal('يرجى اختيار صورة واحدة على الأقل للمنتج.');
             return;
         }
 
-        const mainCategory = document.getElementById('adCategory').value;
-        const subCategory = document.getElementById('adSubCategory').value || mainCategory;
-        const condition = document.getElementById('adCondition').value;
-        const targetCatName = subCategory || mainCategory;
-        const matchedCat = categoriesData.find(c => c.name === targetCatName) || categoriesData.find(c => c.name === mainCategory);
-        
-        let currentPrice = matchedCat ? (condition === 'جديد' ? Number(matchedCat.new_price || 0) : Number(matchedCat.used_price || 0)) : 0;
-        const isFreeAd = matchedCat && (matchedCat.is_free === true || currentPrice === 0);
-
-        if (!isFreeAd && !receiptImageWebp) {
-            showCustomModal('يرجى رفع صورة إيصال التحويل لاستكمال إرسال الإعلان.');
-            return;
-        }
-
         const submitBtn = document.getElementById('submitBtn');
-        if (submitBtn) {
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'جاري إرسال الإعلان...';
-        }
+        if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'جاري رفع الصور والإرسال...'; }
 
         try {
+            // رفع صور الإعلان بالتتابع والحصول على روابطهم الحقيقية
+            let uploadedUrls = [];
+            for (let imgObj of selectedAdImages) {
+                const publicUrl = await uploadImageToSupabase(imgObj.file, 'listings');
+                uploadedUrls.push(publicUrl);
+            }
+
+            // رفع إيصال الدفع إن وجد
+            let receiptUrl = null;
+            if (rawReceiptFile) {
+                receiptUrl = await uploadImageToSupabase(rawReceiptFile, 'receipts');
+            }
+
+            const mainCategory = document.getElementById('adCategory').value;
+            const subCategory = document.getElementById('adSubCategory').value || mainCategory;
+            const condition = document.getElementById('adCondition').value;
+
+            // إرسال البيانات للجدول بحالة pending (معلق لحين المراجعة من الإدارة)
             const response = await fetch(`${SUPABASE_URL}/rest/v1/ads`, {
                 method: 'POST',
                 headers: {
@@ -305,9 +254,9 @@ if (addAdFormElement) {
                     category: mainCategory,
                     sub_category: subCategory,
                     description: document.getElementById('adDescription').value,
-                    image_url: selectedAdImages.map(img => img.webp).join('||'),
-                    payment_reference: receiptImageWebp || null,
-                    status: 'pending'
+                    image_url: uploadedUrls.join('||'),
+                    payment_reference: receiptUrl,
+                    status: 'pending' // معلق ولا يظهر للمستخدمين إلا بعد الاعتماد
                 })
             });
 
@@ -317,10 +266,7 @@ if (addAdFormElement) {
             setTimeout(() => window.location.replace('index.html?v=' + Date.now()), 2500);
         } catch (err) {
             showCustomModal('حدث خطأ أثناء الحفظ: ' + err.message);
-            if (submitBtn) {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'إرسال الإعلان للمراجعة';
-            }
+            if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'إرسال الإعلان للمراجعة'; }
         }
     });
 }
