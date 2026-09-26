@@ -14,7 +14,7 @@ function closeCustomModal() {
     document.getElementById('customModal').classList.add('hidden');
 }
 
-// جلب الأقسام الرئيسية والفرعية من Supabase
+// جلب الأقسام من Supabase
 async function fetchCategories() {
     try {
         const response = await fetch(`${SUPABASE_URL}/rest/v1/categories?select=*`, {
@@ -32,7 +32,7 @@ async function fetchCategories() {
         
         mainCategorySelect.innerHTML = '<option value="">اختر القسم الرئيسي</option>';
 
-        // افترضنا هنا إن الأقسام الرئيسية هي اللي مفيهاش parent_id أو قيمتها فارغة
+        // الأقسام الرئيسية هي اللي مفيهاش parent_id
         const mainCategories = categoriesData.filter(cat => !cat.parent_id || cat.parent_id === "");
 
         if (mainCategories.length > 0) {
@@ -43,7 +43,6 @@ async function fetchCategories() {
                 mainCategorySelect.appendChild(option);
             });
         } else {
-            // لو قاعدة البيانات مش مسجلة parent_id، هنعرض كل الأقسام كمثال رئيسي
             categoriesData.forEach(cat => {
                 const option = document.createElement('option');
                 option.value = cat.name; 
@@ -56,7 +55,7 @@ async function fetchCategories() {
     }
 }
 
-// دالة تسلسل الأقسام الفرعية بناءً على اختيار القسم الرئيسي
+// تسلسل الأقسام الفرعية وتحديث التسعير الديناميكي
 function handleMainCategoryChange() {
     const mainCategoryName = document.getElementById('adCategory').value;
     const subCategorySelect = document.getElementById('adSubCategory');
@@ -65,12 +64,8 @@ function handleMainCategoryChange() {
 
     if (!mainCategoryName) return;
 
-    // البحث عن الأقسام الفرعية التابعة للقسم الرئيسي المختار
     const parentCat = categoriesData.find(c => c.name === mainCategoryName);
-    
-    // لو عندك حقل في قاعدة البيانات يربط الفرعي بالرئيسي (مثلا parent_id أو sub_categories)
-    // هنا بنجيب الأقسام الفرعية المرتبطة
-    const subCategories = categoriesData.filter(c => c.parent_id === (parentCat ? parentCat.id : null));
+    const subCategories = categoriesData.filter(c => parentCat && c.parent_id === parentCat.id);
 
     if (subCategories.length > 0) {
         subCategories.forEach(sub => {
@@ -80,7 +75,6 @@ function handleMainCategoryChange() {
             subCategorySelect.appendChild(option);
         });
     } else {
-        // لو مفيش أقسام فرعية مفصولة، ممكن نعتبر القسم نفسه متاح أو نعرض رسالة
         const option = document.createElement('option');
         option.value = mainCategoryName;
         option.textContent = mainCategoryName + ' (رئيسي مباشر)';
@@ -105,13 +99,15 @@ async function fetchGovernorates() {
         const governorates = await response.json();
         const govSelect = document.getElementById('adGovernorate');
         
-        govSelect.innerHTML = '<option value="">اختر المحافظة</option>';
-        governorates.forEach(gov => {
-            const option = document.createElement('option');
-            option.value = gov.name; 
-            option.textContent = gov.name;
-            govSelect.appendChild(option);
-        });
+        if (govSelect) {
+            govSelect.innerHTML = '<option value="">اختر المحافظة</option>';
+            governorates.forEach(gov => {
+                const option = document.createElement('option');
+                option.value = gov.name; 
+                option.textContent = gov.name;
+                govSelect.appendChild(option);
+            });
+        }
     } catch (err) {
         console.error('خطأ في تحميل المحافظات:', err);
     }
@@ -120,34 +116,57 @@ async function fetchGovernorates() {
 document.addEventListener('DOMContentLoaded', () => {
     fetchCategories();
     fetchGovernorates();
+    
+    // ربط الأحداث للتحديث الفوري عند تغيير القسم أو الحالة
+    const catSelect = document.getElementById('adCategory');
+    const subCatSelect = document.getElementById('adSubCategory');
+    const conditionSelect = document.getElementById('adCondition');
+
+    if (catSelect) catSelect.addEventListener('change', handleMainCategoryChange);
+    if (subCatSelect) subCatSelect.addEventListener('change', updateDynamicPricing);
+    if (conditionSelect) conditionSelect.addEventListener('change', updateDynamicPricing);
 });
 
-// تحديث الأسعار الديناميكية (جديد ومستعمل) وإخفاء صندوق الدفع لو الإعلان مجاني
+// تحديث الأسعار وإخفاء صندوق الدفع تماماً لو القسم مجاني أو سعره صفر
 function updateDynamicPricing() {
-    const selectedCategoryName = document.getElementById('adCategory').value;
-    const condition = document.getElementById('adCondition').value;
+    const mainCategoryName = document.getElementById('adCategory').value;
+    const subCategoryName = document.getElementById('adSubCategory').value;
+    const condition = document.getElementById('adCondition').value || 'جديد';
     const paymentSection = document.getElementById('paymentSectionWrapper');
     const displayFee = document.getElementById('displayFeeAmount');
     const feeText = document.getElementById('feeTextSpan');
 
-    if (!selectedCategoryName) return;
+    if (!paymentSection) return;
 
-    const category = categoriesData.find(c => c.name === selectedCategoryName);
-    if (!category) return;
+    // البحث عن القسم المختار (الفرعي أولاً، أو الرئيسي لو مفيش فرعي)
+    let targetCatName = subCategoryName || mainCategoryName;
+    if (!targetCatName) {
+        paymentSection.classList.add('hidden');
+        return;
+    }
 
-    let currentPrice = condition === 'جديد' ? (category.new_price || 0) : (category.used_price || 0);
+    const category = categoriesData.find(c => c.name === targetCatName) || categoriesData.find(c => c.name === mainCategoryName);
+    
+    if (!category) {
+        paymentSection.classList.add('hidden');
+        return;
+    }
 
-    if (category.is_free || currentPrice === 0) {
+    // جلب السعر حسب الحالة (جديد أو مستعمل)
+    let currentPrice = condition === 'جديد' ? Number(category.new_price || 0) : Number(category.used_price || 0);
+
+    // التحقق من أن القسم مجاني بالكامل أو سعره 0
+    if (category.is_free === true || currentPrice === 0) {
         paymentSection.classList.add('hidden');
         receiptImageWebp = '';
     } else {
         paymentSection.classList.remove('hidden');
-        displayFee.textContent = currentPrice;
-        feeText.textContent = currentPrice + ' ج.م';
+        if (displayFee) displayFee.textContent = currentPrice;
+        if (feeText) feeText.textContent = currentPrice + ' ج.م';
     }
 }
 
-// تحويل الصور إلى WebP للمحافظة على مساحة السيرفر وسرعة الموقع
+// تحويل الصور إلى WebP
 function convertImageToWebp(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -196,6 +215,7 @@ async function handleAdImages(event) {
 
 function renderAdImagesPreviews() {
     const container = document.getElementById('adImagesPreviewContainer');
+    if (!container) return;
     container.innerHTML = '';
     if (selectedAdImages.length > 0) {
         container.classList.remove('hidden');
@@ -217,20 +237,25 @@ async function handleReceiptImage(event) {
     const file = event.target.files[0];
     if (file) {
         receiptImageWebp = await convertImageToWebp(file);
-        document.getElementById('receiptImagePreview').src = receiptImageWebp;
-        document.getElementById('receiptImagePreviewContainer').classList.remove('hidden');
-        document.getElementById('receiptLabelText').textContent = 'تم اختيار الإيصال';
+        const preview = document.getElementById('receiptImagePreview');
+        const container = document.getElementById('receiptImagePreviewContainer');
+        const labelText = document.getElementById('receiptLabelText');
+        if (preview) preview.src = receiptImageWebp;
+        if (container) container.classList.remove('hidden');
+        if (labelText) labelText.textContent = 'تم اختيار الإيصال';
         event.target.value = '';
     }
 }
 
 function removeReceiptImage() {
     receiptImageWebp = '';
-    document.getElementById('receiptImagePreviewContainer').classList.add('hidden');
-    document.getElementById('receiptLabelText').textContent = 'اختر صورة الإيصال';
+    const container = document.getElementById('receiptImagePreviewContainer');
+    const labelText = document.getElementById('receiptLabelText');
+    if (container) container.classList.add('hidden');
+    if (labelText) labelText.textContent = 'اختر صورة الإيصال';
 }
 
-// إرسال الإعلان وقيده كـ pending للمراجعة
+// إرسال الإعلان وقيده كـ pending
 document.getElementById('addAdForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
@@ -240,12 +265,13 @@ document.getElementById('addAdForm').addEventListener('submit', async function(e
     }
 
     const category = document.getElementById('adCategory').value;
-    const subCategory = document.getElementById('adSubCategory').value;
+    const subCategory = document.getElementById('adSubCategory').value || category;
     const condition = document.getElementById('adCondition').value;
-    const matchedCat = categoriesData.find(c => c.name === category);
+    const targetCatName = subCategory || category;
+    const matchedCat = categoriesData.find(c => c.name === targetCatName) || categoriesData.find(c => c.name === category);
     
-    let currentPrice = matchedCat ? (condition === 'جديد' ? (matchedCat.new_price || 0) : (matchedCat.used_price || 0)) : 0;
-    const isFreeAd = matchedCat && (matchedCat.is_free || currentPrice === 0);
+    let currentPrice = matchedCat ? (condition === 'جديد' ? Number(matchedCat.new_price || 0) : Number(matchedCat.used_price || 0)) : 0;
+    const isFreeAd = matchedCat && (matchedCat.is_free === true || currentPrice === 0);
 
     if (!isFreeAd && !receiptImageWebp) {
         showCustomModal('يرجى رفع صورة إيصال التحويل لاستكمال إرسال الإعلان.');
@@ -267,18 +293,18 @@ document.getElementById('addAdForm').addEventListener('submit', async function(e
             },
             body: JSON.stringify({
                 title: document.getElementById('adTitle').value,
-                price: parseFloat(document.getElementById('adPrice').value),
+                price: parseFloat(document.getElementById('adPrice').value) || 0,
                 condition: condition,
-                category: subCategory, // نخزن القسم الفرعي النهائي كقسم للإعلان
-                main_category: category, // نخزن القسم الرئيسي للفلترة
+                category: subCategory, 
+                main_category: category, 
                 phone: document.getElementById('adPhone').value,
                 governorate: document.getElementById('adGovernorate').value,
                 description: document.getElementById('adDescription').value,
                 image_url: selectedAdImages.map(img => img.webp).join('||'),
                 receipt_url: receiptImageWebp || null,
-                sender_phone: document.getElementById('senderPhone').value || '',
-                payment_method: document.getElementById('paymentMethod').value || '',
-                status: 'pending' // قيد المراجعة دائماً لحماية منصة متجر البيت
+                sender_phone: document.getElementById('senderPhone') ? document.getElementById('senderPhone').value : '',
+                payment_method: document.getElementById('paymentMethod') ? document.getElementById('paymentMethod').value : '',
+                status: 'pending'
             })
         });
 
