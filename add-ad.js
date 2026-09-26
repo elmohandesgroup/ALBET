@@ -209,7 +209,7 @@ async function handleAdImages(event) {
     for (let file of files) {
         try {
             const webpUrl = await convertImageToWebp(file);
-            selectedAdImages.push({ uniqueId: 'img_' + Math.random().toString(36).substr(2, 9), webp: webpUrl });
+            selectedAdImages.push({ uniqueId: 'img_' + Math.random().toString(36).substr(2, 9), webp: webpUrl, name: file.name });
         } catch(err) { console.error(err); }
     }
     event.target.value = '';
@@ -258,7 +258,38 @@ function removeReceiptImage() {
     if (labelText) labelText.textContent = 'اختر صورة الإيصال';
 }
 
-// إرسال الإعلان بالأعمدة المطابقة تماماً لجدول Supabase
+// دالة مساعدة لرفع ملف الصورة إلى Supabase Storage (Bucket: ads-images)
+async function uploadFileToSupabaseStorage(fileObj, folderName = 'ads') {
+    try {
+        const fileName = `${folderName}_${Date.now()}_${Math.random().toString(36).substr(2, 6)}.webp`;
+        
+        // تحويل Base64 إلى Blob لكي يقبله الـ Storage
+        const base64Response = await fetch(fileObj.webp || fileObj);
+        const blob = await base64Response.blob();
+
+        const response = await fetch(`${SUPABASE_URL}/storage/v1/object/ads-images/${fileName}`, {
+            method: 'POST',
+            headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+                'Content-Type': 'image/webp'
+            },
+            body: blob
+        });
+
+        if (!response.ok) {
+            throw new Error(await response.text());
+        }
+
+        // إرجاع الرابط العام المباشر للصورة
+        return `${SUPABASE_URL}/storage/v1/object/public/ads-images/${fileName}`;
+    } catch (err) {
+        console.error('خطأ في رفع الملف للسيرفر:', err);
+        return null;
+    }
+}
+
+// إرسال الإعلان مع رفع الصور الحقيقية للـ Storage أولاً
 const addAdFormElement = document.getElementById('addAdForm');
 if (addAdFormElement) {
     addAdFormElement.addEventListener('submit', async function(e) {
@@ -286,10 +317,30 @@ if (addAdFormElement) {
         const submitBtn = document.getElementById('submitBtn');
         if (submitBtn) {
             submitBtn.disabled = true;
-            submitBtn.textContent = 'جاري إرسال الإعلان...';
+            submitBtn.textContent = 'جاري رفع الصور وحفظ الإعلان...';
         }
 
         try {
+            // 1. رفع صور الإعلان إلى Supabase Storage
+            let uploadedImageUrls = [];
+            for (let imgObj of selectedAdImages) {
+                const publicUrl = await uploadFileToSupabaseStorage(imgObj, 'ad_img');
+                if (publicUrl) {
+                    uploadedImageUrls.push(publicUrl);
+                }
+            }
+
+            if (uploadedImageUrls.length === 0) {
+                throw new Error('فشل رفع صور الإعلان إلى التخزين السحابي.');
+            }
+
+            // 2. رفع صورة إيصال الدفع إن وجدت
+            let receiptPublicUrl = null;
+            if (receiptImageWebp) {
+                receiptPublicUrl = await uploadFileToSupabaseStorage(receiptImageWebp, 'receipt');
+            }
+
+            // 3. إرسال البيانات نهائياً لجدول ads
             const response = await fetch(`${SUPABASE_URL}/rest/v1/ads`, {
                 method: 'POST',
                 headers: {
@@ -305,8 +356,8 @@ if (addAdFormElement) {
                     category: mainCategory,
                     sub_category: subCategory,
                     condition: condition,
-                    image_url: selectedAdImages.map(img => img.webp).join('||'),
-                    payment_reference: receiptImageWebp || null,
+                    image_url: uploadedImageUrls.join('||'),
+                    payment_reference: receiptPublicUrl || null,
                     status: 'pending'
                 })
             });
