@@ -256,6 +256,7 @@ function removeReceiptImage() {
 }
 
 // إرسال الإعلان وقيده كـ pending بالأعمدة الأساسية فقط
+// إرسال الإعلان وقيده كـ pending بالأعمدة الأساسية فقط
 document.getElementById('addAdForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
@@ -296,7 +297,6 @@ document.getElementById('addAdForm').addEventListener('submit', async function(e
                 price: parseFloat(document.getElementById('adPrice').value) || 0,
                 condition: condition,
                 category: subCategory, 
-                phone: document.getElementById('adPhone').value,
                 description: document.getElementById('adDescription').value,
                 image_url: selectedAdImages.map(img => img.webp).join('||'),
                 receipt_url: receiptImageWebp || null,
@@ -313,4 +313,5 @@ document.getElementById('addAdForm').addEventListener('submit', async function(e
         submitBtn.disabled = false;
         submitBtn.textContent = 'إرسال الإعلان للمراجعة';
     }
+});
 });
