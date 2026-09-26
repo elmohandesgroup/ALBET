@@ -33,7 +33,6 @@ async function fetchCategories() {
         if (!mainCategorySelect) return;
         mainCategorySelect.innerHTML = '<option value="">اختر القسم الرئيسي</option>';
 
-        // الأقسام الرئيسية هي التي ليس لها parent_id
         const mainCategories = categoriesData.filter(cat => !cat.parent_id || cat.parent_id === "");
 
         if (mainCategories.length > 0) {
@@ -122,7 +121,6 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchCategories();
     fetchGovernorates();
     
-    // ربط الأحداث للتحديث الفوري عند تغيير القسم أو الحالة
     const catSelect = document.getElementById('adCategory');
     const subCatSelect = document.getElementById('adSubCategory');
     const conditionSelect = document.getElementById('adCondition');
@@ -257,7 +255,7 @@ function removeReceiptImage() {
     if (labelText) labelText.textContent = 'اختر صورة الإيصال';
 }
 
-// إرسال الإعلان وقيده كـ pending
+// إرسال الإعلان وقيده كـ pending بالأعمدة الأساسية فقط
 document.getElementById('addAdForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
@@ -302,8 +300,6 @@ document.getElementById('addAdForm').addEventListener('submit', async function(e
                 description: document.getElementById('adDescription').value,
                 image_url: selectedAdImages.map(img => img.webp).join('||'),
                 receipt_url: receiptImageWebp || null,
-                sender_phone: document.getElementById('senderPhone') ? document.getElementById('senderPhone').value : '',
-                payment_method: document.getElementById('paymentMethod') ? document.getElementById('paymentMethod').value : '',
                 status: 'pending'
             })
         });
