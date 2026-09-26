@@ -92,9 +92,10 @@
 
     <!-- سكريبت جلب وإدارة الإعلانات من قاعدة البيانات -->
     <script>
-        // إعدادات الاتصال بقاعدة بيانات Supabase (ضع بيانات مشروعك هنا)
-        const SUPABASE_URL = 'https://your-project.supabase.co';
-        const SUPABASE_KEY = 'your-anon-key';
+        // إعدادات الاتصال الحقيقية بقاعدة بيانات Supabase الخاصة بك
+        const SUPABASE_URL = 'ضع_رابط_مشرعك_هنا_مثل_https://xyz.supabase.co';
+        const SUPABASE_KEY = 'ضع_مفتاح_anons_key_هنا';
+        
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         async function fetchPendingAds() {
@@ -102,11 +103,11 @@
             tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-gray-400 font-medium">جاري التحديث...</td></tr>`;
 
             try {
-                // استعلام جلب الإعلانات الغير معتمدة (Pending / status = false أو pending)
+                // استعلام جلب الإعلانات الغير معتمدة (Pending / is_approved = false)
                 const { data: ads, error } = await supabaseClient
                     .from('ads')
                     .select('*')
-                    .eq('is_approved', false) // أو status = 'pending' حسب هيكل جدولك
+                    .eq('is_approved', false)
                     .order('created_at', { ascending: false });
 
                 if (error) throw error;
@@ -121,16 +122,12 @@
                 tbody.innerHTML = '';
                 ads.forEach(ad => {
                     const dateFormatted = new Date(ad.created_at || Date.now()).toLocaleDateString('ar-EG');
-                    
-                    // صورة الإعلان
                     const imgUrl = ad.image_url || ad.images?.[0] || 'logo192.png';
                     
-                    // صورة الإيصال أو حالة الدفع (مدعوم بربط الـ SMS Gateway أو الإيصال المرفوع)
                     const paymentProof = ad.payment_receipt_url 
                         ? `<a href="${ad.payment_receipt_url}" target="_blank" class="text-blue-600 underline font-bold text-xs flex items-center gap-1">عرض الإيصال</a>`
                         : `<span class="text-xs bg-amber-50 text-amber-700 px-2 py-1 rounded-lg font-bold">${ad.payment_type || 'مجاني / معلق SMS'}</span>`;
 
-                    // بيانات التواصل مع العميل
                     const clientPhone = ad.phone || ad.seller_phone || 'غير مسجل';
                     const clientName = ad.seller_name || ad.name || 'عميل متجر البيت';
 
@@ -178,16 +175,15 @@
 
             } catch (err) {
                 console.error(err);
-                tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-red-500 font-bold">حدث خطأ أثناء جلب الإعلانات. تأكد من اتصال القاعدة.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-red-500 font-bold">حدث خطأ أثناء جلب الإعلانات. تأكد من إدخال بيانات Supabase الصحيحة.</td></tr>`;
             }
         }
 
-        // دالة اعتماد الإعلان (نشر مباشر)
         async function approveAd(id) {
             if (!confirm('هل أنت متأكد من اعتماد ونشر هذا الإعلان على المنصة؟')) return;
             const { error } = await supabaseClient
                 .from('ads')
-                .update({ is_approved: true }) // أو status = 'active'
+                .update({ is_approved: true })
                 .eq('id', id);
 
             if (error) {
@@ -198,7 +194,6 @@
             }
         }
 
-        // دالة رفض الإعلان (مع إمكانية إشعار العميل عبر وسائل التواصل)
         async function rejectAd(id, phone) {
             const reason = prompt('أدخل سبب رفض الإعلان ليتم إرساله للعميل أو مراجعته:');
             if (reason === null) return;
@@ -211,8 +206,7 @@
             if (error) {
                 alert('حدث خطأ: ' + error.message);
             } else {
-                alert('تم رفض الإعلان. يمكنك التواصل مع العميل عبر الواتساب لتعديله.');
-                // فتح واتساب تلقائياً للعميل المرفوض إعلانه
+                alert('تم رفض الإعلان.');
                 if(phone && phone !== 'غير مسجل') {
                     window.open(`https://wa.me/${phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('عذراً، تم رفض إعلانك بسبب: ' + reason + '. برجاء التعديل وإعادة الإرسال.')}`, '_blank');
                 }
@@ -220,7 +214,6 @@
             }
         }
 
-        // دالة حذف الإعلان نهائياً
         async function deleteAd(id) {
             if (!confirm('هل أنت متأكد من حذف هذا الإعلان نهائياً من قاعدة البيانات؟')) return;
             const { error } = await supabaseClient
@@ -236,7 +229,6 @@
             }
         }
 
-        // التشغيل التلقائي عند فتح الصفحة
         window.onload = fetchPendingAds;
     </script>
 </body>
