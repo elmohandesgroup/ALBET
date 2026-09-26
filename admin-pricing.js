@@ -123,16 +123,20 @@ async function loadCategoriesForAdmin() {
             const nameIndentation = cat.isMain ? cat.name : `↳ ${cat.name}`;
             const safeImageUrl = cat.image_url || 'logo192.png';
 
+            // تأمين جلب الأسعار بشكل قاطع لتعرض بشكل صحيح في الجدول
+            const nPrice = Number(cat.new_price) || 0;
+            const uPrice = Number(cat.used_price) || 0;
+
             tbody.innerHTML += `
                 <tr class="${rowBg} hover:bg-orange-50/30 transition-colors border-b">
                     <td class="p-3"><img src="${safeImageUrl}" class="w-10 h-10 object-cover rounded-xl border shadow-sm"></td>
                     <td class="p-3 text-gray-800">${nameIndentation}</td>
                     <td class="p-3">${typeLabel}</td>
-                    <td class="p-3 text-gray-700">${cat.new_price || 0} ج.م</td>
-                    <td class="p-3 text-gray-700">${cat.used_price || 0} ج.م</td>
+                    <td class="p-3 text-gray-700">${nPrice} ج.م</td>
+                    <td class="p-3 text-gray-700">${uPrice} ج.م</td>
                     <td class="p-3">${statusLabel}</td>
                     <td class="p-3 text-center flex items-center justify-center gap-2">
-                        <button onclick="editCategory('${cat.id}', '${cat.name}', '${cat.parent_id || ''}', ${cat.new_price || 0}, ${cat.used_price || 0}, ${cat.is_free || false}, '${cat.image_url || ''}')" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm">تعديل</button>
+                        <button onclick="editCategory('${cat.id}', '${cat.name.replace(/'/g, "\\'")}', '${cat.parent_id || ''}', ${nPrice}, ${uPrice}, ${cat.is_free || false}, '${cat.image_url || ''}')" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm">تعديل</button>
                         <button onclick="deleteCategory('${cat.id}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm">حذف</button>
                     </td>
                 </tr>
@@ -148,10 +152,11 @@ async function loadCategoriesForAdmin() {
 function editCategory(id, name, parentId, newPrice, usedPrice, isFree, imageUrl) {
     editingCategoryId = id;
     currentExistingImageUrl = imageUrl;
+    
     document.getElementById('catName').value = name;
-    document.getElementById('catNewPrice').value = newPrice;
-    document.getElementById('catUsedPrice').value = usedPrice;
-    document.getElementById('catIsFree').checked = isFree;
+    document.getElementById('catNewPrice').value = Number(newPrice) || 0;
+    document.getElementById('catUsedPrice').value = Number(usedPrice) || 0;
+    document.getElementById('catIsFree').checked = Boolean(isFree);
 
     const typeLevelSelect = document.getElementById('catTypeLevel');
     const parentWrapper = document.getElementById('parentCategoryWrapper');
@@ -203,7 +208,6 @@ document.getElementById('addCategoryForm').addEventListener('submit', async (e) 
 
             if (uploadError) throw uploadError;
 
-            // التصحيح هنا: استخدام باكت categories لجلب الرابط العام بشكل صحيح
             const { data: publicUrlData } = supabaseClient.storage.from('categories').getPublicUrl(fileName);
             image_url = publicUrlData.publicUrl;
         }
