@@ -1,64 +1,130 @@
-// ملف التسعير الديناميكي لصفحة أضف إعلانك (add-ad.html)
-document.addEventListener('DOMContentLoaded', () => {
-    const categorySelect = document.getElementById('category-select'); // تأكد من مطابقة الـ ID في صفحة add-ad.html
-    const conditionSelect = document.getElementById('condition-select'); // خانة الحالة (جديد / مستعمل)
-    const paymentBox = document.getElementById('payment-box'); // صندوق الدفع في الصفحة
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>إدارة التسعير والأقسام - متجر البيت</title>
+    <link rel="manifest" href="admin-manifest.json">
+    <script>
+        if (localStorage.getItem('isAdminLoggedIn') !== 'true') {
+            alert('عذراً، يجب تسجيل الدخول أولاً!');
+            window.location.href = 'admin-login.html';
+        }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+        body { font-family: 'Cairo', sans-serif; background-color: #f8f9fa; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 pb-20">
 
-    if (categorySelect) {
-        categorySelect.addEventListener('change', async (e) => {
-            const categoryId = e.target.value;
-            if (!categoryId) return;
-
-            try {
-                // جلب تسعير القسم المحدد من قاعدة البيانات
-                const { data, error } = await supabaseClient
-                    .from('categories')
-                    .select('new_price, used_price, is_free')
-                    .eq('id', categoryId)
-                    .single();
-
-                if (error || !data) return;
-
-                updatePaymentUI(data, conditionSelect ? conditionSelect.value : 'جديد');
-
-            } catch (err) {
-                console.error('خطأ في جلب التسعير الديناميكي:', err);
-            }
-        });
-    }
-
-    if (conditionSelect) {
-        conditionSelect.addEventListener('change', async () => {
-            const categoryId = categorySelect ? categorySelect.value : null;
-            if (!categoryId) return;
-
-            const { data } = await supabaseClient
-                .from('categories')
-                .select('new_price, used_price, is_free')
-                .eq('id', categoryId)
-                .single();
-
-            if (data) {
-                updatePaymentUI(data, conditionSelect.value);
-            }
-        });
-    }
-});
-
-function updatePaymentUI(categoryData, condition) {
-    const amountSpan = document.getElementById('required-amount'); // العنصر الذي يعرض المبلغ المطلوب
-    const paymentContainer = document.getElementById('payment-container'); // حاوية الدفع بالكامل
-
-    if (!paymentContainer) return;
-
-    if (categoryData.is_free) {
-        paymentContainer.innerHTML = `
-            <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-xl text-center font-bold text-sm">
-                🎉 هذا القسم مجاني بالكامل! لا توجد أي رسوم نشر مطلوبة لهذا الإعلان.
+    <!-- الهيدر -->
+    <header class="bg-white shadow-sm sticky top-0 z-40 px-4 py-3.5">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="admin-dashboard.html" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    <span>الرجوع للوحة التحكم</span>
+                </a>
             </div>
-        `;
-    } else {
-        const priceToPay = condition === 'مستعمل' ? (categoryData.used_price || 30) : (categoryData.new_price || 50);
-        if (amountSpan) amountSpan.innerText = priceToPay + ' ج.م';
-    }
-}
+            <h1 class="text-base md:text-xl font-black text-orange-600">إدارة التسعير والأقسام</h1>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
+        
+        <!-- نموذج إضافة قسم جديد -->
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-6 space-y-4">
+            <h2 class="font-black text-gray-800 text-base flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-orange-600 inline-block"></span>
+                إضافة قسم جديد (رئيسي أو فرعي) وتسعيره
+            </h2>
+            
+            <form id="addCategoryForm" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">اسم القسم *</label>
+                    <input type="text" id="catName" required placeholder="مثال: مراوح وتكيفات" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-orange-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">نوع القسم (المستوى)</label>
+                    <select id="catTypeLevel" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-orange-500">
+                        <option value="main">قسم رئيسي</option>
+                        <option value="sub">قسم فرعي</option>
+                    </select>
+                </div>
+
+                <!-- قائمة اختيار القسم الرئيسي (تظهر فقط لو اختار قسم فرعي) -->
+                <div id="parentCategoryWrapper" class="hidden">
+                    <label class="block text-xs font-bold text-gray-700 mb-1">يتبع القسم الرئيسي *</label>
+                    <select id="catParent" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-orange-500">
+                        <option value="">اختر القسم الرئيسي</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">صورة القسم</label>
+                    <div class="flex items-center gap-2">
+                        <input type="file" id="catImage" accept="image/*" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-500 file:ml-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100">
+                        <button type="button" id="clearImageBtn" class="hidden bg-red-100 hover:bg-red-200 text-red-600 px-2.5 py-2 rounded-xl text-xs font-bold transition-all">حذف</button>
+                    </div>
+                    <!-- معاينة الصورة -->
+                    <div id="imagePreviewContainer" class="mt-2 hidden">
+                        <img id="imagePreview" src="" alt="معاينة الصورة" class="w-14 h-14 object-cover rounded-xl border shadow-sm">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">سعر إعلان (جديد) ج.م</label>
+                    <input type="number" id="catNewPrice" value="50" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-orange-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">سعر إعلان (مستعمل) ج.م</label>
+                    <input type="number" id="catUsedPrice" value="30" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-orange-500">
+                </div>
+
+                <div class="flex items-center gap-3 pt-6">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="catIsFree" class="w-4 h-4 text-orange-600 rounded focus:ring-orange-500">
+                        <span class="text-xs font-bold text-gray-700">مجاني بالكامل؟</span>
+                    </label>
+                </div>
+
+                <div class="md:col-span-3 pt-2">
+                    <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 rounded-xl text-sm transition-all shadow-sm">
+                        حفظ وإضافة القسم
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- جدول عرض الأقسام والأسعار -->
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-6 space-y-4">
+            <h2 class="font-black text-gray-800 text-base">الأقسام المسجلة وأسعارها الحالية</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-right border-collapse">
+                    <thead>
+                        <tr class="border-b text-xs text-gray-500 bg-gray-50/50">
+                            <th class="p-3">الصورة</th>
+                            <th class="p-3">اسم القسم</th>
+                            <th class="p-3">النوع</th>
+                            <th class="p-3">سعر (جديد)</th>
+                            <th class="p-3">سعر (مستعمل)</th>
+                            <th class="p-3">الحالة</th>
+                            <th class="p-3 text-center">الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="categoriesTableBody" class="divide-y divide-gray-100 text-sm">
+                        <tr><td colspan="7" class="text-center text-gray-400 py-6">جاري التحميل...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="admin-pricing.js"></script>
+</body>
+</html>
