@@ -1,6 +1,6 @@
-        const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let editingCategoryId = null;
 let currentExistingImageUrl = ''; // حفظ رابط الصورة القديمة عند التعديل
@@ -147,7 +147,7 @@ async function loadCategoriesForAdmin() {
 
 function editCategory(id, name, parentId, newPrice, usedPrice, isFree, imageUrl) {
     editingCategoryId = id;
-    currentExistingImageUrl = imageUrl; // الاحتفاظ برابط الصورة القديمة
+    currentExistingImageUrl = imageUrl;
     document.getElementById('catName').value = name;
     document.getElementById('catNewPrice').value = newPrice;
     document.getElementById('catUsedPrice').value = usedPrice;
@@ -193,9 +193,8 @@ document.getElementById('addCategoryForm').addEventListener('submit', async (e) 
     }
 
     try {
-        let image_url = currentExistingImageUrl; // الافتراضي هو الصورة القديمة
+        let image_url = currentExistingImageUrl;
 
-        // لو تم اختيار صورة جديدة، ارفعها
         if (imageFile) {
             const fileName = `cat_${Date.now()}.webp`;
             const { error: uploadError } = await supabaseClient.storage
@@ -204,7 +203,8 @@ document.getElementById('addCategoryForm').addEventListener('submit', async (e) 
 
             if (uploadError) throw uploadError;
 
-            const { data: publicUrlData } = supabaseClient.storage.from('ads-images').getPublicUrl(fileName);
+            // التصحيح هنا: استخدام باكت categories لجلب الرابط العام بشكل صحيح
+            const { data: publicUrlData } = supabaseClient.storage.from('categories').getPublicUrl(fileName);
             image_url = publicUrlData.publicUrl;
         }
 
