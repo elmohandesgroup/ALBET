@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تفاصيل الإعلان - متجر البيت</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <div class="mb-6">
+            <a href="index.html" class="text-orange-600 font-bold hover:underline">← العودة للرئيسية</a>
+        </div>
+        <div id="adDetailsContainer" class="bg-white rounded-xl shadow-md p-6">
+            <p class="text-center text-gray-500 py-12">جاري تحميل تفاصيل الإعلان...</p>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
+
+        async function fetchAdDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const adId = urlParams.get('id');
+            const container = document.getElementById('adDetailsContainer');
+
+            if (!adId) {
+                container.innerHTML = '<p class="text-center text-red-500">معرف الإعلان غير موجود.</p>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/ads?id=eq.${adId}&select=*`, {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                    }
+                });
+
+                if (!response.ok) throw new Error('فشل في جلب البيانات');
+
+                const ads = await response.json();
+                if (ads.length === 0) {
+                    container.innerHTML = '<p class="text-center text-gray-500">الإعلان غير موجود أو تم حذفه.</p>';
+                    return;
+                }
+
+                const ad = ads[0];
+                let images = [];
+                if (ad.image_url) {
+                    images = ad.image_url.split('||');
+                }
+
+                container.innerHTML = `
+                    <h1 class="text-2xl font-bold text-gray-800 mb-4">${ad.title || 'بدون عنوان'}</h1>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <img id="mainImage" src="${images[0] || 'https://via.placeholder.com/400'}" class="w-full h-80 object-cover rounded-lg shadow-sm border">
+                            <div class="flex gap-2 mt-3 overflow-x-auto pb-2">
+                                ${images.map((img, idx) => `<img src="${img}" onclick="document.getElementById('mainImage').src='${img}'" class="w-16 h-16 object-cover rounded cursor-pointer border hover:opacity-75">`).join('')}
+                            </div>
+                        </div>
+                        <div>
+                            <div class="bg-orange-50 p-4 rounded-lg border border-orange-200 mb-4">
+                                <span class="text-3xl font-extrabold text-orange-600">${ad.price || 0}</span> <span class="text-gray-600 font-bold">ج.م</span>
+                            </div>
+                            <ul class="space-y-3 text-gray-700">
+                                <li><strong>القسم:</strong> ${ad.category || 'غير محدد'} / ${ad.sub_category || ''}</li>
+                                <li><strong>الحالة:</strong> <span class="px-2 py-1 bg-green-100 text-green-800 rounded text-sm">${ad.condition || 'جديد'}</span></li>
+                                <li><strong>تاريخ النشر:</strong> ${new Date(ad.created_at).toLocaleDateString('ar-EG')}</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-2">تفاصيل ووصف الإعلان:</h3>
+                        <p class="text-gray-600 whitespace-pre-line bg-gray-50 p-4 rounded-lg border">${ad.description || 'لا يوجد وصف متاح.'}</p>
+                    </div>
+                `;
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = '<p class="text-center text-red-500">حدث خطأ أثناء تحميل تفاصيل الإعلان.</p>';
+            }
+        }
+
+        fetchAdDetails();
+    </script>
+</body>
+</html>
