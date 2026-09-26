@@ -30,9 +30,10 @@ async function fetchCategories() {
         categoriesData = await response.json();
         const mainCategorySelect = document.getElementById('adCategory');
         
+        if (!mainCategorySelect) return;
         mainCategorySelect.innerHTML = '<option value="">اختر القسم الرئيسي</option>';
 
-        // الأقسام الرئيسية هي اللي مفيهاش parent_id
+        // الأقسام الرئيسية هي التي ليس لها parent_id
         const mainCategories = categoriesData.filter(cat => !cat.parent_id || cat.parent_id === "");
 
         if (mainCategories.length > 0) {
@@ -60,9 +61,13 @@ function handleMainCategoryChange() {
     const mainCategoryName = document.getElementById('adCategory').value;
     const subCategorySelect = document.getElementById('adSubCategory');
     
+    if (!subCategorySelect) return;
     subCategorySelect.innerHTML = '<option value="">اختر القسم الفرعي</option>';
 
-    if (!mainCategoryName) return;
+    if (!mainCategoryName) {
+        updateDynamicPricing();
+        return;
+    }
 
     const parentCat = categoriesData.find(c => c.name === mainCategoryName);
     const subCategories = categoriesData.filter(c => parentCat && c.parent_id === parentCat.id);
@@ -129,16 +134,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // تحديث الأسعار وإخفاء صندوق الدفع تماماً لو القسم مجاني أو سعره صفر
 function updateDynamicPricing() {
-    const mainCategoryName = document.getElementById('adCategory').value;
-    const subCategoryName = document.getElementById('adSubCategory').value;
-    const condition = document.getElementById('adCondition').value || 'جديد';
+    const mainCategoryName = document.getElementById('adCategory') ? document.getElementById('adCategory').value : '';
+    const subCategoryName = document.getElementById('adSubCategory') ? document.getElementById('adSubCategory').value : '';
+    const condition = document.getElementById('adCondition') ? document.getElementById('adCondition').value : 'جديد';
     const paymentSection = document.getElementById('paymentSectionWrapper');
     const displayFee = document.getElementById('displayFeeAmount');
     const feeText = document.getElementById('feeTextSpan');
 
     if (!paymentSection) return;
 
-    // البحث عن القسم المختار (الفرعي أولاً، أو الرئيسي لو مفيش فرعي)
     let targetCatName = subCategoryName || mainCategoryName;
     if (!targetCatName) {
         paymentSection.classList.add('hidden');
@@ -152,10 +156,8 @@ function updateDynamicPricing() {
         return;
     }
 
-    // جلب السعر حسب الحالة (جديد أو مستعمل)
     let currentPrice = condition === 'جديد' ? Number(category.new_price || 0) : Number(category.used_price || 0);
 
-    // التحقق من أن القسم مجاني بالكامل أو سعره 0
     if (category.is_free === true || currentPrice === 0) {
         paymentSection.classList.add('hidden');
         receiptImageWebp = '';
@@ -282,7 +284,7 @@ document.getElementById('addAdForm').addEventListener('submit', async function(e
     submitBtn.disabled = true;
     submitBtn.textContent = 'جاري إرسال الإعلان...';
 
-   try {
+    try {
         const response = await fetch(`${SUPABASE_URL}/rest/v1/ads`, {
             method: 'POST',
             headers: {
@@ -296,7 +298,6 @@ document.getElementById('addAdForm').addEventListener('submit', async function(e
                 price: parseFloat(document.getElementById('adPrice').value) || 0,
                 condition: condition,
                 category: subCategory, 
-                main_category: category, 
                 phone: document.getElementById('adPhone').value,
                 description: document.getElementById('adDescription').value,
                 image_url: selectedAdImages.map(img => img.webp).join('||'),
