@@ -104,11 +104,11 @@ const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
 
             try {
                 // استعلام جلب الإعلانات الغير معتمدة (Pending / is_approved = false)
-                const { data: ads, error } = await supabaseClient
-                    .from('ads')
-                    .select('*')
-                    .eq('is_approved', false)
-                    .order('created_at', { ascending: false });
+               const { data, error } = await supabaseClient
+    .from('ads')
+    .select('*')
+    .eq('status', 'pending')
+    .order('created_at', { ascending: false });
 
                 if (error) throw error;
 
