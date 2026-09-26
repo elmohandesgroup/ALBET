@@ -3,18 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>لوحة التحكم الرئيسية - متجر البيت (albet.store)</title>
-    <link rel="manifest" href="admin-manifest.json">
-    <!-- حماية الصفحة -->
-    <script>
-        if (localStorage.getItem('isAdminLoggedIn') !== 'true') {
-            alert('عذراً، يجب تسجيل الدخول أولاً!');
-            window.location.href = 'admin-login.html';
-        }
-    </script>
-
+    <title>لوحة تحكم المدير العام - متجر البيت</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
@@ -26,311 +20,224 @@
             background-color: #f8f9fa;
             -webkit-tap-highlight-color: transparent;
         }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 pb-20">
 
-    <!-- الهيدر الرئيسي المنسق مثل الـ Index تماماً -->
-    <header class="bg-white shadow-sm sticky top-0 z-40 px-4 py-3.5">
+    <!-- الهيدر الرئيسي للوحة التحكم -->
+    <header class="bg-white shadow-sm sticky top-0 z-50 px-4 py-4 md:py-5">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
-            
-            <!-- القسم الأيمن: زر القائمة الجانبية (3 شرط) + اللوجو -->
             <div class="flex items-center gap-3">
-                <button id="open-menu-btn" class="p-1.5 text-gray-700 hover:text-orange-600 transition-colors focus:outline-none" aria-label="فتح القائمة">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                    </svg>
-                </button>
-                <a href="admin-dashboard.html" class="flex items-center">
-                    <img src="logo192.png" alt="متجر البيت" class="w-12 h-12 object-contain rounded-xl shadow-sm border border-gray-100 bg-white p-1">
+                <a href="index.html" class="flex items-center cursor-pointer">
+                    <img src="logo192.png" alt="متجر البيت" class="w-14 h-14 object-contain rounded-2xl shadow-sm border border-gray-100 bg-white p-1.5">
                 </a>
-            </div>
-
-            <!-- القسم الأوسط: اسم المتجر والسلوجان -->
-            <div class="text-center flex-1 mx-2">
-                <a href="admin-dashboard.html" class="block">
+                <div>
                     <h1 class="text-lg md:text-2xl font-black text-orange-600 leading-tight">متجر البيت</h1>
-                    <p class="text-[11px] md:text-xs text-gray-500 font-medium">لوحة تحكم المدير العام</p>
-                </a>
+                    <p class="text-xs text-gray-500 font-medium">لوحة تحكم المدير العام</p>
+                </div>
             </div>
 
-            <!-- القسم الأيسر: زر تحديث سريع -->
-            <div class="flex items-center">
-                <button onclick="loadPendingAds()" class="bg-orange-600 hover:bg-orange-700 text-white px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition-all shadow-sm flex items-center gap-1.5 whitespace-nowrap">
+            <div class="flex items-center gap-3">
+                <button onclick="fetchPendingAds()" class="bg-orange-50 hover:bg-orange-100 text-orange-600 px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold transition-all flex items-center gap-2 border border-orange-200">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                     </svg>
                     <span>تحديث البيانات</span>
                 </button>
             </div>
-
         </div>
     </header>
 
-    <!-- القائمة الجانبية (Drawer Menu) -->
-    <div id="side-menu" class="fixed inset-0 z-50 hidden">
-        <!-- الخلفية المعتمة -->
-        <div id="menu-overlay" class="absolute inset-0 bg-black/50 transition-opacity"></div>
-        <!-- محتوى القائمة -->
-        <div class="absolute right-0 top-0 bottom-0 w-80 bg-white shadow-2xl p-5 flex flex-col justify-between transform transition-transform duration-300 translate-x-full overflow-y-auto" id="menu-content">
-            <div>
-                <div class="flex items-center justify-between pb-4 border-b mb-4">
-                    <div class="flex items-center gap-2">
-                        <img src="logo192.png" alt="متجر البيت" class="w-10 h-10 object-contain">
-                        <span class="font-black text-orange-600 text-lg">لوحة التحكم</span>
-                    </div>
-                    <button id="close-menu-btn" class="text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
-                </div>
-               <nav class="space-y-1.5">
-    <div class="pt-1 pb-1 text-xs font-bold text-gray-400 px-3">أقسام الإدارة والتقارير الشاملة</div>
-    
-    <!-- 1. مراجعة الإعلانات (إعلانات العملاء) -->
-    <a href="admin-dashboard.html" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-orange-600 bg-orange-50 transition-colors">
-        <span class="flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-            </svg>
-            مراجعة الإعلانات
-        </span>
-        <span class="w-2 h-2 rounded-full bg-orange-600"></span>
-    </a>
-
-    <!-- 2. إضافة إعلانات الشركات (الخاصة بيك) -->
-    <a href="admin-company-ads.html" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors border border-gray-100 shadow-xs">
-        <span class="flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-            </svg>
-            إضافة إعلانات الشركات
-        </span>
-        <span class="bg-orange-100 text-orange-700 text-[10px] px-2 py-0.5 rounded-full font-bold">خاص</span>
-    </a>
-
-    <!-- 3. إضافة موظف -->
-    <a href="staff-management.html" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors border border-gray-100 shadow-xs">
-        <span class="flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-            إضافة موظف
-        </span>
-    </a>
-
-    <!-- 4. إضافة قسم -->
-    <a href="categories.html" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors border border-gray-100 shadow-xs">
-        <span class="flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
-            إضافة قسم
-        </span>
-    </a>
-
-    <!-- 5. إدارة تسعير الإعلانات (الجديد) -->
-    <a href="admin-pricing.html" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors border border-gray-100 shadow-xs">
-        <span class="flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-            إدارة التسعير
-        </span>
-        <span class="bg-orange-100 text-orange-700 text-[10px] px-2 py-0.5 rounded-full font-bold">جديد</span>
-    </a>
-
-    <!-- 6. تقرير اليوم -->
-    <a href="admin-daily-report.html" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors border border-gray-100 shadow-xs">
-        <span class="flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
-            </svg>
-            تقرير اليوم
-        </span>
-    </a>
-
-    <!-- 7. الأرباح والخسائر -->
-    <a href="admin-profits.html" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors border border-gray-100 shadow-xs">
-        <span class="flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-            الأرباح والخسائر
-        </span>
-    </a>
-
-    <!-- 8. المرتبات -->
-    <a href="admin-salaries.html" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors border border-gray-100 shadow-xs">
-        <span class="flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
-            </svg>
-            مرتبات الموظفين
-        </span>
-    </a>
-
-    <!-- 9. المصروفات -->
-    <a href="admin-expenses.html" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors border border-gray-100 shadow-xs">
-        <span class="flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-            </svg>
-            المصروفات
-        </span>
-    </a>
-</nav>
-            </div>
-            
-            <!-- زر تسجيل الخروج أسفل القائمة تماماً -->
-            <div class="pt-4 border-t">
-                <button onclick="logoutAdmin()" class="w-full bg-red-500 hover:bg-red-600 text-white py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm">
-                    <span>تسجيل الخروج</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                    </svg>
-                </button>
-                <div class="text-center text-[11px] text-gray-400 pt-3">
-                    جميع الحقوق محفوظة &copy; متجر البيت 2026
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- المحتوى الرئيسي -->
-    <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
-        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-6 space-y-4">
-            <div class="flex justify-between items-center border-b pb-4">
+    <main class="max-w-7xl mx-auto px-4 mt-6">
+        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-5 md:p-6 mb-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-gray-100">
                 <div>
-                    <h2 class="font-black text-gray-800 text-base md:text-lg flex items-center gap-2">
-                        <span class="w-2.5 h-2.5 rounded-full bg-orange-600 inline-block"></span>
-                        مراجعة الإعلانات المعلقة وإيصالات الدفع
+                    <h2 class="text-xl font-black text-gray-800 flex items-center gap-2">
+                        <span class="w-3 h-3 bg-orange-500 rounded-full inline-block animate-pulse"></span>
+                        مراجعة الإعلانات المعلقة (الجديدة والمستعملة) وإيصالات الدفع
                     </h2>
-                    <p class="text-xs text-gray-500 mt-0.5">قم بمراجعة الإعلانات المرفوعة حديثاً واعتمادها لتظهر مباشرة على المنصة.</p>
+                    <p class="text-xs text-gray-500 mt-1">قم بمراجعة الإعلانات المرفوعة، تفاصيل العميل، وإيصالات الدفع قبل اعتمادها لتظهر مباشرة على المنصة.</p>
+                </div>
+                <div class="bg-orange-50 px-4 py-2 rounded-2xl border border-orange-100 text-center">
+                    <span class="text-xs text-orange-700 font-bold block">إجمالي المعلق:</span>
+                    <span id="pending-count" class="text-lg font-black text-orange-600">0</span>
                 </div>
             </div>
 
-            <!-- جدول الإعلانات -->
-            <div class="overflow-x-auto">
+            <!-- جدول الإعلانات المعلقة -->
+            <div class="overflow-x-auto mt-4">
                 <table class="w-full text-right border-collapse">
                     <thead>
-                        <tr class="border-b text-xs text-gray-500 bg-gray-50/50">
+                        <tr class="bg-gray-50 text-gray-500 text-xs font-bold border-b border-gray-100">
                             <th class="p-3">صورة الإعلان</th>
-                            <th class="p-3">إيصال الدفع</th>
                             <th class="p-3">عنوان الإعلان</th>
                             <th class="p-3">القسم</th>
                             <th class="p-3">السعر</th>
+                            <th class="p-3">إيصال الدفع / النوع</th>
+                            <th class="p-3">بيانات التواصل مع العميل</th>
                             <th class="p-3">تاريخ الرفع</th>
                             <th class="p-3 text-center">الإجراءات</th>
                         </tr>
                     </thead>
-                    <tbody id="pendingAdsTableBody" class="divide-y divide-gray-100 text-sm">
+                    <tbody id="admin-ads-tbody" class="divide-y divide-gray-100 text-sm font-medium text-gray-700">
                         <tr>
-                            <td colspan="7" class="text-center text-gray-400 py-10">جاري جلب الإعلانات المعلقة من قاعدة البيانات...</td>
+                            <td colspan="8" class="text-center py-8 text-gray-400 font-medium">جاري تحميل الإعلانات المعلقة...</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-        </section>
+        </div>
     </main>
 
+    <!-- سكريبت جلب وإدارة الإعلانات من قاعدة البيانات -->
     <script>
-        const openMenuBtn = document.getElementById('open-menu-btn');
-        const closeMenuBtn = document.getElementById('close-menu-btn');
-        const sideMenu = document.getElementById('side-menu');
-        const menuOverlay = document.getElementById('menu-overlay');
-        const menuContent = document.getElementById('menu-content');
+        // إعدادات الاتصال بقاعدة بيانات Supabase (ضع بيانات مشروعك هنا)
+        const SUPABASE_URL = 'https://your-project.supabase.co';
+        const SUPABASE_KEY = 'your-anon-key';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        function openMenu() {
-            sideMenu.classList.remove('hidden');
-            setTimeout(() => {
-                menuContent.classList.remove('translate-x-full');
-            }, 10);
-        }
-
-        function closeMenu() {
-            menuContent.classList.add('translate-x-full');
-            setTimeout(() => {
-                sideMenu.classList.add('hidden');
-            }, 300);
-        }
-
-        openMenuBtn.addEventListener('click', openMenu);
-        closeMenuBtn.addEventListener('click', closeMenu);
-        menuOverlay.addEventListener('click', closeMenu);
-
-        function logoutAdmin() {
-            localStorage.removeItem('isAdminLoggedIn');
-            window.location.href = 'admin-login.html';
-        }
-    </script>
-
-    <script>
-        const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        window.onload = () => {
-            loadPendingAds();
-        };
-
-        async function loadPendingAds() {
-            const tbody = document.getElementById('pendingAdsTableBody');
-            if (!tbody) return;
+        async function fetchPendingAds() {
+            const tbody = document.getElementById('admin-ads-tbody');
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-gray-400 font-medium">جاري التحديث...</td></tr>`;
 
             try {
-                const { data, error } = await supabaseClient
+                // استعلام جلب الإعلانات الغير معتمدة (Pending / status = false أو pending)
+                const { data: ads, error } = await supabaseClient
                     .from('ads')
                     .select('*')
+                    .eq('is_approved', false) // أو status = 'pending' حسب هيكل جدولك
                     .order('created_at', { ascending: false });
 
                 if (error) throw error;
 
-                if (!data || data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="7" class="text-center text-gray-400 py-10">لا توجد إعلانات معلقة حالياً. المنصة نظيفة!</td></tr>`;
+                document.getElementById('pending-count').textContent = ads ? ads.length : 0;
+
+                if (!ads || ads.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="8" class="text-center py-12 text-gray-400 font-bold">لا توجد إعلانات معلقة للمراجعة حالياً. مبروك!</td></tr>`;
                     return;
                 }
 
                 tbody.innerHTML = '';
-                data.forEach(ad => {
-                    const row = `
-                        <tr class="hover:bg-gray-50/80 transition-colors">
-                            <td class="p-3">
-                                <img src="${ad.image_url || 'logo192.png'}" alt="" class="w-12 h-12 object-cover rounded-xl border border-gray-100 shadow-sm">
-                            </td>
-                            <td class="p-3">
-                                ${ad.payment_proof_url ? `<img src="${ad.payment_proof_url}" alt="إيصال" class="w-12 h-12 object-cover rounded-xl border border-gray-100 shadow-sm cursor-pointer hover:opacity-80" onclick="window.open('${ad.payment_proof_url}', '_blank')">` : '<span class="text-xs text-gray-400">لا يوجد</span>'}
-                            </td>
-                            <td class="p-3 font-bold text-gray-800">${ad.title}</td>
-                            <td class="p-3"><span class="bg-gray-100 text-gray-600 text-xs px-2.5 py-1 rounded-lg font-medium">${ad.category || 'عام'}</span></td>
-                            <td class="p-3 font-black text-orange-600">${ad.price ? ad.price.toLocaleString() : 0} ج.م</td>
-                            <td class="p-3 text-xs text-gray-500">${new Date(ad.created_at).toLocaleDateString('ar-EG')}</td>
-                            <td class="p-3 text-center space-x-1 space-x-reverse">
-                                <button onclick="approveAd('${ad.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow-sm transition-all">اعتماد</button>
-                                <button onclick="rejectAd('${ad.id}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow-sm transition-all">رفض</button>
-                            </td>
-                        </tr>
+                ads.forEach(ad => {
+                    const dateFormatted = new Date(ad.created_at || Date.now()).toLocaleDateString('ar-EG');
+                    
+                    // صورة الإعلان
+                    const imgUrl = ad.image_url || ad.images?.[0] || 'logo192.png';
+                    
+                    // صورة الإيصال أو حالة الدفع (مدعوم بربط الـ SMS Gateway أو الإيصال المرفوع)
+                    const paymentProof = ad.payment_receipt_url 
+                        ? `<a href="${ad.payment_receipt_url}" target="_blank" class="text-blue-600 underline font-bold text-xs flex items-center gap-1">عرض الإيصال</a>`
+                        : `<span class="text-xs bg-amber-50 text-amber-700 px-2 py-1 rounded-lg font-bold">${ad.payment_type || 'مجاني / معلق SMS'}</span>`;
+
+                    // بيانات التواصل مع العميل
+                    const clientPhone = ad.phone || ad.seller_phone || 'غير مسجل';
+                    const clientName = ad.seller_name || ad.name || 'عميل متجر البيت';
+
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-gray-50/80 transition-colors';
+                    tr.innerHTML = `
+                        <td class="p-3">
+                            <img src="${imgUrl}" alt="صورة الإعلان" class="w-14 h-14 object-cover rounded-xl border border-gray-100 shadow-sm">
+                        </td>
+                        <td class="p-3 font-bold text-gray-900 max-w-[200px] truncate" title="${ad.title}">${ad.title}</td>
+                        <td class="p-3"><span class="bg-gray-100 px-2.5 py-1 rounded-lg text-xs font-bold text-gray-600">${ad.category || 'عام'}</span></td>
+                        <td class="p-3 font-black text-orange-600">${ad.price ? ad.price + ' ج.م' : 'مجاني'}</td>
+                        <td class="p-3">${paymentProof}</td>
+                        <td class="p-3">
+                            <div class="text-xs space-y-1">
+                                <div class="font-bold text-gray-800">${clientName}</div>
+                                <div dir="ltr" class="text-right text-gray-500 font-mono">${clientPhone}</div>
+                                <div class="flex items-center gap-2 pt-1">
+                                    <a href="tel:${clientPhone}" class="bg-emerald-50 text-emerald-600 hover:bg-emerald-100 p-1.5 rounded-lg text-xs font-bold flex items-center gap-1" title="اتصال هاتفي">
+                                        📞 اتصال
+                                    </a>
+                                    <a href="https://wa.me/${clientPhone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('مرحباً بك بخصوص إعلانك (' + ad.title + ') على متجر البيت...')}" target="_blank" class="bg-green-50 text-green-600 hover:bg-green-100 p-1.5 rounded-lg text-xs font-bold flex items-center gap-1" title="مراسلة واتساب">
+                                        💬 واتساب
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="p-3 text-xs text-gray-500">${dateFormatted}</td>
+                        <td class="p-3 text-center">
+                            <div class="flex items-center justify-center gap-1.5">
+                                <button onclick="approveAd('${ad.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1">
+                                    ✓ اعتماد
+                                </button>
+                                <button onclick="rejectAd('${ad.id}', '${clientPhone}')" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm">
+                                    رفض
+                                </button>
+                                <button onclick="deleteAd('${ad.id}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm">
+                                    حذف
+                                </button>
+                            </div>
+                        </td>
                     `;
-                    tbody.innerHTML += row;
+                    tbody.appendChild(tr);
                 });
 
             } catch (err) {
                 console.error(err);
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center text-red-500 py-10">خطأ في الاتصال بقاعدة البيانات</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-red-500 font-bold">حدث خطأ أثناء جلب الإعلانات. تأكد من اتصال القاعدة.</td></tr>`;
             }
         }
 
+        // دالة اعتماد الإعلان (نشر مباشر)
         async function approveAd(id) {
-            alert('تم اعتماد الإعلان بنجاح (معرف: ' + id + ')');
-            loadPendingAds();
-        }
+            if (!confirm('هل أنت متأكد من اعتماد ونشر هذا الإعلان على المنصة؟')) return;
+            const { error } = await supabaseClient
+                .from('ads')
+                .update({ is_approved: true }) // أو status = 'active'
+                .eq('id', id);
 
-        async function rejectAd(id) {
-            if(confirm('هل أنت متأكد من حذف أو رفض هذا الإعلان؟')) {
-                const { error } = await supabaseClient.from('ads').delete().eq('id', id);
-                if(!error) {
-                    alert('تم حذف الإعلان بنجاح');
-                    loadPendingAds();
-                } else {
-                    alert('حدث خطأ أثناء الحذف');
-                }
+            if (error) {
+                alert('حدث خطأ أثناء الاعتماد: ' + error.message);
+            } else {
+                alert('تم اعتماد ونشر الإعلان بنجاح!');
+                fetchPendingAds();
             }
         }
+
+        // دالة رفض الإعلان (مع إمكانية إشعار العميل عبر وسائل التواصل)
+        async function rejectAd(id, phone) {
+            const reason = prompt('أدخل سبب رفض الإعلان ليتم إرساله للعميل أو مراجعته:');
+            if (reason === null) return;
+
+            const { error } = await supabaseClient
+                .from('ads')
+                .update({ is_approved: false, rejection_reason: reason })
+                .eq('id', id);
+
+            if (error) {
+                alert('حدث خطأ: ' + error.message);
+            } else {
+                alert('تم رفض الإعلان. يمكنك التواصل مع العميل عبر الواتساب لتعديله.');
+                // فتح واتساب تلقائياً للعميل المرفوض إعلانه
+                if(phone && phone !== 'غير مسجل') {
+                    window.open(`https://wa.me/${phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('عذراً، تم رفض إعلانك بسبب: ' + reason + '. برجاء التعديل وإعادة الإرسال.')}`, '_blank');
+                }
+                fetchPendingAds();
+            }
+        }
+
+        // دالة حذف الإعلان نهائياً
+        async function deleteAd(id) {
+            if (!confirm('هل أنت متأكد من حذف هذا الإعلان نهائياً من قاعدة البيانات؟')) return;
+            const { error } = await supabaseClient
+                .from('ads')
+                .delete()
+                .eq('id', id);
+
+            if (error) {
+                alert('حدث خطأ أثناء الحذف: ' + error.message);
+            } else {
+                alert('تم حذف الإعلان بنجاح.');
+                fetchPendingAds();
+            }
+        }
+
+        // التشغيل التلقائي عند فتح الصفحة
+        window.onload = fetchPendingAds;
     </script>
 </body>
 </html>
