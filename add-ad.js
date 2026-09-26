@@ -6,15 +6,18 @@ let receiptImageWebp = '';
 let categoriesData = []; 
 
 function showCustomModal(message) {
-    document.getElementById('modalMessage').textContent = message;
-    document.getElementById('customModal').classList.remove('hidden');
+    const modalMsg = document.getElementById('modalMessage');
+    const customModal = document.getElementById('customModal');
+    if (modalMsg) modalMsg.textContent = message;
+    if (customModal) customModal.classList.remove('hidden');
 }
 
 function closeCustomModal() {
-    document.getElementById('customModal').classList.add('hidden');
+    const customModal = document.getElementById('customModal');
+    if (customModal) customModal.classList.add('hidden');
 }
 
-// جلب الأقسام من Supabase
+// جلب الأقسام من Supabase وتعبئتها في القائمة
 async function fetchCategories() {
     try {
         const response = await fetch(`${SUPABASE_URL}/rest/v1/categories?select=*`, {
@@ -33,6 +36,7 @@ async function fetchCategories() {
         if (!mainCategorySelect) return;
         mainCategorySelect.innerHTML = '<option value="">اختر القسم الرئيسي</option>';
 
+        // الأقسام الرئيسية هي التي ليس لها parent_id أو قيمته فارغة
         const mainCategories = categoriesData.filter(cat => !cat.parent_id || cat.parent_id === "");
 
         if (mainCategories.length > 0) {
@@ -255,63 +259,68 @@ function removeReceiptImage() {
     if (labelText) labelText.textContent = 'اختر صورة الإيصال';
 }
 
-// إرسال الإعلان وقيده كـ pending بالأعمدة الأساسية فقط
-// إرسال الإعلان وقيده كـ pending بالأعمدة الأساسية فقط
-document.getElementById('addAdForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
+// إرسال الإعلان وقيده كـ pending بالأعمدة الأساسية المضمونة
+const addAdFormElement = document.getElementById('addAdForm');
+if (addAdFormElement) {
+    addAdFormElement.addEventListener('submit', async function(e) {
+        e.preventDefault();
 
-    if (selectedAdImages.length === 0) {
-        showCustomModal('يرجى اختيار صورة واحدة على الأقل للمنتج.');
-        return;
-    }
+        if (selectedAdImages.length === 0) {
+            showCustomModal('يرجى اختيار صورة واحدة على الأقل للمنتج.');
+            return;
+        }
 
-    const category = document.getElementById('adCategory').value;
-    const subCategory = document.getElementById('adSubCategory').value || category;
-    const condition = document.getElementById('adCondition').value;
-    const targetCatName = subCategory || category;
-    const matchedCat = categoriesData.find(c => c.name === targetCatName) || categoriesData.find(c => c.name === category);
-    
-    let currentPrice = matchedCat ? (condition === 'جديد' ? Number(matchedCat.new_price || 0) : Number(matchedCat.used_price || 0)) : 0;
-    const isFreeAd = matchedCat && (matchedCat.is_free === true || currentPrice === 0);
+        const category = document.getElementById('adCategory').value;
+        const subCategory = document.getElementById('adSubCategory').value || category;
+        const condition = document.getElementById('adCondition').value;
+        const targetCatName = subCategory || category;
+        const matchedCat = categoriesData.find(c => c.name === targetCatName) || categoriesData.find(c => c.name === category);
+        
+        let currentPrice = matchedCat ? (condition === 'جديد' ? Number(matchedCat.new_price || 0) : Number(matchedCat.used_price || 0)) : 0;
+        const isFreeAd = matchedCat && (matchedCat.is_free === true || currentPrice === 0);
 
-    if (!isFreeAd && !receiptImageWebp) {
-        showCustomModal('يرجى رفع صورة إيصال التحويل لاستكمال إرسال الإعلان.');
-        return;
-    }
+        if (!isFreeAd && !receiptImageWebp) {
+            showCustomModal('يرجى رفع صورة إيصال التحويل لاستكمال إرسال الإعلان.');
+            return;
+        }
 
-    const submitBtn = document.getElementById('submitBtn');
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'جاري إرسال الإعلان...';
+        const submitBtn = document.getElementById('submitBtn');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'جاري إرسال الإعلان...';
+        }
 
-    try {
-        const response = await fetch(`${SUPABASE_URL}/rest/v1/ads`, {
-            method: 'POST',
-            headers: {
-               'Content-Type': 'application/json',
-               'apikey': SUPABASE_ANON_KEY,
-               'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
-               'Prefer': 'return=representation'
-            },
-            body: JSON.stringify({
-                title: document.getElementById('adTitle').value,
-                price: parseFloat(document.getElementById('adPrice').value) || 0,
-                condition: condition,
-                category: subCategory, 
-                description: document.getElementById('adDescription').value,
-                image_url: selectedAdImages.map(img => img.webp).join('||'),
-                receipt_url: receiptImageWebp || null,
-                status: 'pending'
-            })
-        });
+        try {
+            const response = await fetch(`${SUPABASE_URL}/rest/v1/ads`, {
+                method: 'POST',
+                headers: {
+                   'Content-Type': 'application/json',
+                   'apikey': SUPABASE_ANON_KEY,
+                   'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+                   'Prefer': 'return=representation'
+                },
+                body: JSON.stringify({
+                    title: document.getElementById('adTitle').value,
+                    price: parseFloat(document.getElementById('adPrice').value) || 0,
+                    condition: condition,
+                    category: subCategory, 
+                    description: document.getElementById('adDescription').value,
+                    image_url: selectedAdImages.map(img => img.webp).join('||'),
+                    receipt_url: receiptImageWebp || null,
+                    status: 'pending'
+                })
+            });
 
-        if (!response.ok) throw new Error(await response.text());
+            if (!response.ok) throw new Error(await response.text());
 
-        showCustomModal('تم إرسال إعلانك بنجاح وسيتم مراجعته واعتماده قريباً!');
-        setTimeout(() => window.location.replace('index.html?v=' + Date.now()), 2500);
-    } catch (err) {
-        showCustomModal('حدث خطأ أثناء الحفظ: ' + err.message);
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'إرسال الإعلان للمراجعة';
-    }
-});
-});
+            showCustomModal('تم إرسال إعلانك بنجاح وسيتم مراجعته واعتماده قريباً!');
+            setTimeout(() => window.location.replace('index.html?v=' + Date.now()), 2500);
+        } catch (err) {
+            showCustomModal('حدث خطأ أثناء الحفظ: ' + err.message);
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'إرسال الإعلان للمراجعة';
+            }
+        }
+    });
+}
