@@ -2,7 +2,8 @@ const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-let editingCategoryId = null; // لتتبع وضع التعديل
+let editingCategoryId = null;
+let currentExistingImageUrl = ''; // حفظ رابط الصورة القديمة عند التعديل
 
 document.addEventListener('DOMContentLoaded', () => {
     loadCategoriesForAdmin();
@@ -10,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setupLevelToggle();
 });
 
-// التحكم في إظهار وإخفاء حقل القسم الرئيسي ديناميكياً
 function setupLevelToggle() {
     const typeLevelSelect = document.getElementById('catTypeLevel');
     const parentWrapper = document.getElementById('parentCategoryWrapper');
@@ -30,7 +30,6 @@ function setupLevelToggle() {
     });
 }
 
-// معاينة الصورة وحذفها قبل الرفع
 function setupImagePreview() {
     const fileInput = document.getElementById('catImage');
     const previewContainer = document.getElementById('imagePreviewContainer');
@@ -71,7 +70,6 @@ function clearImageInput() {
     if (clearBtn) clearBtn.classList.add('hidden');
 }
 
-// تحميل الأقسام وترتيبها (رئيسي ثم تحته فرعي) مع زر التعديل
 async function loadCategoriesForAdmin() {
     const tbody = document.getElementById('categoriesTableBody');
     const parentSelect = document.getElementById('catParent');
@@ -93,7 +91,6 @@ async function loadCategoriesForAdmin() {
             return;
         }
 
-        // تعبئة قائمة الأقسام الرئيسية في نموذج الإضافة
         if (parentSelect) {
             parentSelect.innerHTML = `<option value="">اختر القسم الرئيسي التابع له</option>`;
             categories.filter(c => !c.parent_id).forEach(cat => {
@@ -101,7 +98,6 @@ async function loadCategoriesForAdmin() {
             });
         }
 
-        // تجميع وترتيب الأقسام: الرئيس وتحته الفرعي مباشرة
         const mainCategories = categories.filter(c => !c.parent_id);
         let orderedCategories = [];
 
@@ -113,7 +109,6 @@ async function loadCategoriesForAdmin() {
             });
         });
 
-        // بناء الجدول بالشكل المرتب
         tbody.innerHTML = '';
         orderedCategories.forEach(cat => {
             const typeLabel = cat.isMain 
@@ -122,21 +117,22 @@ async function loadCategoriesForAdmin() {
             
             const statusLabel = cat.is_free 
                 ? `<span class="bg-emerald-100 text-emerald-700 text-xs px-2.5 py-1 rounded-lg font-bold">مجاني بالكامل</span>` 
-                : `<span class="bg-orange-100 text-orange-700 text-xs px-2.5 py-1 rounded-lg font-bold">مدفوع</span>`;
+                : `<span class="bg-orange-100 text-orange-700 text-xs px-2.5 py-1 rounded-lg font-bold">حسب السعر</span>`;
 
             const rowBg = cat.isMain ? 'bg-white font-bold' : 'bg-gray-50/60';
             const nameIndentation = cat.isMain ? cat.name : `↳ ${cat.name}`;
+            const safeImageUrl = cat.image_url || 'logo192.png';
 
             tbody.innerHTML += `
                 <tr class="${rowBg} hover:bg-orange-50/30 transition-colors border-b">
-                    <td class="p-3"><img src="${cat.image_url || 'logo192.png'}" class="w-10 h-10 object-cover rounded-xl border shadow-sm"></td>
+                    <td class="p-3"><img src="${safeImageUrl}" class="w-10 h-10 object-cover rounded-xl border shadow-sm"></td>
                     <td class="p-3 text-gray-800">${nameIndentation}</td>
                     <td class="p-3">${typeLabel}</td>
                     <td class="p-3 text-gray-700">${cat.new_price || 0} ج.م</td>
                     <td class="p-3 text-gray-700">${cat.used_price || 0} ج.م</td>
                     <td class="p-3">${statusLabel}</td>
                     <td class="p-3 text-center flex items-center justify-center gap-2">
-                        <button onclick="editCategory('${cat.id}', '${cat.name}', '${cat.parent_id || ''}', ${cat.new_price || 0}, ${cat.used_price || 0}, ${cat.is_free || false})" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm">تعديل</button>
+                        <button onclick="editCategory('${cat.id}', '${cat.name}', '${cat.parent_id || ''}', ${cat.new_price || 0}, ${cat.used_price || 0}, ${cat.is_free || false}, '${cat.image_url || ''}')" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm">تعديل</button>
                         <button onclick="deleteCategory('${cat.id}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm">حذف</button>
                     </td>
                 </tr>
@@ -149,9 +145,9 @@ async function loadCategoriesForAdmin() {
     }
 }
 
-// دقة تعبئة بيانات التعديل
-function editCategory(id, name, parentId, newPrice, usedPrice, isFree) {
+function editCategory(id, name, parentId, newPrice, usedPrice, isFree, imageUrl) {
     editingCategoryId = id;
+    currentExistingImageUrl = imageUrl; // الاحتفاظ برابط الصورة القديمة
     document.getElementById('catName').value = name;
     document.getElementById('catNewPrice').value = newPrice;
     document.getElementById('catUsedPrice').value = usedPrice;
@@ -181,7 +177,6 @@ function editCategory(id, name, parentId, newPrice, usedPrice, isFree) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// حفظ أو تحديث القسم في قاعدة البيانات
 document.getElementById('addCategoryForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const name = document.getElementById('catName').value.trim();
@@ -198,8 +193,9 @@ document.getElementById('addCategoryForm').addEventListener('submit', async (e) 
     }
 
     try {
-        let image_url = null;
+        let image_url = currentExistingImageUrl; // الافتراضي هو الصورة القديمة
 
+        // لو تم اختيار صورة جديدة، ارفعها
         if (imageFile) {
             const fileName = `cat_${Date.now()}.webp`;
             const { error: uploadError } = await supabaseClient.storage
@@ -213,24 +209,27 @@ document.getElementById('addCategoryForm').addEventListener('submit', async (e) 
         }
 
         if (editingCategoryId) {
-            // تحديث قسم موجود
-            let updateData = { name, parent_id: parent_id || null, new_price, used_price, is_free };
-            if (image_url) updateData.image_url = image_url;
-
-            const { error } = await supabaseClient.from('categories').update(updateData).eq('id', editingCategoryId);
-            if (error) throw error;
-
-            alert('تم تحديث القسم بنجاح!');
-            resetFormState();
-        } else {
-            // إضافة قسم جديد
-            const { error } = await supabaseClient.from('categories').insert([{
+            const { error } = await supabaseClient.from('categories').update({
                 name,
                 parent_id: parent_id || null,
                 new_price,
                 used_price,
                 is_free,
                 image_url
+            }).eq('id', editingCategoryId);
+
+            if (error) throw error;
+
+            alert('تم تحديث القسم بنجاح!');
+            resetFormState();
+        } else {
+            const { error } = await supabaseClient.from('categories').insert([{
+                name,
+                parent_id: parent_id || null,
+                new_price,
+                used_price,
+                is_free,
+                image_url: image_url || null
             }]);
 
             if (error) throw error;
@@ -251,6 +250,7 @@ document.getElementById('addCategoryForm').addEventListener('submit', async (e) 
 
 function resetFormState() {
     editingCategoryId = null;
+    currentExistingImageUrl = '';
     document.getElementById('addCategoryForm').reset();
     document.getElementById('parentCategoryWrapper').classList.add('hidden');
     clearImageInput();
@@ -260,7 +260,6 @@ function resetFormState() {
     submitBtn.classList.add('bg-orange-600', 'hover:bg-orange-700');
 }
 
-// حذف قسم
 async function deleteCategory(id) {
     if (confirm('هل أنت متأكد من حذف هذا القسم؟ (سيتم حذف الأقسام الفرعية التابعة له أيضاً)')) {
         try {
