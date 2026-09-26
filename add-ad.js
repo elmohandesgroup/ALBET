@@ -17,7 +17,7 @@ function closeCustomModal() {
     if (customModal) customModal.classList.add('hidden');
 }
 
-// جلب الأقسام من Supabase وتعبئتها في القائمة
+// جلب الأقسام من Supabase
 async function fetchCategories() {
     try {
         const response = await fetch(`${SUPABASE_URL}/rest/v1/categories?select=*`, {
@@ -36,7 +36,6 @@ async function fetchCategories() {
         if (!mainCategorySelect) return;
         mainCategorySelect.innerHTML = '<option value="">اختر القسم الرئيسي</option>';
 
-        // الأقسام الرئيسية هي التي ليس لها parent_id أو قيمته فارغة
         const mainCategories = categoriesData.filter(cat => !cat.parent_id || cat.parent_id === "");
 
         if (mainCategories.length > 0) {
@@ -259,7 +258,7 @@ function removeReceiptImage() {
     if (labelText) labelText.textContent = 'اختر صورة الإيصال';
 }
 
-// إرسال الإعلان وقيده كـ pending بالأعمدة الأساسية المضمونة
+// إرسال الإعلان بالأعمدة المتوافقة تماماً مع جدول Supabase الموجود لديك
 const addAdFormElement = document.getElementById('addAdForm');
 if (addAdFormElement) {
     addAdFormElement.addEventListener('submit', async function(e) {
@@ -270,11 +269,11 @@ if (addAdFormElement) {
             return;
         }
 
-        const category = document.getElementById('adCategory').value;
-        const subCategory = document.getElementById('adSubCategory').value || category;
+        const mainCategory = document.getElementById('adCategory').value;
+        const subCategory = document.getElementById('adSubCategory').value || mainCategory;
         const condition = document.getElementById('adCondition').value;
-        const targetCatName = subCategory || category;
-        const matchedCat = categoriesData.find(c => c.name === targetCatName) || categoriesData.find(c => c.name === category);
+        const targetCatName = subCategory || mainCategory;
+        const matchedCat = categoriesData.find(c => c.name === targetCatName) || categoriesData.find(c => c.name === mainCategory);
         
         let currentPrice = matchedCat ? (condition === 'جديد' ? Number(matchedCat.new_price || 0) : Number(matchedCat.used_price || 0)) : 0;
         const isFreeAd = matchedCat && (matchedCat.is_free === true || currentPrice === 0);
@@ -303,10 +302,11 @@ if (addAdFormElement) {
                     title: document.getElementById('adTitle').value,
                     price: parseFloat(document.getElementById('adPrice').value) || 0,
                     condition: condition,
-                    category: subCategory, 
+                    category: mainCategory,
+                    sub_category: subCategory,
                     description: document.getElementById('adDescription').value,
                     image_url: selectedAdImages.map(img => img.webp).join('||'),
-                    receipt_url: receiptImageWebp || null,
+                    payment_reference: receiptImageWebp || null,
                     status: 'pending'
                 })
             });
