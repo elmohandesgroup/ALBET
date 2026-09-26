@@ -92,9 +92,8 @@
 
     <!-- سكريبت جلب وإدارة الإعلانات من قاعدة البيانات -->
     <script>
-        // إعدادات الاتصال الحقيقية بقاعدة بيانات Supabase الخاصة بك
-       const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
+        const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
         
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -103,12 +102,11 @@ const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
             tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-gray-400 font-medium">جاري التحديث...</td></tr>`;
 
             try {
-                // استعلام جلب الإعلانات الغير معتمدة (Pending / is_approved = false)
-               const { data, error } = await supabaseClient
-    .from('ads')
-    .select('*')
-    .eq('status', 'pending')
-    .order('created_at', { ascending: false });
+                const { data: ads, error } = await supabaseClient
+                    .from('ads')
+                    .select('*')
+                    .eq('status', 'pending')
+                    .order('created_at', { ascending: false });
 
                 if (error) throw error;
 
@@ -126,7 +124,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
                     
                     const paymentProof = ad.payment_receipt_url 
                         ? `<a href="${ad.payment_receipt_url}" target="_blank" class="text-blue-600 underline font-bold text-xs flex items-center gap-1">عرض الإيصال</a>`
-                        : `<span class="text-xs bg-amber-50 text-amber-700 px-2 py-1 rounded-lg font-bold">${ad.payment_type || 'مجاني / معلق SMS'}</span>`;
+                        : `<span class="text-xs bg-amber-50 text-amber-700 px-2 py-1 rounded-lg font-bold">${ad.payment_type || 'مجاني / معلق'}</span>`;
 
                     const clientPhone = ad.phone || ad.seller_phone || 'غير مسجل';
                     const clientName = ad.seller_name || ad.name || 'عميل متجر البيت';
@@ -181,9 +179,10 @@ const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
 
         async function approveAd(id) {
             if (!confirm('هل أنت متأكد من اعتماد ونشر هذا الإعلان على المنصة؟')) return;
+            // تعديل الحالة إلى approved لكي يظهر في الصفحة الرئيسية
             const { error } = await supabaseClient
                 .from('ads')
-                .update({ is_approved: true })
+                .update({ status: 'approved' })
                 .eq('id', id);
 
             if (error) {
@@ -200,7 +199,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
 
             const { error } = await supabaseClient
                 .from('ads')
-                .update({ is_approved: false, rejection_reason: reason })
+                .update({ status: 'rejected', rejection_reason: reason })
                 .eq('id', id);
 
             if (error) {
