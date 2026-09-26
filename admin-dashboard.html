@@ -96,7 +96,7 @@
        const SUPABASE_URL = 'https://usaqiylvcnmccgpnxwaq.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_he-h5ysxqK0VLujbtAXcUg_K5qf1rSB';
         
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         async function fetchPendingAds() {
             const tbody = document.getElementById('admin-ads-tbody');
